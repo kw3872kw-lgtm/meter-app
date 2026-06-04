@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="계량기교체">
+<meta name="theme-color" content="#07192e">
+<title>디지털계량기 교체 앱</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:#07192e;--ink-mid:#0d3050;--ink-soft:#1a5280;
+  --sea:#00b8cc;--sea-bright:#00d9ef;--sea-pale:rgba(0,184,204,0.10);--sea-border:rgba(0,184,204,0.22);
+  --foam:#eaf8fb;--sky:#d4f0f7;--white:#ffffff;
+  --red:#f03e5c;--red-pale:rgba(240,62,92,0.10);
+  --green:#00c48c;--green-pale:rgba(0,196,140,0.10);
+  --amber:#f5a623;--amber-pale:rgba(245,166,35,0.10);
+  --muted:#7ea8c0;--border:rgba(0,184,204,0.18);
+  --r-sm:5px;--r-md:10px;--r-lg:16px;--r-xl:22px;
+  --sh-sm:0 2px 8px rgba(7,25,46,0.07);
+  --sh-md:0 6px 20px rgba(7,25,46,0.11);
+  --sh-lg:0 14px 44px rgba(7,25,46,0.16);
+  --t:0.2s cubic-bezier(.4,0,.2,1);
+}
+
+html{
+  font-size:18px;
+  -webkit-text-size-adjust:100%;
+  -ms-text-size-adjust:100%;
+  width:100%;
+  overflow-x:hidden;
+}
+
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:#d4f0f7;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%,rgba(0,184,204,0.13) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%,rgba(26,82,128,0.10) 0%,transparent 60%);
+  min-height:100vh;
+  color:var(--ink);
+  overflow-x:hidden;
+  padding-bottom:100px;
+  width:100%;
+  max-width:100%;
+}
+.hdr{position:sticky;top:0;z-index:200;background:rgba(7,25,46,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,217,239,0.15)}
+.hdr-inner{max-width:100%;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px}
+.hdr-brand{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:34px;height:34px;border-radius:var(--r-sm);background:linear-gradient(135deg,var(--sea),var(--ink-soft));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--white);line-height:1}
+.hdr-sub{font-size:11px;color:rgba(0,217,239,0.7);letter-spacing:.6px;margin-top:2px}
+.worker-pill{display:flex;align-items:center;gap:6px;background:rgba(0,184,204,0.12);border:1px solid rgba(0,184,204,0.25);border-radius:20px;padding:5px 14px;font-size:13px;color:rgba(0,217,239,0.85)}
+.wpulse{width:6px;height:6px;border-radius:50%;background:var(--sea-bright);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.wave{height:28px;overflow:hidden}
+.wave svg{width:200%;height:100%;animation:wv 7s linear infinite}
+@keyframes wv{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.page{max-width:100%;width:100%;margin:0 auto;padding:16px 14px 0}
+.no-banner{background:rgba(7,25,46,0.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);padding:20px 22px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--sh-md)}
+.no-banner-label{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:var(--sea-bright);flex-shrink:0}
+.no-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,184,204,0.3);border-radius:var(--r-md);overflow:hidden;transition:border-color var(--t),box-shadow var(--t);flex-shrink:0}
+.no-wrap.focused{border-color:var(--sea);box-shadow:0 0 0 3px rgba(0,184,204,0.18)}
+.no-wrap.found{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,196,140,0.15)}
+.no-wrap.notfound{border-color:var(--red);box-shadow:0 0 0 3px rgba(240,62,92,0.12)}
+.no-pre{padding:10px 10px 10px 16px;font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--sea)}
+.no-wrap input{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:var(--white);letter-spacing:2px;width:100px;padding:10px 4px}
+.no-wrap input::placeholder{color:rgba(255,255,255,0.2);font-size:24px}
+.no-tag{margin-right:12px;padding:5px 10px;border-radius:4px;font-size:13px;font-weight:700;opacity:0;transition:opacity var(--t)}
+.no-tag.show{opacity:1}
+.no-tag.found{background:var(--green-pale);color:var(--green)}
+.no-tag.notfound{background:var(--red-pale);color:var(--red)}
+.no-tag.searching{background:rgba(255,255,255,0.08);color:var(--muted)}
+.no-hint{font-size:14px;color:var(--muted);flex:1;min-width:180px}
+.no-hint.err{color:var(--red)}
+.grid-2{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+.card{background:rgba(255,255,255,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.95);border-radius:var(--r-xl);box-shadow:var(--sh-sm);overflow:hidden;transition:box-shadow var(--t);animation:rise .35s ease both;margin-bottom:16px}
+.card:hover{box-shadow:var(--sh-md)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card-head{display:flex;align-items:center;gap:12px;padding:18px 20px 16px;border-bottom:1px solid var(--border)}
+.card-icon{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.card-icon.blue{background:linear-gradient(135deg,rgba(0,184,204,0.18),rgba(26,82,128,0.12))}
+.card-icon.green{background:linear-gradient(135deg,rgba(0,196,140,0.18),rgba(0,160,100,0.10))}
+.card-icon.amber{background:linear-gradient(135deg,rgba(245,166,35,0.18),rgba(200,130,0,0.10))}
+.card-icon.ink{background:linear-gradient(135deg,rgba(7,25,46,0.12),rgba(26,82,128,0.08))}
+.card-label{font-size:17px;font-weight:700;color:var(--ink);flex:1}
+.cbadge{font-size:12px;font-weight:700;letter-spacing:.3px;padding:4px 10px;border-radius:4px}
+.cbadge.req{background:var(--red-pale);color:var(--red)}
+.cbadge.opt{background:rgba(7,25,46,0.06);color:var(--muted)}
+.cbadge.done{background:var(--green-pale);color:var(--green)}
+.card-body{padding:20px 20px}
+.info-empty{text-align:center;padding:28px 0;color:var(--muted);font-size:15px}
+.info-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-chip{background:linear-gradient(135deg,rgba(0,184,204,0.07),rgba(26,82,128,0.04));border:1px solid var(--sea-border);border-radius:var(--r-md);padding:13px 15px}
+.info-chip.w2{grid-column:1/-1}
+.ic-label{font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.ic-value{font-size:17px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:360px){.info-chips{grid-template-columns:1fr}}
+.fl{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.fl:last-child{margin-bottom:0}
+.fl-label{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.1px}
+.fi{width:100%;padding:15px 16px;background:var(--foam);border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:17px;color:var(--ink);outline:none;transition:border-color var(--t),box-shadow var(--t),background var(--t);-webkit-appearance:none;appearance:none}
+.fi::placeholder{color:var(--muted);font-size:15px}
+.fi:focus{border-color:var(--sea);background:var(--white);box-shadow:0 0 0 4px rgba(0,184,204,0.12)}
+.fi[type=date]{cursor:pointer;font-family:'DM Mono',monospace;font-size:16px}
+.rpg{display:flex;gap:10px;flex-wrap:wrap}
+.rp{display:flex;align-items:center;gap:8px;padding:13px 20px;border:1.5px solid rgba(0,184,204,0.2);border-radius:100px;cursor:pointer;font-size:16px;color:var(--muted);background:var(--foam);transition:all var(--t);user-select:none;min-width:120px;justify-content:center}
+.rp input{display:none}
+.rp:has(input:checked){border-color:var(--sea);background:linear-gradient(135deg,rgba(0,184,204,0.12),rgba(26,82,128,0.07));color:var(--ink-soft);font-weight:700;box-shadow:0 0 0 4px rgba(0,184,204,0.1)}
+.rp.ok:has(input:checked){border-color:var(--green);background:var(--green-pale);color:var(--green);box-shadow:0 0 0 4px rgba(0,196,140,0.1)}
+.rp.ng:has(input:checked){border-color:var(--red);background:var(--red-pale);color:var(--red);box-shadow:0 0 0 4px rgba(240,62,92,0.1)}
+.ri{font-size:20px}
+.ba-wrap{display:flex;flex-direction:column;gap:16px;margin-bottom:16px}
+.ba-col{background:rgba(255,255,255,0.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.95);border-radius:var(--r-xl);box-shadow:var(--sh-sm);overflow:hidden;transition:box-shadow var(--t)}
+.ba-col:hover{box-shadow:var(--sh-md)}
+.ba-head{display:flex;align-items:center;gap:10px;padding:16px 20px 14px;border-bottom:1px solid var(--border)}
+.ba-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.ba-before .ba-dot{background:var(--amber)}
+.ba-after .ba-dot{background:var(--green)}
+.ba-title{font-size:16px;font-weight:700;letter-spacing:.2px}
+.ba-before .ba-title{color:var(--amber)}
+.ba-after .ba-title{color:var(--green)}
+.ba-body{padding:18px 20px}
+.ba-arrow{display:none}
+.pg{display:grid;grid-template-columns:1fr;gap:16px}
+.ps{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ps:hover{border-color:var(--sea);background:rgba(0,184,204,0.06);box-shadow:var(--sh-sm)}
+.ps:active{transform:scale(0.98)}
+.ps.disabled{opacity:.3;pointer-events:none}
+.ps.ok{border-style:solid;border-color:var(--green);background:rgba(255,255,255,0.9)}
+.ps-thumb{width:100%;aspect-ratio:16/9;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:var(--r-xl) var(--r-xl) 0 0}
+.ps-thumb img{width:100%;height:100%;object-fit:cover;display:none}
+.ps-thumb img.show{display:block}
+.ps-thumb .ph-icon{font-size:52px;opacity:.3}
+.ps.ok .ps-thumb .ph-icon{display:none}
+.wm-overlay{position:absolute;bottom:0;left:0;width:100%;background:rgba(255,255,255,0.93);border-top:1.5px solid #333;font-family:'Noto Sans KR',sans-serif;font-size:9px;line-height:1.4;display:none;pointer-events:none}
+.ps.ok .wm-overlay{display:block}
+.wm-table{width:100%;border-collapse:collapse}
+.wm-table tr td{border:0.5px solid #555;padding:2px 5px;vertical-align:middle;color:#111}
+.wm-table .wm-key{font-weight:700;white-space:nowrap;width:28%;background:rgba(210,235,255,0.7)}
+.wm-table .wm-val{font-weight:400}
+.ps-label{padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
+.pl{font-size:18px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px}
+.psub{font-size:14px;color:var(--muted)}
+.pdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:4px;vertical-align:middle}
+.ps.ok::after{content:'✓ 업로드됨';position:absolute;top:12px;right:14px;font-size:13px;font-weight:700;color:var(--white);background:var(--green);padding:4px 12px;border-radius:20px;z-index:10}
+input.pi-input{display:none}
+.status-row{display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(255,255,255,.6);border:1px solid rgba(0,184,204,0.12);border-radius:var(--r-md);font-size:15px;color:var(--ink)}
+.sr-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sr-icon.b{background:rgba(0,184,204,0.1)}
+.sr-icon.a{background:var(--amber-pale)}
+.sr-path{font-size:12px;color:var(--muted);margin-top:3px}
+.gap6{display:flex;flex-direction:column;gap:10px}
+.mt8{margin-top:10px}
+.mt12{margin-top:14px}
+.ctab{display:flex;border:2px solid var(--sea-border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:16px}
+.ct{flex:1;padding:15px;background:transparent;border:none;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all var(--t);border-right:1px solid var(--sea-border)}
+.ct:last-child{border-right:none}
+.ct.active-sign{background:linear-gradient(135deg,rgba(0,184,204,0.15),rgba(26,82,128,0.1));color:var(--ink-soft);font-weight:700}
+.ct.active-sticker{background:var(--amber-pale);color:#8a5e00;font-weight:700}
+.cond{display:none}
+.cond.active{display:block}
+.sign-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:#0a1f38;flex-direction:column;align-items:stretch;justify-content:stretch}
+.sign-modal.open{display:flex}
+.sign-modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(0,184,204,0.10);border-bottom:1px solid rgba(0,184,204,0.2);flex-shrink:0}
+.sign-modal-title{font-size:15px;font-weight:700;color:var(--sea-bright);display:flex;align-items:center;gap:8px}
+.sign-modal-actions{display:flex;gap:8px;align-items:center}
+.exit-dialog{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center}
+.exit-dialog.open{display:flex}
+.exit-box{background:#fff;border-radius:var(--r-xl);padding:28px 24px 20px;max-width:320px;width:90%;text-align:center;box-shadow:var(--sh-lg);animation:rise .25s ease}
+.exit-box-icon{font-size:40px;margin-bottom:12px}
+.exit-box-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.exit-box-msg{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+.exit-btns{display:flex;gap:10px}
+.exit-btn{flex:1;padding:14px;border:none;border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--t)}
+.exit-btn.cancel{background:var(--foam);color:var(--muted);border:1.5px solid var(--border)}
+.exit-btn.ok{background:linear-gradient(135deg,var(--red),#c0003a);color:#fff}
+.sm-btn{padding:13px 26px;border:none;border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all var(--t)}
+.sm-btn.clear{background:rgba(240,62,92,0.15);color:var(--red)}
+.sm-btn.confirm{background:linear-gradient(135deg,var(--sea),var(--ink-soft));color:var(--white);box-shadow:0 3px 12px rgba(0,184,204,0.35)}
+.sm-btn.cancel{background:rgba(255,255,255,0.08);color:var(--muted)}
+.sign-modal-guide{text-align:center;padding:12px 20px 8px;font-size:16px;color:rgba(0,217,239,0.65);flex-shrink:0;letter-spacing:.3px}
+.sign-modal-canvas-wrap{flex:1;display:flex;align-items:stretch;padding:0 16px 20px}
+canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);cursor:crosshair;touch-action:none}
+.sign-preview-wrap{border:1.5px solid var(--green);border-radius:var(--r-lg);overflow:hidden;background:var(--white);position:relative}
+.sign-preview-img{display:block;width:100%;max-height:120px;object-fit:contain;background:var(--white)}
+.sign-preview-edit{position:absolute;top:8px;right:8px;padding:5px 12px;border:none;border-radius:var(--r-md);background:rgba(0,184,204,0.15);color:var(--sea);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--t)}
+.sign-done-badge{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--green-pale);border-radius:var(--r-sm);font-size:12px;color:var(--green);font-weight:700;margin-bottom:8px}
+.save-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(7,25,46,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(0,184,204,0.18);padding:14px 18px}
+.save-bar-inner{max-width:100%;width:100%;margin:0 auto;display:flex;align-items:center;gap:14px}
+.save-summary{flex:1;display:flex;flex-direction:column;gap:3px}
+.ss-no{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--sea-bright);line-height:1}
+.ss-addr{font-size:13px;color:var(--muted)}
+.save-btn{padding:16px 32px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-xl);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--white);cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(0,184,204,0.35);transition:transform var(--t),box-shadow var(--t);white-space:nowrap;flex-shrink:0}
+.lov{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.lov.on{display:flex}
+.lsp{width:42px;height:42px;border-radius:50%;border:3px solid rgba(0,184,204,0.2);border-top-color:var(--sea-bright);animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltxt{font-size:13px;color:rgba(255,255,255,.9);font-weight:500}
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:var(--white);border:1px solid rgba(0,184,204,0.25);padding:13px 24px;border-radius:100px;font-size:15px;font-weight:500;box-shadow:var(--sh-lg);transition:transform .32s cubic-bezier(.34,1.56,.64,1);z-index:400;white-space:nowrap;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.done-banner{display:none;background:linear-gradient(135deg,rgba(0,196,140,0.15),rgba(0,160,100,0.08));border:2px solid var(--green);border-radius:var(--r-xl);padding:24px 20px;margin-bottom:16px;text-align:center;animation:rise .4s ease}
+.done-banner.show{display:block}
+.done-icon{font-size:52px;margin-bottom:10px}
+.done-title{font-size:20px;font-weight:700;color:var(--green);margin-bottom:6px}
+.done-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.done-new-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-lg);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--white);cursor:pointer;box-shadow:0 4px 16px rgba(0,184,204,0.3);transition:all var(--t)}
+
+/* PWA 설치 배너 */
+.install-banner{
+  display:none;
+  background:linear-gradient(135deg,rgba(0,184,204,0.15),rgba(7,25,46,0.9));
+  border:1.5px solid rgba(0,184,204,0.35);
+  border-radius:var(--r-lg);
+  padding:14px 16px;
+  margin-bottom:14px;
+  align-items:center;
+  gap:12px;
+  animation:rise .4s ease;
+}
+.install-banner.show{display:flex}
+.install-icon{font-size:24px;flex-shrink:0}
+.install-text{flex:1}
+.install-text strong{display:block;font-size:14px;color:var(--white);margin-bottom:2px}
+.install-text span{font-size:12px;color:var(--muted)}
+.install-btn{padding:10px 18px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:var(--white);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.install-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0}
+
+/* iOS 설치 안내 모달 */
+.ios-guide{display:none;position:fixed;inset:0;z-index:600;background:rgba(7,25,46,0.85);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center}
+.ios-guide.open{display:flex}
+.ios-guide-box{background:#1a3a5c;border:1px solid rgba(0,184,204,0.3);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:28px 24px 40px;width:100%;max-width:480px;animation:slideUp .35s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ios-guide-title{font-size:18px;font-weight:700;color:var(--white);margin-bottom:6px;text-align:center}
+.ios-guide-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:20px}
+.ios-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.ios-step{display:flex;align-items:center;gap:12px;background:rgba(0,184,204,0.08);border-radius:var(--r-md);padding:14px}
+.ios-step-num{width:28px;height:28px;border-radius:50%;background:var(--sea);color:var(--white);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ios-step-text{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5}
+.ios-guide-close{width:100%;padding:14px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;color:var(--white);cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="lov" id="lov"><div class="lsp"></div><div class="ltxt" id="ltxt">처리 중…</div></div>
+<div class="toast" id="toastEl"></div>
+
+<!-- 종료 확인 다이얼로그 -->
+<div class="exit-dialog" id="exitDialog">
+  <div class="exit-box">
+    <div class="exit-box-icon">⚠️</div>
+    <div class="exit-box-title">앱을 종료하시겠습니까?</div>
+    <div class="exit-box-msg">입력 중인 내용이 있습니다.<br>저장하지 않으면 모든 내용이 사라집니다.</div>
+    <div class="exit-btns">
+      <button class="exit-btn cancel" onclick="closeExitDialog()">계속 작업</button>
+      <button class="exit-btn ok" onclick="forceExit()">종료</button>
+    </div>
+  </div>
+</div>
+
+<!-- iOS 설치 안내 -->
+<div class="ios-guide" id="iosGuide">
+  <div class="ios-guide-box">
+    <div class="ios-guide-title">📱 홈 화면에 앱 추가하기</div>
+    <div class="ios-guide-sub">아래 단계를 따라 앱처럼 설치하세요</div>
+    <div class="ios-steps">
+      <div class="ios-step"><div class="ios-step-num">1</div><div class="ios-step-text">하단 Safari 공유 버튼 <strong style="color:var(--sea)">[ ⬆ ]</strong> 을 탭하세요</div></div>
+      <div class="ios-step"><div class="ios-step-num">2</div><div class="ios-step-text"><strong style="color:var(--sea)">"홈 화면에 추가"</strong> 를 선택하세요</div></div>
+      <div class="ios-step"><div class="ios-step-num">3</div><div class="ios-step-text">오른쪽 상단 <strong style="color:var(--sea)">"추가"</strong> 를 탭하면 설치 완료!</div></div>
+    </div>
+    <button class="ios-guide-close" onclick="document.getElementById('iosGuide').classList.remove('open')">확인</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-brand">
+      <div class="hdr-icon">💧</div>
+      <div>
+        <div class="hdr-title">계량기 교체 앱</div>
+        <div class="hdr-sub">서남광산 고장디지털 교체공사</div>
+      </div>
+    </div>
+    <div class="worker-pill"><div class="wpulse"></div><span id="workerName">로딩중</span></div>
+  </div>
+</header>
+
+<div class="wave">
+  <svg viewBox="0 0 1200 28" preserveAspectRatio="none" fill="none">
+    <path d="M0 14 Q150 0 300 14 Q450 28 600 14 Q750 0 900 14 Q1050 28 1200 14 Q1350 0 1500 14 Q1650 28 1800 14 Q1950 0 2100 14 Q2250 28 2400 14" stroke="rgba(0,184,204,0.2)" stroke-width="1.5" fill="none"/>
+  </svg>
+</div>
+
+<div class="page">
+
+  <!-- PWA 설치 배너 -->
+  <div class="install-banner" id="installBanner">
+    <span class="install-icon">📲</span>
+    <div class="install-text">
+      <strong>앱으로 설치하기</strong>
+      <span>홈 화면에 추가하면 앱처럼 사용 가능!</span>
+    </div>
+    <button class="install-btn" id="installBtn" onclick="installPWA()">설치</button>
+    <button class="install-close" onclick="dismissInstall()">✕</button>
+  </div>
+
+  <!-- 저장 완료 배너 -->
+  <div class="done-banner" id="doneBanner">
+    <div class="done-icon">✅</div>
+    <div class="done-title" id="doneTitle">저장 완료!</div>
+    <div class="done-sub" id="doneSub">드라이브·시트·기기에 저장되었습니다.</div>
+    <button class="done-new-btn" onclick="resetForm()">➕ 새 작업 시작</button>
+  </div>
+
+  <!-- ① NO 입력 -->
+  <div class="no-banner">
+    <div class="no-banner-label">작업 NO</div>
+    <div class="no-wrap" id="noBox">
+      <span class="no-pre">NO.</span>
+      <input type="number" id="noInput" placeholder="001" min="1" max="999"
+        oninput="onNoInput(this.value)"
+        onfocus="document.getElementById('noBox').classList.add('focused')"
+        onblur="document.getElementById('noBox').classList.remove('focused')">
+      <span class="no-tag" id="noTag"></span>
+    </div>
+    <div class="no-hint" id="noHint">ℹ NO 입력 시 시트에서 수용가 정보를 자동으로 불러옵니다</div>
+  </div>
+
+  <!-- ② 수용가 정보 + 작업일자 -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon blue">📋</div>
+        <div class="card-label">수용가 정보</div>
+        <span class="cbadge req" id="infoBadge">미조회</span>
+      </div>
+      <div class="card-body" id="infoArea">
+        <div class="info-empty">NO를 입력하면 정보가 표시됩니다</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ink">📅</div>
+        <div class="card-label">작업일자 &amp; 저장 항목</div>
+      </div>
+      <div class="card-body">
+        <div class="fl">
+          <div class="fl-label">작업일자</div>
+          <input type="date" class="fi" id="workDate">
+        </div>
+        <div class="gap6 mt8">
+          <div class="status-row"><div class="sr-icon b">📊</div><div><div>고장디지털 리스트 기록</div><div class="sr-path">서남광산 고장디지털 교체 → 서남광산 고장디지털 리스트</div></div></div>
+          <div class="status-row"><div class="sr-icon a">📁</div><div><div>드라이브 사진 저장</div><div class="sr-path" id="drivePath">3.작업사진 / 광산구 / 교체 / —월 / —일</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 교체 전/후 -->
+  <div class="ba-wrap">
+    <div class="ba-col ba-before">
+      <div class="ba-head"><div class="ba-dot"></div><div class="ba-title">교체 전 상태</div><span class="cbadge req" style="margin-left:auto">필수/선택</span></div>
+      <div class="ba-body">
+        <div class="fl">
+          <div class="fl-label">밸브 상태 <span style="color:var(--red);font-size:9px">●필수</span></div>
+          <div class="rpg">
+            <label class="rp"><input type="radio" name="bv" value="개(열림)" checked><span class="ri">🔓</span>개(열림)</label>
+            <label class="rp"><input type="radio" name="bv" value="폐(닫힘)"><span class="ri">🔒</span>폐(닫힘)</label>
+          </div>
+        </div>
+        <div class="fl"><div class="fl-label">지침 <span style="color:var(--muted);font-size:9px">●선택</span></div><input type="number" inputmode="numeric" class="fi" id="bRead" placeholder="미확인 시 공란"></div>
+        <div class="fl"><div class="fl-label">봉인번호 <span style="color:var(--muted);font-size:9px">●선택</span></div><input type="text" inputmode="numeric" class="fi" id="bSeal" placeholder="예: 12345-6"></div>
+      </div>
+    </div>
+    <div class="ba-col ba-after">
+      <div class="ba-head"><div class="ba-dot"></div><div class="ba-title">교체 후 상태</div><span class="cbadge req" style="margin-left:auto">모두 필수</span></div>
+      <div class="ba-body">
+        <div class="fl"><div class="fl-label">지침 <span style="color:var(--red);font-size:9px">●필수</span></div><input type="number" inputmode="numeric" class="fi" id="aRead" placeholder="교체 후 초기값"></div>
+        <div class="fl"><div class="fl-label">기물번호 <span style="color:var(--red);font-size:9px">●필수</span></div><input type="text" inputmode="numeric" class="fi" id="aMeter" placeholder="예: 12345-6"></div>
+        <div class="fl"><div class="fl-label">봉인번호 <span style="color:var(--red);font-size:9px">●필수</span></div><input type="text" inputmode="numeric" class="fi" id="aSeal" placeholder="예: 12345-6"></div>
+        <div class="fl">
+          <div class="fl-label">밸브 상태 <span style="color:var(--red);font-size:9px">●필수</span></div>
+          <div class="rpg">
+            <label class="rp ok"><input type="radio" name="av" value="이상없음" checked><span class="ri">✅</span>이상없음</label>
+            <label class="rp ng"><input type="radio" name="av" value="밸브고장"><span class="ri">⚠️</span>밸브고장</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 사진 업로드 -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head">
+      <div class="card-icon amber">📷</div>
+      <div class="card-label">현장 사진 업로드</div>
+      <span class="cbadge req">전체·전·후 필수</span>
+    </div>
+    <div class="card-body">
+      <div class="pg">
+        <div class="ps" id="sl_full" onclick="tp('pFull')">
+          <input type="file" id="pFull" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_full','sb_full','img_full','wm_full','전체사진')">
+          <div class="ps-thumb"><span class="ph-icon">📷</span><img id="img_full" alt="">
+            <div class="wm-overlay" id="wm_full"><table class="wm-table">
+              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
+              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_full" colspan="3">—</td></tr>
+              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">전체사진</td></tr>
+              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_full"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
+            </table></div>
+          </div>
+          <div class="ps-label"><div class="pl">전체사진<span class="pdot"></span></div><div class="psub" id="sb_full">필수</div></div>
+        </div>
+        <div class="ps" id="sl_before" onclick="tp('pBefore')">
+          <input type="file" id="pBefore" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_before','sb_before','img_before','wm_before','교체전')">
+          <div class="ps-thumb"><span class="ph-icon">🔍</span><img id="img_before" alt="">
+            <div class="wm-overlay" id="wm_before"><table class="wm-table">
+              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
+              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_before" colspan="3">—</td></tr>
+              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">교체전</td></tr>
+              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_before"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
+            </table></div>
+          </div>
+          <div class="ps-label"><div class="pl">교체 전<span class="pdot"></span></div><div class="psub" id="sb_before">필수</div></div>
+        </div>
+        <div class="ps" id="sl_after" onclick="tp('pAfter')">
+          <input type="file" id="pAfter" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_after','sb_after','img_after','wm_after','교체후')">
+          <div class="ps-thumb"><span class="ph-icon">✨</span><img id="img_after" alt="">
+            <div class="wm-overlay" id="wm_after"><table class="wm-table">
+              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
+              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_after" colspan="3">—</td></tr>
+              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">교체후</td></tr>
+              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_after"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
+            </table></div>
+          </div>
+          <div class="ps-label"><div class="pl">교체 후<span class="pdot"></span></div><div class="psub" id="sb_after">필수</div></div>
+        </div>
+        <div class="ps disabled" id="sl_sticker" onclick="tp('pSticker')">
+          <input type="file" id="pSticker" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_sticker','sb_sticker','img_sticker','wm_sticker','스티커부착')">
+          <div class="ps-thumb"><span class="ph-icon">🏷️</span><img id="img_sticker" alt="">
+            <div class="wm-overlay" id="wm_sticker"><table class="wm-table">
+              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
+              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_sticker" colspan="3">—</td></tr>
+              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">스티커부착</td></tr>
+              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_sticker"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
+            </table></div>
+          </div>
+          <div class="ps-label"><div class="pl">스티커사진</div><div class="psub" id="sb_sticker">서명불가 시 활성</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 수용가 확인 -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head">
+      <div class="card-icon green">✍️</div>
+      <div class="card-label">수용가 확인</div>
+      <span class="cbadge req">서명 또는 스티커</span>
+    </div>
+    <div class="card-body">
+      <div class="ctab">
+        <button class="ct active-sign" id="btnSign" onclick="setC('sign')">✍️ 서명받기</button>
+        <button class="ct" id="btnSticker" onclick="setC('sticker')">🏷️ 서명불가 (스티커)</button>
+      </div>
+      <div class="cond active" id="condSign">
+        <div id="signPreviewArea" style="display:none">
+          <div class="sign-done-badge">✅ 서명 완료</div>
+          <div class="sign-preview-wrap">
+            <img id="signPreviewImg" class="sign-preview-img" alt="서명">
+            <button class="sign-preview-edit" onclick="openSignModal()">✏️ 다시 서명</button>
+          </div>
+        </div>
+        <div id="signOpenArea">
+          <button onclick="openSignModal()" style="width:100%;padding:22px;background:linear-gradient(135deg,rgba(0,184,204,0.1),rgba(26,82,128,0.07));border:1.5px dashed rgba(0,184,204,0.35);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;color:var(--sea);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all var(--t)">
+            ✍️ 서명란 열기 (전체화면)
+          </button>
+        </div>
+      </div>
+      <div class="cond" id="condSticker">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">ℹ 모든 항목이 기재된 스티커를 부착 후 사진을 업로드하세요</div>
+        <div class="ps" id="sl_sticker2" style="max-width:160px" onclick="tp('pSticker2')">
+          <input type="file" id="pSticker2" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_sticker2','sb_sticker2','img_sticker2','wm_sticker2','스티커부착')">
+          <div class="ps-thumb" style="border-radius:var(--r-lg) var(--r-lg) 0 0"><span class="ph-icon">📸</span><img id="img_sticker2" alt="">
+            <div class="wm-overlay" id="wm_sticker2"><table class="wm-table">
+              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
+              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_sticker2" colspan="3">—</td></tr>
+              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">스티커부착</td></tr>
+              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_sticker2"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
+            </table></div>
+          </div>
+          <div class="ps-label"><div class="pl">스티커사진<span class="pdot"></span></div><div class="psub" id="sb_sticker2">업로드</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- 서명 전체화면 모달 -->
+<div class="sign-modal" id="signModal">
+  <div class="sign-modal-header">
+    <div class="sign-modal-title">✍️ 수용가 서명</div>
+    <div class="sign-modal-actions">
+      <button class="sm-btn clear" onclick="clearFullSign()">🗑 지우기</button>
+      <button class="sm-btn cancel" onclick="closeSignModal()">취소</button>
+      <button class="sm-btn confirm" onclick="confirmSign()">✓ 서명 완료</button>
+    </div>
+  </div>
+  <div class="sign-modal-guide">손가락으로 자유롭게 서명하세요</div>
+  <div class="sign-modal-canvas-wrap">
+    <canvas id="scFull"></canvas>
+  </div>
+</div>
+
+<!-- 하단 저장 바 -->
+<div class="save-bar">
+  <div class="save-bar-inner">
+    <div class="save-summary">
+      <div class="ss-no" id="barNo">NO. —</div>
+      <div class="ss-addr" id="barAddr">NO를 입력해 주세요</div>
+    </div>
+    <button onclick="showExitDialog(null)" style="padding:14px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--r-lg);color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;flex-shrink:0;transition:all var(--t)" title="종료">✕</button>
+    <button class="save-btn" onclick="handleSave()">💾 저장하기</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   설정 — Apps Script 배포 URL
+════════════════════════════════════════════ */
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxGzSqpjURqgJ5F0LlJaHymUXAEDY5nutDF2KLKtINQFVkVbwXJ9MH34lB147BybmUq/exec';
+
+/* ════════════════════════════════════════════
+   GAS API 호출 헬퍼 (fetch 기반 JSONP 방식)
+   Apps Script doGet은 ?action=xxx&...로 라우팅
+════════════════════════════════════════════ */
+function gasCall(action, params) {
+  return new Promise(function(resolve, reject) {
+    var cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+    var url = GAS_URL + '?action=' + encodeURIComponent(action) + '&cb=' + cbName;
+    if (params) {
+      Object.keys(params).forEach(function(k) {
+        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(
+          typeof params[k] === 'object' ? JSON.stringify(params[k]) : params[k]
+        );
+      });
+    }
+    var timer = setTimeout(function() {
+      delete window[cbName];
+      reject(new Error('요청 시간 초과'));
+    }, 30000);
+    window[cbName] = function(data) {
+      clearTimeout(timer);
+      delete window[cbName];
+      resolve(data);
+    };
+    var s = document.createElement('script');
+    s.src = url;
+    s.onerror = function() {
+      clearTimeout(timer);
+      delete window[cbName];
+      reject(new Error('네트워크 오류'));
+    };
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 35000);
+  });
+}
+
+/* POST용 fetch 헬퍼 (사진/saveRecord) */
+function gasPost(action, payload) {
+  return fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: action, payload: payload })
+  }).then(function(r){ return r.json(); });
+}
+
+/* ════════════════════════════════════════════
+   PWA Service Worker 등록
+════════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      console.log('SW 등록 완료:', reg.scope);
+    }).catch(function(err) {
+      console.log('SW 등록 실패:', err);
+    });
+  });
+}
+
+/* ════════════════════════════════════════════
+   PWA 설치 프롬프트
+════════════════════════════════════════════ */
+var deferredPrompt = null;
+var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+var isInStandalone = window.matchMedia('(display-mode: standalone)').matches
+                  || window.navigator.standalone === true;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!isInStandalone && !localStorage.getItem('installDismissed')) {
+    document.getElementById('installBanner').classList.add('show');
+  }
+});
+
+function installPWA() {
+  if (isIOS) {
+    document.getElementById('iosGuide').classList.add('open');
+    return;
+  }
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(r) {
+    deferredPrompt = null;
+    document.getElementById('installBanner').classList.remove('show');
+  });
+}
+
+function dismissInstall() {
+  document.getElementById('installBanner').classList.remove('show');
+  localStorage.setItem('installDismissed', '1');
+}
+
+// iOS에서 아직 설치 안 된 경우 배너 표시
+window.addEventListener('DOMContentLoaded', function() {
+  if (isIOS && !isInStandalone && !localStorage.getItem('installDismissed')) {
+    setTimeout(function() {
+      document.getElementById('installBanner').classList.add('show');
+    }, 2000);
+  }
+});
+
+/* ════════════════════════════════════════════
+   상태 변수
+════════════════════════════════════════════ */
+var cur    = null;
+var noTmr  = null;
+var cMode  = 'sign';
+var wkName = '작업자';
+var WM_KEYS = ['full','before','after','sticker','sticker2'];
+
+/* ════════════════════════════════════════════
+   초기화
+════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
+  updateDrive();
+  refreshAllWM();
+  initSign();
+  document.getElementById('workDate').addEventListener('change', refreshAllWM);
+
+  // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
+  gasCall('getWorkerName').then(function(n) {
+    wkName = n || '작업자';
+    document.getElementById('workerName').textContent = wkName;
+  }).catch(function() {
+    // 오프라인이거나 실패 시 저장된 이름 사용
+    var saved = localStorage.getItem('workerName');
+    if (saved) {
+      wkName = saved;
+      document.getElementById('workerName').textContent = wkName;
+    } else {
+      // 이름 직접 입력 요청
+      var name = prompt('작업자 이름을 입력해 주세요:');
+      if (name) {
+        wkName = name;
+        localStorage.setItem('workerName', name);
+        document.getElementById('workerName').textContent = wkName;
+      }
+    }
+  });
+});
+
+/* ════════════════════════════════════════════
+   NO 입력 → GAS 조회
+════════════════════════════════════════════ */
+function onNoInput(v) {
+  clearTimeout(noTmr);
+  var box  = document.getElementById('noBox');
+  var tag  = document.getElementById('noTag');
+  var hint = document.getElementById('noHint');
+  box.classList.remove('found','notfound');
+  tag.className = 'no-tag';
+
+  if (!v) {
+    hint.textContent = 'ℹ NO 입력 시 시트에서 수용가 정보를 자동으로 불러옵니다';
+    hint.className = 'no-hint';
+    cur = null; resetInfo(); updateBar(); refreshAllWM();
+    return;
+  }
+  tag.textContent = '조회 중…'; tag.className = 'no-tag show searching';
+
+  noTmr = setTimeout(function() {
+    gasCall('getRowByNo', { no: parseInt(v) }).then(function(d) {
+      if (d && !d.error && d.no !== undefined) {
+        box.classList.add('found');
+        tag.textContent = '✓ 확인'; tag.className = 'no-tag show found';
+        hint.textContent = ''; hint.className = 'no-hint';
+        cur = d;
+        renderInfo(v, d);
+        updateBar();
+        updateDrive();
+        refreshAllWM();
+      } else {
+        box.classList.add('notfound');
+        tag.textContent = '✗ 없음'; tag.className = 'no-tag show notfound';
+        hint.textContent = d && d.error ? '❌ ' + d.error : '⚠ 해당 NO가 없습니다.';
+        hint.className = 'no-hint err';
+        cur = null; resetInfo(); updateBar(); refreshAllWM();
+      }
+    }).catch(function(e) {
+      box.classList.add('notfound');
+      tag.textContent = '✗ 오류'; tag.className = 'no-tag show notfound';
+      hint.textContent = '❌ 서버 오류: ' + e.message;
+      hint.className = 'no-hint err';
+    });
+  }, 500);
+}
+
+/* ════════════════════════════════════════════
+   수용가 정보 렌더
+════════════════════════════════════════════ */
+function renderInfo(no, d) {
+  document.getElementById('infoBadge').textContent = 'NO ' + String(no).padStart(3,'0');
+  document.getElementById('infoBadge').className = 'cbadge done';
+  var fields = [
+    {l:'수용가번호',v:d.custNo},{l:'수용가명',v:d.custName},{l:'연락처',v:d.phone},
+    {l:'교체사유',v:d.reason},{l:'구경',v:d.size},{l:'기물번호',v:d.meterNo},
+    {l:'주소',v:d.address,w:true},
+  ];
+  document.getElementById('infoArea').innerHTML =
+    '<div class="info-chips">' +
+    fields.map(function(f) {
+      return '<div class="info-chip'+(f.w?' w2':'')+'"><div class="ic-label">'+f.l+'</div><div class="ic-value">'+(f.v||'—')+'</div></div>';
+    }).join('') + '</div>';
+}
+function resetInfo() {
+  document.getElementById('infoBadge').textContent = '미조회';
+  document.getElementById('infoBadge').className = 'cbadge req';
+  document.getElementById('infoArea').innerHTML = '<div class="info-empty">NO를 입력하면 정보가 표시됩니다</div>';
+}
+
+/* ════════════════════════════════════════════
+   워터마크 위치·날짜 전체 갱신
+════════════════════════════════════════════ */
+function refreshAllWM() {
+  var addr = cur ? (cur.address || '—') : '—';
+  var dateVal = document.getElementById('workDate').value;
+  var dateStr = '—';
+  if (dateVal) {
+    var p = dateVal.split('-');
+    dateStr = p[0]+'년 '+parseInt(p[1])+'월 '+parseInt(p[2])+'일';
+  }
+  WM_KEYS.forEach(function(key) {
+    var locEl  = document.getElementById('wml_'+key);
+    var dateEl = document.getElementById('wmd_'+key);
+    if (locEl)  locEl.textContent  = addr;
+    if (dateEl) dateEl.textContent = dateStr;
+  });
+}
+
+/* ════════════════════════════════════════════
+   사진
+════════════════════════════════════════════ */
+function tp(id) { document.getElementById(id).click(); }
+
+function onPhoto(input, slotId, subId, imgId, wmId, label) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var nm   = file.name;
+  var slot = document.getElementById(slotId);
+  var sub  = document.getElementById(subId);
+  slot.classList.add('ok'); slot.classList.remove('disabled');
+  if (sub) sub.textContent = '합성 중…';
+
+  compositePhoto(file, label).then(function(result) {
+    if (!result || !result.base64) throw new Error('합성 실패');
+    var dataUrl = 'data:'+result.mime+';base64,'+result.base64;
+    var imgEl = document.getElementById(imgId);
+    if (imgEl) { imgEl.src = dataUrl; imgEl.classList.add('show'); }
+    var wmEl = document.getElementById(wmId);
+    if (wmEl) wmEl.style.display = 'none';
+    if (sub) sub.textContent = '✓ '+(nm.length>10 ? nm.substring(0,10)+'…' : nm);
+    saveOnePhotoToDevice(result, label);
+  }).catch(function() {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var imgEl = document.getElementById(imgId);
+      if (imgEl) { imgEl.src = e.target.result; imgEl.classList.add('show'); }
+      if (sub) sub.textContent = '✓ '+(nm.length>10 ? nm.substring(0,10)+'…' : nm);
+      saveOnePhotoToDevice({ base64: e.target.result.split(',')[1], mime: file.type }, label);
+    };
+    reader.readAsDataURL(file);
+  });
+  refreshAllWM();
+}
+
+function saveOnePhotoToDevice(photoData, label) {
+  if (!photoData || !photoData.base64) return;
+  try {
+    var no      = document.getElementById('noInput').value || '000';
+    var pad     = String(no); while (pad.length < 3) pad = '0'+pad;
+    var dateVal = document.getElementById('workDate').value || '';
+    var dateTag = dateVal.replace(/-/g,'');
+    var ext     = photoData.mime === 'image/png' ? '.png' : '.jpg';
+    var fname   = 'NO'+pad+'_'+label+'_'+dateTag+ext;
+    var bytes   = base64ToUint8Array(photoData.base64);
+    var blob    = new Blob([bytes], { type: photoData.mime });
+    var url     = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = fname; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+    showToast('📷 '+label+' 저장됨');
+  } catch(e) { console.warn('즉시 저장 실패:', e.message); }
+}
+
+/* ════════════════════════════════════════════
+   하단 바 / 드라이브 경로
+════════════════════════════════════════════ */
+function updateBar() {
+  var no = document.getElementById('noInput').value;
+  if (cur && no) {
+    document.getElementById('barNo').textContent   = 'NO. '+String(no).padStart(3,'0');
+    document.getElementById('barAddr').textContent = cur.address || '주소 없음';
+  } else {
+    document.getElementById('barNo').textContent   = 'NO. —';
+    document.getElementById('barAddr').textContent = 'NO를 입력해 주세요';
+  }
+}
+function updateDrive() {
+  var d = new Date();
+  document.getElementById('drivePath').textContent =
+    '3.작업사진 / 광산구 / 교체 / '+(d.getMonth()+1)+'월 / '+d.getDate()+'일';
+}
+
+/* ════════════════════════════════════════════
+   수용가 확인 모드
+════════════════════════════════════════════ */
+function setC(mode) {
+  cMode = mode;
+  document.getElementById('btnSign').className    = 'ct'+(mode==='sign'    ? ' active-sign'    : '');
+  document.getElementById('btnSticker').className = 'ct'+(mode==='sticker' ? ' active-sticker' : '');
+  document.getElementById('condSign').className    = 'cond'+(mode==='sign'    ? ' active' : '');
+  document.getElementById('condSticker').className = 'cond'+(mode==='sticker' ? ' active' : '');
+  var ss = document.getElementById('sl_sticker');
+  if (mode==='sticker') ss.classList.remove('disabled');
+  else ss.classList.add('disabled');
+}
+
+/* ════════════════════════════════════════════
+   서명 전체화면 모달
+════════════════════════════════════════════ */
+var signCtx = null, signDrw = false, signLast = null, signSaved = false;
+
+function setupSignCanvas() {
+  var cv = document.getElementById('scFull');
+  var dpr = window.devicePixelRatio || 1;
+  if (!cv.offsetWidth || !cv.offsetHeight) return;
+  var snap = (signSaved && cv.width > 0) ? cv.toDataURL() : null;
+  cv.width  = cv.offsetWidth  * dpr;
+  cv.height = cv.offsetHeight * dpr;
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#ffffff'; ctx.fillStyle = '#ffffff';
+  ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  signCtx = ctx;
+  if (snap) {
+    var img = new Image();
+    img.onload = function() { ctx.drawImage(img, 0, 0, cv.offsetWidth, cv.offsetHeight); };
+    img.src = snap;
+  }
+}
+
+function signGetPos(e) {
+  var cv = document.getElementById('scFull');
+  var rect = cv.getBoundingClientRect();
+  var src = e.touches ? e.touches[0] : e;
+  var ratX = cv.offsetWidth  / (rect.width  || 1);
+  var ratY = cv.offsetHeight / (rect.height || 1);
+  return { x:(src.clientX-rect.left)*ratX, y:(src.clientY-rect.top)*ratY };
+}
+
+function initSign() {
+  var cv = document.getElementById('scFull');
+  function dn(e) { e.preventDefault(); if(!signCtx)return; signDrw=true; signLast=signGetPos(e); signCtx.beginPath(); signCtx.arc(signLast.x,signLast.y,signCtx.lineWidth/2,0,Math.PI*2); signCtx.fill(); }
+  function mv(e) { if(!signDrw||!signCtx)return; e.preventDefault(); var p=signGetPos(e); signCtx.beginPath(); signCtx.moveTo(signLast.x,signLast.y); signCtx.lineTo(p.x,p.y); signCtx.stroke(); signLast=p; }
+  function up(e) { e.preventDefault(); signDrw=false; signLast=null; }
+  cv.addEventListener('mousedown',dn); cv.addEventListener('mousemove',mv); cv.addEventListener('mouseup',up); cv.addEventListener('mouseleave',up);
+  cv.addEventListener('touchstart',dn,{passive:false}); cv.addEventListener('touchmove',mv,{passive:false}); cv.addEventListener('touchend',up,{passive:false}); cv.addEventListener('touchcancel',up,{passive:false});
+  window.addEventListener('orientationchange', function() { setTimeout(function() { if(document.getElementById('signModal').classList.contains('open')) setupSignCanvas(); }, 400); });
+  window.addEventListener('resize', function() { if(document.getElementById('signModal').classList.contains('open')) setTimeout(setupSignCanvas, 200); });
+}
+
+function openSignModal() {
+  document.getElementById('signModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(function() {
+    setupSignCanvas();
+    var prevSrc = document.getElementById('signPreviewImg').src;
+    if (signSaved && prevSrc && prevSrc.startsWith('data:')) {
+      var img = new Image();
+      img.onload = function() { var cv=document.getElementById('scFull'); if(signCtx) signCtx.drawImage(img,0,0,cv.offsetWidth,cv.offsetHeight); };
+      img.src = prevSrc;
+    }
+  }, 150);
+}
+function closeSignModal() { document.getElementById('signModal').classList.remove('open'); document.body.style.overflow = ''; }
+function clearFullSign() { var cv=document.getElementById('scFull'); if(signCtx) signCtx.clearRect(0,0,cv.offsetWidth,cv.offsetHeight); }
+
+function confirmSign() {
+  var cv = document.getElementById('scFull');
+  if (!signCtx) { showToast('⚠️ 서명란을 다시 열어주세요.'); return; }
+  var imgData = signCtx.getImageData(0,0,cv.width,cv.height).data;
+  var hasMark = false;
+  for (var i=3; i<imgData.length; i+=4) { if(imgData[i]>10){ hasMark=true; break; } }
+  if (!hasMark) { showToast('⚠️ 서명란에 서명을 해주세요.'); return; }
+  var dataUrl = cv.toDataURL('image/png');
+  document.getElementById('signPreviewImg').src = dataUrl;
+  signSaved = true;
+  document.getElementById('signPreviewArea').style.display = 'block';
+  document.getElementById('signOpenArea').style.display = 'none';
+  closeSignModal();
+  showToast('✅ 서명이 저장되었습니다.');
+}
+
+function getSignBase64() {
+  if (!signSaved) return null;
+  var src = document.getElementById('signPreviewImg').src;
+  if (!src || !src.startsWith('data:')) return null;
+  return { base64: src.split(',')[1], mime: 'image/png' };
+}
+
+/* ════════════════════════════════════════════
+   종료 확인창
+════════════════════════════════════════════ */
+var isSaving = false, exitTarget = null;
+
+window.addEventListener('beforeunload', function(e) {
+  if (isSaving) return;
+  var no = document.getElementById('noInput').value;
+  var aRead = document.getElementById('aRead').value;
+  if (no || aRead || signSaved) {
+    var msg = '입력 중인 내용이 있습니다.';
+    e.preventDefault(); e.returnValue = msg; return msg;
+  }
+});
+
+function showExitDialog(target) {
+  var no = document.getElementById('noInput').value;
+  var aRead = document.getElementById('aRead').value;
+  if (!no && !aRead && !signSaved) { if(target) window.location.href=target; return; }
+  exitTarget = target || null;
+  document.getElementById('exitDialog').classList.add('open');
+}
+function closeExitDialog() { document.getElementById('exitDialog').classList.remove('open'); exitTarget=null; }
+function forceExit() {
+  isSaving = true;
+  document.getElementById('exitDialog').classList.remove('open');
+  if (exitTarget) window.location.href = exitTarget;
+  else { window.close(); setTimeout(function(){ window.location.href='about:blank'; }, 300); }
+}
+
+/* ════════════════════════════════════════════
+   Canvas 워터마크 합성
+════════════════════════════════════════════ */
+function compositePhoto(file, label) {
+  return new Promise(function(res, rej) {
+    if (!file) { res(null); return; }
+    var addr = cur ? (cur.address || '—') : '—';
+    var dateVal = document.getElementById('workDate').value;
+    var dateStr = '—';
+    if (dateVal) {
+      var dp = dateVal.split('-');
+      dateStr = dp[0]+'.'+parseInt(dp[1])+'.'+parseInt(dp[2]);
+    }
+    var fontReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    fontReady.then(function() {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() { drawWatermark(img, addr, dateStr, label, res, rej); };
+        img.onerror = function() { rej(new Error('이미지 로드 실패')); };
+        img.src = ev.target.result;
+      };
+      reader.onerror = function() { rej(new Error('파일 읽기 실패')); };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+
+function drawWatermark(img, addr, dateStr, label, res, rej) {
+  try {
+    var W0 = img.naturalWidth || img.width;
+    var H0 = img.naturalHeight || img.height;
+    var SCALE = 0.577;
+    var W = Math.round(W0*SCALE), H = Math.round(H0*SCALE);
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var ctx = cv.getContext('2d');
+    ctx.drawImage(img, 0, 0, W, H);
+    var sc = W/1280;
+    var tW = Math.round(W*0.44);
+    var rowH = Math.round(32*sc);
+    var fSz = Math.max(Math.round(14*sc), 11);
+    var pad = Math.round(6*sc);
+    var lw = Math.max(Math.round(sc), 0.5);
+    var keyW = Math.round(tW*0.20);
+    var rows = [
+      {key:'공사명',val:'2026년 디지털계량기 교체공사(서남광산)'},
+      {key:'공  정',val:'디지털계량기 교체'},
+      {key:'위  치',val:addr},
+      {key:'내  용',val:label},
+      {key:'일  자',val:dateStr,extra:'시공사',extraVal:'(주)양정건설'},
+    ];
+    var tH = rowH*rows.length, tX = 0, tY = H-tH;
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.fillRect(tX, tY, tW, tH);
+    ctx.strokeStyle = '#222222'; ctx.lineWidth = lw*1.5;
+    ctx.strokeRect(tX+lw*0.75, tY+lw*0.75, tW-lw*1.5, tH-lw*1.5);
+    ctx.lineWidth = lw; ctx.strokeStyle = '#444444'; ctx.textBaseline = 'middle';
+    rows.forEach(function(row, i) {
+      var rY = tY+rowH*i, midY = rY+rowH/2;
+      if (i>0) { ctx.beginPath(); ctx.moveTo(tX,rY); ctx.lineTo(tX+tW,rY); ctx.stroke(); }
+      if (!row.extra) {
+        ctx.fillStyle = 'rgba(200,220,245,0.85)'; ctx.fillRect(tX,rY,keyW,rowH);
+        ctx.beginPath(); ctx.moveTo(tX+keyW,rY); ctx.lineTo(tX+keyW,rY+rowH); ctx.stroke();
+        ctx.fillStyle = '#111111'; ctx.font = 'bold '+fSz+'px "Noto Sans KR",sans-serif';
+        ctx.fillText(row.key, tX+pad, midY);
+        ctx.font = fSz+'px "Noto Sans KR",sans-serif';
+        ctx.fillText(ellipsis(ctx,row.val,fSz,tW-keyW-pad*2), tX+keyW+pad, midY);
+      } else {
+        var dateValW = Math.round((tW-keyW*2)*0.38);
+        var col2x = tX+keyW, col3x = col2x+dateValW, col4x = col3x+keyW;
+        ctx.fillStyle = 'rgba(200,220,245,0.85)';
+        ctx.fillRect(tX,rY,keyW,rowH); ctx.fillRect(col3x,rY,keyW,rowH);
+        [col2x,col3x,col4x].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x,rY); ctx.lineTo(x,rY+rowH); ctx.stroke(); });
+        ctx.fillStyle = '#111111'; ctx.font = 'bold '+fSz+'px "Noto Sans KR",sans-serif';
+        ctx.fillText(row.key, tX+pad, midY);
+        ctx.font = fSz+'px "Noto Sans KR",sans-serif';
+        ctx.fillText(ellipsis(ctx,row.val,fSz,dateValW-pad*2), col2x+pad, midY);
+        ctx.font = 'bold '+fSz+'px "Noto Sans KR",sans-serif';
+        ctx.fillText(row.extra, col3x+pad, midY);
+        ctx.font = fSz+'px "Noto Sans KR",sans-serif';
+        ctx.fillText(ellipsis(ctx,row.extraVal,fSz,tW-keyW-dateValW-keyW-pad), col4x+pad, midY);
+      }
+    });
+    res({ base64: cv.toDataURL('image/jpeg',0.75).split(',')[1], mime:'image/jpeg' });
+  } catch(e) { rej(e); }
+}
+
+function ellipsis(ctx, text, fSz, maxW) {
+  if (!text) return '—';
+  if (ctx.measureText(text).width <= maxW) return text;
+  var t = text;
+  while (t.length > 1 && ctx.measureText(t+'…').width > maxW) t = t.slice(0,-1);
+  return t+'…';
+}
+
+/* ════════════════════════════════════════════
+   유효성 검사
+════════════════════════════════════════════ */
+function validate() {
+  var no = document.getElementById('noInput').value;
+  if (!no || !cur)                                          { showToast('⚠️ NO를 먼저 입력해 주세요.');           return false; }
+  if (!document.getElementById('aRead').value)              { showToast('⚠️ 교체 후 지침을 입력해 주세요.');      return false; }
+  if (!document.getElementById('aMeter').value)             { showToast('⚠️ 교체 후 기물번호를 입력해 주세요.');  return false; }
+  if (!document.getElementById('aSeal').value)              { showToast('⚠️ 교체 후 봉인번호를 입력해 주세요.');  return false; }
+  if (!document.getElementById('pFull').files[0])           { showToast('⚠️ 전체사진을 업로드해 주세요.');         return false; }
+  if (!document.getElementById('pBefore').files[0])         { showToast('⚠️ 교체 전 사진을 업로드해 주세요.');     return false; }
+  if (!document.getElementById('pAfter').files[0])          { showToast('⚠️ 교체 후 사진을 업로드해 주세요.');     return false; }
+  if (cMode==='sign' && !signSaved)                          { showToast('⚠️ 수용가 서명을 받아주세요.');           return false; }
+  if (cMode==='sticker' && !document.getElementById('pSticker2').files[0]) { showToast('⚠️ 스티커 사진을 업로드해 주세요.'); return false; }
+  return true;
+}
+
+/* ════════════════════════════════════════════
+   저장 처리
+════════════════════════════════════════════ */
+async function handleSave() {
+  if (!validate()) return;
+  showLoading('워터마크 합성 중…');
+  try {
+    var signData = null;
+    if (cMode === 'sign') {
+      signData = getSignBase64();
+      if (!signData) { hideLoading(); showToast('⚠️ 서명을 받아주세요.'); return; }
+    }
+    var stickerFile = cMode === 'sticker'
+      ? document.getElementById('pSticker2').files[0]
+      : (document.getElementById('pSticker').files[0] || null);
+
+    var no = document.getElementById('noInput').value;
+    var pad = String(no); while (pad.length < 3) pad = '0'+pad;
+
+    var photos = {
+      full   : await compositePhoto(document.getElementById('pFull').files[0],   '전체사진'),
+      before : await compositePhoto(document.getElementById('pBefore').files[0], '교체전'),
+      after  : await compositePhoto(document.getElementById('pAfter').files[0],  '교체후'),
+      sticker: stickerFile ? await compositePhoto(stickerFile, '스티커부착') : null,
+      sign   : signData,
+    };
+
+    var payload = {
+      no           : no,
+      workDate     : document.getElementById('workDate').value,
+      beforeValve  : document.querySelector('input[name="bv"]:checked').value,
+      beforeReading: document.getElementById('bRead').value,
+      beforeSeal   : document.getElementById('bSeal').value,
+      afterReading : document.getElementById('aRead').value,
+      afterMeterNo : document.getElementById('aMeter').value,
+      afterSeal    : document.getElementById('aSeal').value,
+      afterValve   : document.querySelector('input[name="av"]:checked').value,
+      confirmType  : cMode,
+      worker       : wkName,
+    };
+
+    showLoading('텍스트 파일 저장 중…');
+    saveTextToDevice('NO'+pad, payload);
+    if (signData) saveOnePhotoToDevice(signData, '서명');
+
+    showLoading('드라이브에 사진 저장 중…');
+    var photoResult = await gasPost('savePhotos', { no: no, workDate: payload.workDate, photos: photos });
+    if (!photoResult.success) { hideLoading(); showToast('❌ 드라이브 저장 실패: '+(photoResult.msg||'')); return; }
+
+    payload.photoFolderUrl = photoResult.folderUrl;
+    showLoading('시트에 교체 내용 기록 중…');
+    var saveResult = await gasPost('saveRecord', payload);
+    hideLoading();
+    if (saveResult.success) {
+      isSaving = true;
+      showDone('NO'+pad, payload.workDate);
+    } else {
+      showToast('❌ 시트 저장 실패: '+(saveResult.msg||''));
+    }
+  } catch(e) { hideLoading(); showToast('❌ 오류: '+e.message); }
+}
+
+/* ════════════════════════════════════════════
+   텍스트 파일 → 기기 저장
+════════════════════════════════════════════ */
+function saveTextToDevice(prefix, p) {
+  try {
+    var W = 40, HR = '━'.repeat(W), hr = '─'.repeat(W);
+    function row(label, value) {
+      var v = String(value||'—'), pad = 12;
+      var l = (label+' ').padEnd(pad,' ');
+      return '│ '+l+': '+v;
+    }
+    var lines = [
+      HR,'  ■ '+prefix+' 디지털계량기 교체 작업내용',HR,
+      row('NO',p.no),row('작업일자',p.workDate),row('작업자',p.worker),hr,
+      '  ▶ 수용가 정보',hr,
+      row('수용가번호',cur?cur.custNo:'—'),row('수용가명',cur?cur.custName:'—'),
+      row('연락처',cur?cur.phone:'—'),row('주소',cur?cur.address:'—'),
+      row('교체사유',cur?cur.reason:'—'),row('구경',cur?cur.size:'—'),
+      row('기물번호(구)',cur?cur.meterNo:'—'),hr,
+      '  ▶ 교체 전 상태',hr,
+      row('밸브 상태',p.beforeValve),row('지침',p.beforeReading||'미기재'),row('봉인번호',p.beforeSeal||'미기재'),hr,
+      '  ▶ 교체 후 상태',hr,
+      row('지침',p.afterReading),row('기물번호(신)',p.afterMeterNo),row('봉인번호',p.afterSeal),row('밸브 상태',p.afterValve),hr,
+      '  ▶ 수용가 확인',hr,
+      row('확인 방식',p.confirmType==='sign'?'서명 완료':'스티커 부착'),HR,
+    ];
+    var text = lines.join('\r\n');
+    var blob = new Blob(['\uFEFF'+text], { type:'text/plain;charset=utf-8' });
+    var url  = URL.createObjectURL(blob);
+    var dateTag = (p.workDate||'').replace(/-/g,'');
+    var a = document.createElement('a');
+    a.href = url; a.download = prefix+'_작업내용_'+dateTag+'.txt'; a.style.display='none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+  } catch(e) { console.warn('텍스트 저장 실패:', e.message); }
+}
+
+/* ════════════════════════════════════════════
+   저장 완료 / 폼 초기화
+════════════════════════════════════════════ */
+function showDone(prefix, workDate) {
+  document.getElementById('doneTitle').textContent = prefix+' 저장 완료!';
+  document.getElementById('doneSub').textContent   = (workDate||'')+' 드라이브·시트·기기에 저장되었습니다.';
+  document.getElementById('doneBanner').classList.add('show');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function resetForm() {
+  document.getElementById('doneBanner').classList.remove('show');
+  document.getElementById('noInput').value = '';
+  var box = document.getElementById('noBox');
+  box.classList.remove('found','notfound','focused');
+  document.getElementById('noTag').className = 'no-tag';
+  document.getElementById('noHint').textContent = 'ℹ NO 입력 시 시트에서 수용가 정보를 자동으로 불러옵니다';
+  document.getElementById('noHint').className = 'no-hint';
+  cur = null; resetInfo(); updateBar(); refreshAllWM(); updateDrive();
+  document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('bRead').value = ''; document.getElementById('bSeal').value = '';
+  document.querySelectorAll('input[name="bv"]')[0].checked = true;
+  document.getElementById('aRead').value  = ''; document.getElementById('aMeter').value = '';
+  document.getElementById('aSeal').value  = '';
+  document.querySelectorAll('input[name="av"]')[0].checked = true;
+  ['sl_full','sl_before','sl_after','sl_sticker','sl_sticker2'].forEach(function(id) {
+    var el = document.getElementById(id); if(!el) return;
+    el.classList.remove('ok');
+    if (id==='sl_sticker') el.classList.add('disabled');
+  });
+  ['img_full','img_before','img_after','img_sticker','img_sticker2'].forEach(function(id) {
+    var el = document.getElementById(id); if(el){ el.src=''; el.classList.remove('show'); }
+  });
+  ['sb_full','sb_before','sb_after'].forEach(function(id) {
+    var el = document.getElementById(id); if(el) el.textContent = '필수';
+  });
+  ['pFull','pBefore','pAfter','pSticker','pSticker2'].forEach(function(id) {
+    var el = document.getElementById(id); if(el) el.value = '';
+  });
+  signSaved = false; signCtx = null;
+  document.getElementById('signPreviewArea').style.display = 'none';
+  document.getElementById('signOpenArea').style.display = 'block';
+  document.getElementById('signPreviewImg').src = '';
+  setC('sign');
+  isSaving = false;
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* ════════════════════════════════════════════
+   유틸
+════════════════════════════════════════════ */
+function base64ToUint8Array(b64) {
+  var bin = atob(b64), len = bin.length, bytes = new Uint8Array(len);
+  for (var i=0; i<len; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+function showLoading(msg) { document.getElementById('ltxt').textContent=msg||'처리 중…'; document.getElementById('lov').classList.add('on'); }
+function hideLoading()    { document.getElementById('lov').classList.remove('on'); }
+function showToast(msg) {
+  var t = document.getElementById('toastEl');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('on'); }, 3200);
+}
+</script>
+</body>
+</html>
