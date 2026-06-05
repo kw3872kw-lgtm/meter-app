@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=360, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -60,18 +60,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
 .tab-pane.on{display:block}
 
 /* ── 시작화면 ── */
-.start{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.start-box{background:var(--card);border-radius:var(--r3);padding:32px 24px;width:100%;max-width:360px;box-shadow:var(--shadow)}
-.start-logo{text-align:center;font-size:56px;margin-bottom:8px}
-.start-title{text-align:center;font-size:22px;font-weight:900;color:var(--text);margin-bottom:4px}
-.start-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:28px}
+.start{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.start-box{background:var(--card);border-radius:var(--r3);padding:36px 28px;width:100%;box-shadow:var(--shadow)}
+.start-logo{text-align:center;font-size:72px;margin-bottom:12px}
+.start-title{text-align:center;font-size:26px;font-weight:900;color:var(--text);margin-bottom:6px}
+.start-sub{text-align:center;font-size:14px;color:var(--muted);margin-bottom:32px}
 .field{margin-bottom:18px}
-.field-label{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.field-label{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .field-label-ic{font-size:16px}
-.inp{width:100%;padding:14px 16px;background:var(--card2);border:2px solid var(--border);border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.inp{width:100%;padding:16px 18px;background:var(--card2);border:2px solid var(--border);border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:17px;color:var(--text);outline:none;transition:border-color .2s;-webkit-appearance:none}
 .inp:focus{border-color:var(--accent);background:#fff}
 .inp[type=date]{font-family:'DM Mono',monospace;font-size:15px}
-.start-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:18px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(0,197,222,.35);transition:transform .15s,box-shadow .15s}
+.start-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:20px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(0,197,222,.35);transition:transform .15s,box-shadow .15s}
 .start-btn:active{transform:scale(.97);box-shadow:0 3px 10px rgba(0,197,222,.25)}
 
 /* ── NO 입력 영역 ── */
