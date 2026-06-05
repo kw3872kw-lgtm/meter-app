@@ -30,7 +30,7 @@
   --t:0.2s cubic-bezier(.4,0,.2,1);
   --fs-xs:11px;--fs-sm:12px;--fs-base:13px;--fs-md:14px;--fs-lg:16px;--fs-xl:18px;
 }
-html{font-size:15px;-webkit-text-size-adjust:100%;width:100%;overflow-x:hidden;}
+html{font-size:22px;-webkit-text-size-adjust:100%;width:100%;overflow-x:hidden;}
 body{font-family:'Noto Sans KR',sans-serif;background:#d4f0f7;min-height:100vh;color:var(--ink);overflow-x:hidden;padding-bottom:70px;}
 
 /* ── 헤더 ── */
@@ -123,12 +123,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:#d4f0f7;min-height:100vh;c
 .photo-slot{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:column;margin-bottom:10px}
 .photo-slot:active{transform:scale(0.98)}
 .photo-slot.ok{border-style:solid;border-color:var(--green);background:#fff}
-.ps-thumb{width:100%;aspect-ratio:16/9;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;border-radius:var(--r-xl) var(--r-xl) 0 0;overflow:hidden;position:relative}
+.ps-thumb{width:100%;aspect-ratio:16/4;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;border-radius:var(--r-xl) var(--r-xl) 0 0;overflow:hidden;position:relative}
 .ps-thumb img{width:100%;height:100%;object-fit:cover;display:none}
 .ps-thumb img.show{display:block}
 .ps-thumb .ph-icon{font-size:36px;opacity:.3}
 .photo-slot.ok .ph-icon{display:none}
-.ps-label{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.ps-label{padding:6px 10px;display:flex;align-items:center;justify-content:space-between}
 .ps-name{font-size:14px;font-weight:700;color:var(--ink)}
 .ps-sub{font-size:11px;color:var(--muted)}
 .ps-saved{font-size:11px;font-weight:700;color:var(--green)}
