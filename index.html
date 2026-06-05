@@ -314,6 +314,14 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
     <button class="install-close" onclick="dismissInstall()">✕</button>
   </div>
 
+  <!-- 임시 저장확인 버튼 -->
+  <div style="background:rgba(245,166,35,0.15);border:1.5px dashed rgba(245,166,35,0.5);border-radius:16px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:20px">🔧</span>
+    <div style="flex:1;font-size:13px;color:#7a5000"><strong>저장 테스트</strong><br>NO 입력 후 10초 뒤 버튼 눌러보세요</div>
+    <button onclick="checkSave()" style="padding:10px 16px;background:linear-gradient(135deg,#f5a623,#e09000);border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">💾 저장확인</button>
+    <button onclick="testLoad()" style="padding:10px 16px;background:linear-gradient(135deg,#00b8cc,#1a5280);border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;cursor:pointer">🔄 복원확인</button>
+  </div>
+
   <!-- 저장 완료 배너 -->
   <div class="done-banner" id="doneBanner">
     <div class="done-icon">✅</div>
@@ -1361,6 +1369,28 @@ function base64ToUint8Array(b64) {
   for (var i=0; i<len; i++) bytes[i] = bin.charCodeAt(i);
   return bytes;
 }
+/* ── 테스트용 함수 ── */
+function checkSave() {
+  autoSave();
+  setTimeout(function() {
+    var raw = localStorage.getItem('meterAutoSave');
+    if (!raw) { alert('❌ 저장된 데이터 없음!\nlocalStorage가 작동 안 하고 있어요.'); return; }
+    try {
+      var d = JSON.parse(raw);
+      alert('✅ 저장 성공!\n\nNO: ' + (d.no||'(빈값)') +
+            '\n작업일: ' + (d.workDate||'') +
+            '\n교체후지침: ' + (d.aRead||'(빈값)') +
+            '\n저장시각: ' + new Date(d.ts).toLocaleTimeString());
+    } catch(e) { alert('❌ 파싱 오류: ' + e.message); }
+  }, 500);
+}
+function testLoad() {
+  var raw = localStorage.getItem('meterAutoSave');
+  if (!raw) { alert('❌ 복원할 데이터 없음!\n먼저 NO 입력 후 저장확인 버튼을 눌러주세요.'); return; }
+  var result = autoLoad();
+  alert(result ? '✅ 복원 성공!' : '❌ 복원 실패!\n' + raw.substring(0,100));
+}
+
 function showLoading(msg) { document.getElementById('ltxt').textContent=msg||'처리 중…'; document.getElementById('lov').classList.add('on'); }
 function hideLoading()    { document.getElementById('lov').classList.remove('on'); }
 function showToast(msg) {
