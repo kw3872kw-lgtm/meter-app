@@ -749,8 +749,8 @@ window.addEventListener('DOMContentLoaded', function() {
    // 자동저장 불러오기
   autoLoad();
 
-  // 30초마다 자동저장
-  setInterval(autoSave, 30000);
+  // 1초마다 자동저장 (뒤로가기 대비)
+  setInterval(autoSave, 1000);
 
   // 입력할 때마다 자동저장
   ['noInput','bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
