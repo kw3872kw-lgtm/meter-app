@@ -7,1564 +7,1135 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="계량기교체">
-<meta name="theme-color" content="#07192e">
-<title>디지털계량기 교체 앱</title>
+<meta name="theme-color" content="#0f2942">
+<title>계량기 교체 앱</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#07192e;--ink-mid:#0d3050;--ink-soft:#1a5280;
-  --sea:#00b8cc;--sea-bright:#00d9ef;
-  --foam:#eaf8fb;--white:#fff;
-  --red:#f03e5c;--red-pale:rgba(240,62,92,0.10);
-  --green:#00c48c;--green-pale:rgba(0,196,140,0.10);
-  --amber:#f5a623;--amber-pale:rgba(245,166,35,0.12);
-  --muted:#7ea8c0;--border:rgba(0,184,204,0.18);
-  --r-sm:6px;--r-md:11px;--r-lg:16px;--r-xl:20px;
-  --sh-sm:0 2px 8px rgba(7,25,46,0.07);
-  --sh-md:0 5px 18px rgba(7,25,46,0.12);
-  --t:0.2s cubic-bezier(.4,0,.2,1);
-  --fs-xs:11px;--fs-sm:12px;--fs-base:13px;--fs-md:14px;--fs-lg:16px;--fs-xl:18px;
+  --bg:#0f2942;
+  --bg2:#162f4a;
+  --card:#ffffff;
+  --card2:#f4f9fc;
+  --accent:#00c5de;
+  --accent2:#00e5ff;
+  --green:#00c87a;
+  --green2:#e6fff4;
+  --red:#ff4566;
+  --red2:#fff0f3;
+  --amber:#ffaa00;
+  --amber2:#fff8e6;
+  --text:#0f2942;
+  --text2:#4a6882;
+  --muted:#8aadc4;
+  --border:#d6eaf4;
+  --r:14px;--r2:20px;--r3:28px;
+  --shadow:0 4px 20px rgba(15,41,66,0.12);
+  --shadow2:0 2px 10px rgba(15,41,66,0.08);
 }
-html{font-size:22px;-webkit-text-size-adjust:100%;width:100%;overflow-x:hidden;}
-body{font-family:'Noto Sans KR',sans-serif;background:#d4f0f7;min-height:100vh;color:var(--ink);overflow-x:hidden;padding-bottom:70px;}
+html{font-size:17px;-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);overflow-x:hidden;padding-bottom:80px}
 
 /* ── 헤더 ── */
-.hdr{position:sticky;top:0;z-index:200;background:rgba(7,25,46,0.97);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,217,239,0.15)}
-.hdr-inner{display:flex;align-items:center;justify-content:space-between;height:50px;padding:0 14px}
-.hdr-brand{display:flex;align-items:center;gap:8px}
-.hdr-icon{width:28px;height:28px;border-radius:5px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));display:flex;align-items:center;justify-content:center;font-size:14px}
-.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:#fff;line-height:1}
-.hdr-sub{font-size:10px;color:rgba(0,217,239,0.7);margin-top:1px}
-.worker-pill{display:flex;align-items:center;gap:5px;background:rgba(0,184,204,0.12);border:1px solid rgba(0,184,204,0.25);border-radius:20px;padding:4px 10px;font-size:11px;color:rgba(0,217,239,0.85)}
-.wpulse{width:5px;height:5px;border-radius:50%;background:var(--sea-bright);animation:blink 2s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr{background:var(--bg);padding:14px 16px 10px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,197,222,0.15)}
+.hdr-row{display:flex;align-items:center;justify-content:space-between}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.hdr-title{font-size:18px;font-weight:900;color:#fff;letter-spacing:-.3px}
+.hdr-sub{font-size:12px;color:rgba(0,229,255,.6);margin-top:2px}
+.worker-chip{background:rgba(0,197,222,.15);border:1px solid rgba(0,197,222,.3);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:700;color:var(--accent2)}
 
-/* ── 탭 네비게이션 ── */
-.tab-nav{display:flex;background:rgba(7,25,46,0.95);border-bottom:1px solid rgba(0,184,204,0.15)}
-.tab-btn{flex:1;padding:10px 4px;background:none;border:none;font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all var(--t);border-bottom:2px solid transparent}
-.tab-btn.active{color:var(--sea-bright);border-bottom-color:var(--sea-bright)}
-.tab-icon{font-size:20px}
+/* ── 탭 ── */
+.tabs{display:none;background:var(--bg2);border-bottom:1px solid rgba(0,197,222,.15)}
+.tabs.show{display:flex}
+.tab{flex:1;padding:12px 4px 10px;background:none;border:none;font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-bottom:3px solid transparent;transition:all .2s}
+.tab.on{color:var(--accent2);border-bottom-color:var(--accent)}
+.tab-ic{font-size:20px}
+.tab-pane{display:none}
+.tab-pane.on{display:block}
 
-/* ── 탭 콘텐츠 ── */
-.tab-content{display:none}
-.tab-content.active{display:block}
+/* ── 시작화면 ── */
+.start{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.start-box{background:var(--card);border-radius:var(--r3);padding:32px 24px;width:100%;max-width:360px;box-shadow:var(--shadow)}
+.start-logo{text-align:center;font-size:56px;margin-bottom:8px}
+.start-title{text-align:center;font-size:22px;font-weight:900;color:var(--text);margin-bottom:4px}
+.start-sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:28px}
+.field{margin-bottom:18px}
+.field-label{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.field-label-ic{font-size:16px}
+.inp{width:100%;padding:14px 16px;background:var(--card2);border:2px solid var(--border);border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.inp:focus{border-color:var(--accent);background:#fff}
+.inp[type=date]{font-family:'DM Mono',monospace;font-size:15px}
+.start-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:18px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(0,197,222,.35);transition:transform .15s,box-shadow .15s}
+.start-btn:active{transform:scale(.97);box-shadow:0 3px 10px rgba(0,197,222,.25)}
 
-/* ── 공통 페이지 패딩 ── */
-.page{padding:12px 12px 0}
-
-/* ── 시작화면 (날짜+작업자) ── */
-.start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 120px);padding:20px}
-.start-card{background:#fff;border-radius:var(--r-xl);padding:24px 20px;width:100%;max-width:340px;box-shadow:var(--sh-md);text-align:center}
-.start-logo{font-size:48px;margin-bottom:12px}
-.start-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--ink);margin-bottom:4px}
-.start-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
-.start-field{margin-bottom:14px;text-align:left}
-.start-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block}
-.start-input{width:100%;padding:11px 14px;background:var(--foam);border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color var(--t)}
-.start-input:focus{border-color:var(--sea);background:#fff}
-.start-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-lg);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(0,184,204,0.3);transition:all var(--t)}
-.start-btn:active{transform:scale(0.98)}
-
-/* ── NO 배너 ── */
-.no-banner{background:rgba(7,25,46,0.88);backdrop-filter:blur(12px);border:1px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.no-label{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--sea-bright);flex-shrink:0}
-.no-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,184,204,0.3);border-radius:var(--r-md);overflow:hidden;transition:border-color var(--t)}
-.no-wrap.found{border-color:var(--green)}
-.no-wrap.notfound{border-color:var(--red)}
-.no-pre{padding:7px 8px 7px 12px;font-family:'DM Mono',monospace;font-size:15px;color:var(--sea)}
-.no-wrap input{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:#fff;letter-spacing:2px;width:85px;padding:7px 4px}
-.no-wrap input::placeholder{color:rgba(255,255,255,0.2);font-size:18px}
-.no-tag{margin-right:8px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;opacity:0;transition:opacity var(--t)}
+/* ── NO 입력 영역 ── */
+.no-area{background:var(--bg2);margin:12px 12px 0;border-radius:var(--r2);padding:16px;border:1px solid rgba(0,197,222,.2)}
+.no-row{display:flex;align-items:center;gap:10px}
+.no-badge{font-size:13px;font-weight:900;color:var(--accent);background:rgba(0,197,222,.15);padding:4px 10px;border-radius:8px;white-space:nowrap}
+.no-inp-wrap{flex:1;display:flex;align-items:center;background:rgba(255,255,255,.07);border:2px solid rgba(0,197,222,.25);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.no-inp-wrap.found{border-color:var(--green)}
+.no-inp-wrap.notfound{border-color:var(--red)}
+.no-pre{font-size:14px;font-weight:700;color:var(--accent);padding:0 6px 0 12px;font-family:'DM Mono',monospace}
+.no-inp{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:#fff;width:90px;padding:10px 8px 10px 0;letter-spacing:2px}
+.no-inp::placeholder{color:rgba(255,255,255,.2);font-size:20px}
+.no-tag{font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;opacity:0;transition:opacity .2s;white-space:nowrap;margin-right:6px}
 .no-tag.show{opacity:1}
-.no-tag.found{background:var(--green-pale);color:var(--green)}
-.no-tag.notfound{background:var(--red-pale);color:var(--red)}
-.no-tag.searching{background:rgba(255,255,255,0.08);color:var(--muted)}
-.no-hint{font-size:12px;color:var(--muted);flex:1;min-width:140px}
+.no-tag.found{background:var(--green2);color:var(--green)}
+.no-tag.notfound{background:var(--red2);color:var(--red)}
+.no-tag.searching{background:rgba(255,255,255,.1);color:var(--muted)}
+.no-hint{font-size:12px;color:var(--muted);margin-top:8px}
 .no-hint.err{color:var(--red)}
 
-/* ── 수용가 정보 ── */
-.info-card{background:rgba(255,255,255,0.9);border-radius:var(--r-lg);padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.95)}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.info-chip{background:rgba(0,184,204,0.06);border:1px solid rgba(0,184,204,0.15);border-radius:var(--r-md);padding:8px 10px}
-.info-chip.w2{grid-column:1/-1}
-.ic-label{font-size:10px;color:var(--muted);margin-bottom:2px;font-weight:500}
-.ic-value{font-size:13px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.info-empty{text-align:center;padding:16px;color:var(--muted);font-size:12px}
+/* ── 수용가 카드 ── */
+.cust-card{background:var(--card);margin:8px 12px 0;border-radius:var(--r2);padding:16px;box-shadow:var(--shadow2)}
+.cust-empty{text-align:center;padding:16px;color:var(--muted);font-size:14px}
+.cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cust-item{background:var(--card2);border-radius:var(--r);padding:10px 12px;border:1px solid var(--border)}
+.cust-item.wide{grid-column:1/-1}
+.cust-key{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:3px}
+.cust-val{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ── STEP 진행바 ── */
-.step-bar{background:rgba(255,255,255,0.9);border-radius:var(--r-lg);padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.95)}
-.step-bar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.step-title{font-size:13px;font-weight:700;color:var(--ink)}
-.step-count{font-size:11px;color:var(--muted)}
-.step-dots{display:flex;gap:5px}
-.step-dot{width:28px;height:5px;border-radius:3px;background:rgba(0,184,204,0.15);transition:all var(--t);cursor:pointer}
-.step-dot.done{background:var(--green)}
-.step-dot.active{background:var(--sea)}
+/* ── STEP 진행 ── */
+.step-nav-bar{margin:10px 12px 0;background:var(--card);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--shadow2)}
+.snb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.snb-title{font-size:15px;font-weight:900;color:var(--text)}
+.snb-count{font-size:13px;font-weight:700;color:var(--muted)}
+.snb-dots{display:flex;gap:6px}
+.snb-dot{flex:1;height:6px;border-radius:3px;background:var(--border);transition:all .3s;cursor:pointer}
+.snb-dot.done{background:var(--green)}
+.snb-dot.active{background:var(--accent)}
 
 /* ── STEP 카드 ── */
-.step-card{background:rgba(255,255,255,0.92);border-radius:var(--r-xl);padding:16px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.95);box-shadow:var(--sh-sm);display:none;animation:rise .3s ease}
-.step-card.active{display:block}
-@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.step-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.step-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--sea),var(--ink-soft));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#fff;flex-shrink:0}
-.step-num.done{background:var(--green)}
-.step-name{font-size:15px;font-weight:700;color:var(--ink);flex:1}
-.step-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
-.step-status.saved{background:var(--green-pale);color:var(--green)}
-.step-status.pending{background:var(--red-pale);color:var(--red)}
-.step-status.partial{background:var(--amber-pale);color:#7a5000}
+.step-card{display:none;background:var(--card);margin:8px 12px 0;border-radius:var(--r2);padding:20px 16px;box-shadow:var(--shadow2);animation:fadeUp .25s ease}
+.step-card.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.step-hd{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid var(--border)}
+.step-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#007fa3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;flex-shrink:0}
+.step-num.done{background:linear-gradient(135deg,var(--green),#009960)}
+.step-name{font-size:17px;font-weight:900;color:var(--text);flex:1;line-height:1.2}
+.step-badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.step-badge.ok{background:var(--green2);color:var(--green)}
+.step-badge.ng{background:var(--red2);color:var(--red)}
+.step-badge.part{background:var(--amber2);color:var(--amber)}
 
-/* ── 사진 슬롯 ── */
-.photo-slot{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:row;align-items:center;margin-bottom:10px;min-height:80px}
-.photo-slot:active{transform:scale(0.98)}
-.photo-slot.ok{border-style:solid;border-color:var(--green);background:#fff}
-.ps-thumb{width:90px;height:70px;flex-shrink:0;aspect-ratio:unset;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;border-radius:var(--r-lg) 0 0 var(--r-lg);overflow:hidden;position:relative}
-.ps-thumb img{width:100%;height:100%;object-fit:cover;display:none}
-.ps-thumb img.show{display:block}
-.ps-thumb .ph-icon{font-size:36px;opacity:.3}
-.photo-slot.ok .ph-icon{display:none}
-.ps-label{padding:8px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
-.ps-name{font-size:16px;font-weight:700;color:var(--ink)}
-.ps-sub{font-size:11px;color:var(--muted)}
-.ps-saved{font-size:11px;font-weight:700;color:var(--green)}
-.photo-slot.ok::after{content:'✓ 저장됨';position:absolute;top:6px;right:8px;font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:3px 8px;border-radius:20px;z-index:10}
+/* ── 사진 촬영 버튼 ── */
+.photo-btn{width:100%;padding:0;border:2px dashed rgba(0,197,222,.35);border-radius:var(--r2);background:var(--card2);cursor:pointer;overflow:hidden;transition:all .2s;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:0;min-height:72px}
+.photo-btn.taken{border:2px solid var(--green);background:#fff}
+.photo-btn:active{transform:scale(.98)}
+.photo-thumb{width:90px;height:72px;background:rgba(0,197,222,.08);flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:var(--r) 0 0 var(--r);overflow:hidden;position:relative}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:none}
+.photo-thumb img.show{display:block}
+.photo-thumb-ic{font-size:28px;opacity:.4}
+.photo-thumb.taken .photo-thumb-ic{display:none}
+.photo-info{flex:1;padding:12px 14px;text-align:left}
+.photo-name{font-size:16px;font-weight:700;color:var(--text);margin-bottom:3px}
+.photo-sub{font-size:13px;color:var(--muted)}
+.photo-sub.saved{color:var(--green);font-weight:700}
+.photo-check{width:36px;height:36px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;font-size:18px;color:#fff;margin-right:14px;flex-shrink:0}
+.photo-btn.taken .photo-check{display:flex}
 input.pi{display:none}
 
-/* ── 워터마크 오버레이 ── */
-.wm-overlay{position:absolute;bottom:0;left:0;width:100%;background:rgba(255,255,255,0.92);border-top:1px solid #333;font-size:8px;line-height:1.4;display:none;pointer-events:none}
-.photo-slot.ok .wm-overlay{display:block}
-.wm-table{width:100%;border-collapse:collapse}
-.wm-table td{border:0.5px solid #555;padding:1px 4px;color:#111}
-.wm-key{font-weight:700;white-space:nowrap;width:26%;background:rgba(210,235,255,0.7)}
-
 /* ── 입력 필드 ── */
-.fl{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-.fl:last-child{margin-bottom:0}
-.fl-label{font-size:12px;font-weight:600;color:var(--muted)}
-.fl-label .req{color:var(--red);font-size:10px;margin-left:2px}
-.fi{width:100%;padding:12px 14px;background:var(--foam);border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color var(--t);-webkit-appearance:none}
-.fi:focus{border-color:var(--sea);background:#fff}
-.fi.saved{border-color:var(--green);background:rgba(0,196,140,0.05)}
-.fi::placeholder{color:var(--muted);font-size:12px}
-.save-indicator{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--green);margin-top:3px;opacity:0;transition:opacity var(--t)}
-.save-indicator.show{opacity:1}
+.field-group{display:flex;flex-direction:column;gap:14px}
+.fld{display:flex;flex-direction:column;gap:8px}
+.fld-label{font-size:14px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:6px}
+.req{font-size:11px;color:var(--red);background:var(--red2);padding:2px 6px;border-radius:4px}
+.opt{font-size:11px;color:var(--muted);background:var(--card2);padding:2px 6px;border-radius:4px}
+.fi{width:100%;padding:14px 16px;background:var(--card2);border:2px solid var(--border);border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fi:focus{border-color:var(--accent);background:#fff}
+.fi.saved{border-color:var(--green);background:var(--green2)}
+.fi::placeholder{color:var(--muted);font-size:14px}
+.saved-tag{font-size:12px;color:var(--green);font-weight:700;display:none;align-items:center;gap:4px}
+.saved-tag.show{display:flex}
 
-/* ── 라디오 버튼 ── */
-.rpg{display:flex;gap:8px;flex-wrap:wrap}
-.rp{display:flex;align-items:center;gap:6px;padding:11px 16px;border:1.5px solid rgba(0,184,204,0.2);border-radius:100px;cursor:pointer;font-size:14px;color:var(--muted);background:var(--foam);transition:all var(--t);user-select:none}
-.rp input{display:none}
-.rp:has(input:checked){border-color:var(--sea);background:rgba(0,184,204,0.1);color:var(--ink-soft);font-weight:700}
-.rp.ok:has(input:checked){border-color:var(--green);background:var(--green-pale);color:var(--green)}
-.rp.ng:has(input:checked){border-color:var(--red);background:var(--red-pale);color:var(--red)}
+/* ── 라디오 ── */
+.radio-group{display:flex;gap:10px}
+.radio-btn{flex:1;padding:13px 10px;border:2px solid var(--border);border-radius:var(--r);background:var(--card2);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:600;color:var(--muted);text-align:center;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.radio-btn input{display:none}
+.radio-btn:has(input:checked){border-color:var(--accent);background:rgba(0,197,222,.1);color:var(--text);font-weight:700}
+.radio-btn.ok-btn:has(input:checked){border-color:var(--green);background:var(--green2);color:var(--green)}
+.radio-btn.ng-btn:has(input:checked){border-color:var(--red);background:var(--red2);color:var(--red)}
 
 /* ── 서명 ── */
-.ctab{display:flex;border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px}
-.ct{flex:1;padding:10px;background:transparent;border:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all var(--t);border-right:1px solid rgba(0,184,204,0.2)}
-.ct:last-child{border-right:none}
-.ct.active-sign{background:rgba(0,184,204,0.1);color:var(--ink-soft);font-weight:700}
-.ct.active-sticker{background:var(--amber-pale);color:#8a5e00;font-weight:700}
+.confirm-tabs{display:flex;border:2px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.ct-btn{flex:1;padding:12px;background:none;border:none;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;border-right:1px solid var(--border)}
+.ct-btn:last-child{border-right:none}
+.ct-btn.on-sign{background:rgba(0,197,222,.1);color:var(--text);font-weight:700}
+.ct-btn.on-sticker{background:var(--amber2);color:#7a5000;font-weight:700}
 .cond{display:none}
-.cond.active{display:block}
-.sign-open-btn{width:100%;padding:16px;background:rgba(0,184,204,0.08);border:1.5px dashed rgba(0,184,204,0.35);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:var(--sea);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-.sign-preview-wrap{border:1.5px solid var(--green);border-radius:var(--r-lg);overflow:hidden;background:#fff;position:relative;margin-bottom:8px}
-.sign-preview-img{display:block;width:100%;max-height:100px;object-fit:contain}
-.sign-done-badge{display:flex;align-items:center;gap:5px;padding:4px 8px;background:var(--green-pale);border-radius:4px;font-size:11px;color:var(--green);font-weight:700;margin-bottom:6px}
-.sign-edit-btn{position:absolute;top:6px;right:6px;padding:4px 10px;border:none;border-radius:var(--r-md);background:rgba(0,184,204,0.15);color:var(--sea);font-size:11px;font-weight:700;cursor:pointer}
+.cond.on{display:block}
+.sign-open-btn{width:100%;padding:20px;border:2px dashed rgba(0,197,222,.35);border-radius:var(--r2);background:rgba(0,197,222,.06);font-family:'Noto Sans KR',sans-serif;font-size:17px;font-weight:700;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s}
+.sign-done-box{border:2px solid var(--green);border-radius:var(--r2);overflow:hidden;background:#fff;position:relative}
+.sign-done-label{background:var(--green);color:#fff;font-size:13px;font-weight:700;padding:6px 14px;display:flex;align-items:center;gap:6px}
+.sign-done-img{display:block;width:100%;max-height:110px;object-fit:contain}
+.sign-redo{position:absolute;top:6px;right:8px;padding:5px 12px;border:none;border-radius:8px;background:rgba(0,197,222,.2);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer}
 
 /* ── 서명 모달 ── */
 .sign-modal{display:none;position:fixed;inset:0;z-index:400;background:#0a1f38;flex-direction:column}
 .sign-modal.open{display:flex}
-.sign-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,184,204,0.1);border-bottom:1px solid rgba(0,184,204,0.2);flex-shrink:0}
-.sign-modal-title{font-size:14px;font-weight:700;color:var(--sea-bright)}
-.sign-modal-actions{display:flex;gap:6px}
-.sm-btn{padding:8px 16px;border:none;border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
-.sm-btn.clear{background:rgba(240,62,92,0.15);color:var(--red)}
-.sm-btn.cancel{background:rgba(255,255,255,0.08);color:var(--muted)}
-.sm-btn.confirm{background:linear-gradient(135deg,var(--sea),var(--ink-soft));color:#fff}
-.sign-guide{text-align:center;padding:8px;font-size:13px;color:rgba(0,217,239,0.65);flex-shrink:0}
-.sign-canvas-wrap{flex:1;padding:0 12px 16px;display:flex}
-canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);touch-action:none}
+.sign-mhdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,197,222,.1);border-bottom:1px solid rgba(0,197,222,.2);flex-shrink:0}
+.sign-mtitle{font-size:16px;font-weight:700;color:var(--accent2)}
+.sign-mbtns{display:flex;gap:8px}
+.sm-btn{padding:9px 18px;border:none;border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.sm-btn.clr{background:rgba(255,69,102,.15);color:var(--red)}
+.sm-btn.cnl{background:rgba(255,255,255,.08);color:var(--muted)}
+.sm-btn.cfm{background:linear-gradient(135deg,var(--accent),#007fa3);color:#fff}
+.sign-guide{text-align:center;padding:10px;font-size:14px;color:rgba(0,229,255,.6);flex-shrink:0}
+.sign-canvas-wrap{flex:1;padding:0 14px 20px;display:flex}
+canvas#sc{display:block;width:100%;flex:1;background:#0d2540;border:2px solid rgba(0,197,222,.2);border-radius:var(--r2);touch-action:none}
 
-/* ── 단계 이동 버튼 ── */
-.step-nav{display:flex;gap:8px;margin-bottom:10px}
-.step-nav-btn{flex:1;padding:14px;border:none;border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center;gap:6px}
-.step-nav-btn.prev{background:rgba(255,255,255,0.7);color:var(--muted);border:1px solid var(--border)}
-.step-nav-btn.next{background:linear-gradient(135deg,var(--sea),var(--ink-soft));color:#fff;box-shadow:0 3px 12px rgba(0,184,204,0.3)}
-.step-nav-btn.save{background:linear-gradient(135deg,var(--green),#00a070);color:#fff;box-shadow:0 3px 12px rgba(0,196,140,0.3)}
-.step-nav-btn:active{transform:scale(0.97)}
+/* ── 이동 버튼 ── */
+.move-btns{display:flex;gap:10px;margin-top:18px}
+.mv-btn{flex:1;padding:15px;border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.mv-btn:active{transform:scale(.97)}
+.mv-btn.prev{background:var(--card2);color:var(--muted);border:2px solid var(--border)}
+.mv-btn.next{background:linear-gradient(135deg,var(--accent),#007fa3);color:#fff;box-shadow:0 4px 16px rgba(0,197,222,.3)}
+.mv-btn.save{background:linear-gradient(135deg,var(--green),#009960);color:#fff;box-shadow:0 4px 16px rgba(0,200,122,.3)}
 
-/* ── 작업목록 탭 ── */
-.list-header{background:rgba(7,25,46,0.88);border-radius:var(--r-xl);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-.list-date{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea-bright)}
-.list-count{font-size:12px;color:var(--muted)}
-.list-count span{color:var(--sea-bright);font-weight:700;font-size:16px}
-.work-item{background:rgba(255,255,255,0.92);border-radius:var(--r-lg);padding:11px 13px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.95);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t)}
-.work-item:active{transform:scale(0.99)}
-.wi-no{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea);min-width:55px}
+/* ── 작업목록 ── */
+.list-hdr{background:var(--bg2);margin:12px 12px 0;border-radius:var(--r2);padding:16px;border:1px solid rgba(0,197,222,.2)}
+.list-date{font-size:20px;font-weight:900;color:var(--accent2);margin-bottom:2px}
+.list-worker{font-size:13px;color:var(--muted)}
+.list-cnt{font-size:13px;color:var(--muted);margin-top:6px}
+.list-cnt b{font-size:22px;font-weight:900;color:var(--accent2)}
+.work-list{padding:8px 12px 0}
+.work-item{background:var(--card);border-radius:var(--r2);padding:16px;margin-bottom:8px;box-shadow:var(--shadow2);display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.work-item:active{transform:scale(.99)}
+.wi-no{font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--accent);min-width:64px}
 .wi-info{flex:1}
-.wi-name{font-size:13px;font-weight:700;color:var(--ink)}
-.wi-addr{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wi-badges{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
-.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
-.badge.saved{background:var(--green-pale);color:var(--green)}
-.badge.pending{background:var(--amber-pale);color:#7a5000}
-.badge.uploaded{background:rgba(0,184,204,0.1);color:var(--sea)}
-.empty-list{text-align:center;padding:40px 20px;color:var(--muted)}
-.empty-icon{font-size:48px;margin-bottom:12px;opacity:.4}
-.empty-text{font-size:13px}
+.wi-name{font-size:16px;font-weight:700;color:var(--text)}
+.wi-addr{font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wi-status{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.wi-badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.wi-badge.wait{background:var(--amber2);color:var(--amber)}
+.wi-badge.done{background:rgba(0,197,222,.1);color:var(--accent)}
+.wi-badge.sign{background:var(--green2);color:var(--green)}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-ic{font-size:52px;margin-bottom:12px;opacity:.4}
+.empty-tx{font-size:15px}
 
-/* ── 업로드 탭 ── */
-.upload-header{background:rgba(7,25,46,0.88);border-radius:var(--r-xl);padding:14px;margin-bottom:10px;text-align:center}
-.upload-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--sea-bright);margin-bottom:4px}
-.upload-sub{font-size:11px;color:var(--muted)}
-.upload-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.stat-card{background:rgba(255,255,255,0.9);border-radius:var(--r-lg);padding:12px 10px;text-align:center}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:1}
-.stat-num.total{color:var(--sea)}
-.stat-num.done{color:var(--green)}
-.stat-num.wait{color:var(--amber)}
-.stat-label{font-size:10px;color:var(--muted);margin-top:2px}
-.upload-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-xl);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(0,184,204,0.3);transition:all var(--t);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
-.upload-btn:disabled{opacity:.5;cursor:not-allowed}
-.upload-btn:active:not(:disabled){transform:scale(0.98)}
-.upload-list{display:flex;flex-direction:column;gap:6px}
-.upload-item{background:rgba(255,255,255,0.92);border-radius:var(--r-lg);padding:10px 12px;display:flex;align-items:center;gap:10px}
-.ui-no{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--sea);min-width:50px}
+/* ── 업로드 ── */
+.upload-hdr{background:var(--bg2);margin:12px 12px 0;border-radius:var(--r2);padding:18px 16px;border:1px solid rgba(0,197,222,.2);text-align:center}
+.upload-title{font-size:20px;font-weight:900;color:var(--accent2);margin-bottom:4px}
+.upload-sub{font-size:13px;color:var(--muted)}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px 0}
+.stat{background:var(--card);border-radius:var(--r2);padding:14px 10px;text-align:center;box-shadow:var(--shadow2)}
+.stat-n{font-size:32px;font-weight:900;line-height:1}
+.stat-n.all{color:var(--accent)}
+.stat-n.wait{color:var(--amber)}
+.stat-n.done{color:var(--green)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:3px;font-weight:600}
+.upload-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 24px);margin:12px 12px 0;padding:16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:17px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(0,197,222,.3);transition:all .2s}
+.upload-btn:disabled{opacity:.45;cursor:not-allowed}
+.upload-btn:active:not(:disabled){transform:scale(.98)}
+.upload-items{padding:4px 12px 0}
+.ui-item{background:var(--card);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow2)}
+.ui-row{display:flex;align-items:center;gap:12px}
+.ui-no{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--accent);min-width:60px}
 .ui-info{flex:1}
-.ui-name{font-size:12px;font-weight:700;color:var(--ink)}
-.ui-progress{font-size:10px;color:var(--muted);margin-top:2px}
-.ui-status{font-size:18px}
-.progress-bar-wrap{width:100%;height:4px;background:rgba(0,184,204,0.1);border-radius:2px;margin-top:4px;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--sea),var(--green));border-radius:2px;transition:width .5s ease;width:0%}
+.ui-name{font-size:15px;font-weight:700;color:var(--text)}
+.ui-prog{font-size:12px;color:var(--muted);margin-top:2px}
+.ui-ic{font-size:22px}
+.prog-wrap{height:5px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width .5s ease;width:0}
 
-/* ── 하단 저장바 ── */
-.save-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(7,25,46,0.97);backdrop-filter:blur(16px);border-top:1px solid rgba(0,184,204,0.18);padding:12px 16px}
-.save-bar-inner{display:flex;align-items:center;gap:10px}
-.save-summary{flex:1}
-.ss-no{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea-bright);line-height:1}
-.ss-addr{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
-.save-work-btn{padding:13px 24px;background:linear-gradient(135deg,var(--green),#00a070);border:none;border-radius:var(--r-xl);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 3px 12px rgba(0,196,140,0.3);white-space:nowrap;flex-shrink:0}
-.save-work-btn:active{transform:scale(0.97)}
+/* ── 하단 바 ── */
+.bot-bar{position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--bg);border-top:1px solid rgba(0,197,222,.2);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.bot-no{font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--accent2);line-height:1}
+.bot-addr{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.bot-save{padding:13px 22px;background:linear-gradient(135deg,var(--green),#009960);border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:900;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;box-shadow:0 4px 14px rgba(0,200,122,.3);transition:all .2s}
+.bot-save:active{transform:scale(.97)}
+.bot-info{flex:1}
 
-/* ── 로딩 오버레이 ── */
-.lov{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column;gap:12px}
+/* ── 공통 ── */
+.lov{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,41,66,.8);backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column;gap:14px}
 .lov.on{display:flex}
-.lsp{width:38px;height:38px;border-radius:50%;border:3px solid rgba(0,184,204,0.2);border-top-color:var(--sea-bright);animation:spin .75s linear infinite}
+.lsp{width:42px;height:42px;border-radius:50%;border:3px solid rgba(0,197,222,.2);border-top-color:var(--accent);animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ltxt{font-size:12px;color:rgba(255,255,255,.9)}
-
-/* ── 토스트 ── */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:#fff;border:1px solid rgba(0,184,204,0.25);padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;box-shadow:var(--sh-md);transition:transform .32s cubic-bezier(.34,1.56,.64,1);z-index:400;white-space:nowrap;pointer-events:none}
+.ltxt{font-size:14px;color:rgba(255,255,255,.85);font-weight:600}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg2);color:#fff;border:1px solid rgba(0,197,222,.3);padding:12px 22px;border-radius:100px;font-size:14px;font-weight:600;box-shadow:var(--shadow);transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:400;white-space:nowrap;pointer-events:none}
 .toast.on{transform:translateX(-50%) translateY(0)}
-
-/* ── 종료 다이얼로그 ── */
-.exit-dialog{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center}
-.exit-dialog.open{display:flex}
-.exit-box{background:#fff;border-radius:var(--r-xl);padding:24px 20px 18px;max-width:300px;width:90%;text-align:center;box-shadow:var(--sh-md)}
-.exit-icon{font-size:36px;margin-bottom:10px}
-.exit-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px}
-.exit-msg{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:18px}
-.exit-btns{display:flex;gap:8px}
-.exit-btn{flex:1;padding:12px;border:none;border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
-.exit-btn.cancel{background:var(--foam);color:var(--muted);border:1px solid var(--border)}
-.exit-btn.ok{background:linear-gradient(135deg,var(--red),#c0003a);color:#fff}
-
-/* ── 작업 상세 모달 ── */
-.detail-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(7,25,46,0.5);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
-.detail-modal.open{display:flex}
-.detail-box{background:#f0f8fb;border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-height:80vh;overflow-y:auto;padding:16px 14px 80px;animation:slideUp .3s ease}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.detail-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.detail-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea)}
-.detail-close{background:rgba(7,25,46,0.1);border:none;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.detail-section{background:#fff;border-radius:var(--r-lg);padding:12px;margin-bottom:10px}
-.detail-section-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,184,204,0.08)}
-.detail-row:last-child{border-bottom:none}
-.dr-key{font-size:12px;color:var(--muted)}
-.dr-val{font-size:12px;font-weight:600;color:var(--ink)}
-.detail-photos{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
-.detail-photo{aspect-ratio:4/3;border-radius:var(--r-md);overflow:hidden;background:rgba(0,184,204,0.05);border:1px solid var(--border)}
-.detail-photo img{width:100%;height:100%;object-fit:cover}
-.detail-photo-label{font-size:10px;color:var(--muted);text-align:center;margin-top:3px}
-.delete-btn{width:100%;padding:12px;background:var(--red-pale);border:1px solid var(--red);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;color:var(--red);cursor:pointer;margin-top:10px}
+.exit-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,41,66,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center}
+.exit-bg.open{display:flex}
+.exit-box{background:var(--card);border-radius:var(--r3);padding:28px 24px 22px;max-width:300px;width:90%;text-align:center;box-shadow:var(--shadow)}
+.exit-ic{font-size:40px;margin-bottom:12px}
+.exit-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px}
+.exit-msg{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+.exit-btns{display:flex;gap:10px}
+.exit-btn{flex:1;padding:13px;border:none;border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.exit-btn.cnl{background:var(--card2);color:var(--muted);border:2px solid var(--border)}
+.exit-btn.ok{background:linear-gradient(135deg,var(--red),#cc0030);color:#fff}
+.detail-bg{display:none;position:fixed;inset:0;z-index:300;background:rgba(15,41,66,.6);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+.detail-bg.open{display:flex}
+.detail-box{background:var(--card2);border-radius:var(--r3) var(--r3) 0 0;width:100%;max-height:78vh;overflow-y:auto;padding:20px 16px 90px;animation:su .3s ease}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.det-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.det-title{font-size:20px;font-weight:900;color:var(--accent)}
+.det-close{background:var(--border);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer}
+.det-sec{background:var(--card);border-radius:var(--r2);padding:14px;margin-bottom:10px;box-shadow:var(--shadow2)}
+.det-sec-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase}
+.det-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.det-row:last-child{border-bottom:none}
+.det-k{font-size:13px;color:var(--muted);font-weight:500}
+.det-v{font-size:14px;font-weight:700;color:var(--text)}
+.del-btn{width:100%;padding:14px;background:var(--red2);border:2px solid var(--red);border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:var(--red);cursor:pointer;margin-top:8px}
+.sec-gap{height:10px}
 </style>
 </head>
 <body>
 
 <div class="lov" id="lov"><div class="lsp"></div><div class="ltxt" id="ltxt">처리 중…</div></div>
-<div class="toast" id="toastEl"></div>
+<div class="toast" id="toast"></div>
 
-<!-- 종료 다이얼로그 -->
-<div class="exit-dialog" id="exitDialog">
+<div class="exit-bg" id="exitBg">
   <div class="exit-box">
-    <div class="exit-icon">⚠️</div>
-    <div class="exit-title">앱을 종료하시겠습니까?</div>
-    <div class="exit-msg">작업 중인 내용은 임시저장됩니다.<br>나중에 이어서 작업하실 수 있어요.</div>
+    <div class="exit-ic">⚠️</div>
+    <div class="exit-title">종료하시겠습니까?</div>
+    <div class="exit-msg">작업 내용은 자동으로 임시저장됩니다.</div>
     <div class="exit-btns">
-      <button class="exit-btn cancel" onclick="closeExitDialog()">계속 작업</button>
-      <button class="exit-btn ok" onclick="forceExit()">종료</button>
+      <button class="exit-btn cnl" onclick="closeExit()">계속 작업</button>
+      <button class="exit-btn ok" onclick="doExit()">종료</button>
     </div>
   </div>
 </div>
 
-<!-- 작업 상세 모달 -->
-<div class="detail-modal" id="detailModal">
-  <div class="detail-box" id="detailBox"></div>
+<div class="detail-bg" id="detBg">
+  <div class="detail-box" id="detBox"></div>
 </div>
 
-<!-- 서명 모달 -->
 <div class="sign-modal" id="signModal">
-  <div class="sign-modal-hdr">
-    <div class="sign-modal-title">✍️ 수용가 서명</div>
-    <div class="sign-modal-actions">
-      <button class="sm-btn clear" onclick="clearSign()">🗑 지우기</button>
-      <button class="sm-btn cancel" onclick="closeSign()">취소</button>
-      <button class="sm-btn confirm" onclick="confirmSign()">✓ 완료</button>
+  <div class="sign-mhdr">
+    <div class="sign-mtitle">✍️ 수용가 서명</div>
+    <div class="sign-mbtns">
+      <button class="sm-btn clr" onclick="clearSign()">🗑 지우기</button>
+      <button class="sm-btn cnl" onclick="closeSign()">취소</button>
+      <button class="sm-btn cfm" onclick="confirmSign()">✓ 완료</button>
     </div>
   </div>
   <div class="sign-guide">손가락으로 서명해 주세요</div>
-  <div class="sign-canvas-wrap"><canvas id="scFull"></canvas></div>
+  <div class="sign-canvas-wrap"><canvas id="sc"></canvas></div>
 </div>
 
 <!-- 헤더 -->
 <header class="hdr">
-  <div class="hdr-inner">
-    <div class="hdr-brand">
-      <div class="hdr-icon">💧</div>
+  <div class="hdr-row">
+    <div class="hdr-left">
+      <div class="hdr-dot"></div>
       <div>
         <div class="hdr-title">계량기 교체 앱</div>
-        <div class="hdr-sub" id="hdrDate">날짜 로딩중...</div>
+        <div class="hdr-sub" id="hdrSub">날짜 로딩중…</div>
       </div>
     </div>
-    <div class="worker-pill"><div class="wpulse"></div><span id="workerName">로딩중</span></div>
+    <div class="worker-chip" id="workerChip">로딩중</div>
   </div>
 </header>
 
-<!-- 탭 네비게이션 -->
-<div class="tab-nav" id="tabNav" style="display:none">
-  <button class="tab-btn active" onclick="switchTab('work')" id="tab-work">
-    <span class="tab-icon">✏️</span>작업입력
-  </button>
-  <button class="tab-btn" onclick="switchTab('list')" id="tab-list">
-    <span class="tab-icon">📋</span>작업목록
-  </button>
-  <button class="tab-btn" onclick="switchTab('upload')" id="tab-upload">
-    <span class="tab-icon">📤</span>업로드
-  </button>
+<!-- 탭 -->
+<div class="tabs" id="tabs">
+  <button class="tab on" id="tab-work" onclick="goTab('work')"><span class="tab-ic">✏️</span>작업입력</button>
+  <button class="tab" id="tab-list" onclick="goTab('list')"><span class="tab-ic">📋</span>작업목록</button>
+  <button class="tab" id="tab-upload" onclick="goTab('upload')"><span class="tab-ic">📤</span>업로드</button>
 </div>
 
-<!-- ══ 시작화면 ══ -->
-<div id="startScreen" class="start-screen">
-  <div class="start-card">
+<!-- 시작화면 -->
+<div id="startScreen" class="start">
+  <div class="start-box">
     <div class="start-logo">💧</div>
     <div class="start-title">계량기 교체 앱</div>
     <div class="start-sub">서남광산 고장디지털 교체공사</div>
-    <div class="start-field">
-      <label class="start-label">작업일자</label>
-      <input type="date" class="start-input" id="startDate">
+    <div class="field">
+      <div class="field-label"><span class="field-label-ic">📅</span>작업일자</div>
+      <input type="date" class="inp" id="startDate">
     </div>
-    <div class="start-field">
-      <label class="start-label">작업자 이름</label>
-      <input type="text" class="start-input" id="startWorker" placeholder="이름 입력">
+    <div class="field">
+      <div class="field-label"><span class="field-label-ic">👷</span>작업자 이름</div>
+      <input type="text" class="inp" id="startWorker" placeholder="이름 입력">
     </div>
-    <button class="start-btn" onclick="startApp()">🚀 작업 시작</button>
+    <button class="start-btn" onclick="startApp()">🚀 작업 시작하기</button>
   </div>
 </div>
 
-<!-- ══ 작업입력 탭 ══ -->
-<div class="tab-content active" id="tab-content-work">
-<div class="page">
-
+<!-- 작업입력 탭 -->
+<div class="tab-pane on" id="pane-work">
   <!-- NO 입력 -->
-  <div class="no-banner">
-    <div class="no-label">NO</div>
-    <div class="no-wrap" id="noBox">
-      <span class="no-pre">NO.</span>
-      <input type="number" id="noInput" placeholder="001" min="1" max="999"
-        oninput="onNoInput(this.value)"
-        onfocus="document.getElementById('noBox').classList.add('focused')"
-        onblur="document.getElementById('noBox').classList.remove('focused')">
-      <span class="no-tag" id="noTag"></span>
+  <div class="no-area">
+    <div class="no-row">
+      <div class="no-badge">작업 NO</div>
+      <div class="no-inp-wrap" id="noBox">
+        <span class="no-pre">NO.</span>
+        <input type="number" class="no-inp" id="noInp" placeholder="001" min="1" max="999"
+          oninput="onNo(this.value)"
+          onfocus="noBox.classList.add('focus')"
+          onblur="noBox.classList.remove('focus')">
+        <span class="no-tag" id="noTag"></span>
+      </div>
     </div>
-    <div class="no-hint" id="noHint">NO 입력 시 수용가 정보를 불러옵니다</div>
+    <div class="no-hint" id="noHint">NO 입력 시 수용가 정보를 자동으로 불러옵니다</div>
   </div>
 
-  <!-- 수용가 정보 -->
-  <div class="info-card">
-    <div id="infoArea"><div class="info-empty">NO를 입력하면 정보가 표시됩니다</div></div>
+  <!-- 수용가 카드 -->
+  <div class="cust-card" id="custCard">
+    <div class="cust-empty">NO를 입력하면 정보가 표시됩니다</div>
   </div>
 
   <!-- STEP 진행바 -->
-  <div class="step-bar">
-    <div class="step-bar-top">
-      <div class="step-title" id="stepTitle">STEP 1 — 전체사진 촬영</div>
-      <div class="step-count" id="stepCount">1 / 6</div>
+  <div class="step-nav-bar">
+    <div class="snb-top">
+      <div class="snb-title" id="snbTitle">STEP 1 — 전체사진 촬영</div>
+      <div class="snb-count" id="snbCount">1 / 6</div>
     </div>
-    <div class="step-dots" id="stepDots"></div>
+    <div class="snb-dots" id="snbDots"></div>
   </div>
 
-  <!-- STEP 1: 전체사진 -->
-  <div class="step-card active" id="step1">
-    <div class="step-head">
-      <div class="step-num" id="sn1">1</div>
+  <!-- STEP 1 전체사진 -->
+  <div class="step-card on" id="s1">
+    <div class="step-hd">
+      <div class="step-num" id="snum1">1</div>
       <div class="step-name">전체사진 촬영</div>
-      <span class="step-status pending" id="ss1">미촬영</span>
+      <span class="step-badge ng" id="sbadge1">미촬영</span>
     </div>
-    <div class="photo-slot" id="sl_full" onclick="tp('pFull')" style="max-width:50%;margin-left:auto">
-      <input type="file" id="pFull" class="pi" accept="image/*" capture="environment"
-        onchange="onPhoto(this,'sl_full','img_full','wm_full','전체사진','ss1','sn1')">
-      <div class="ps-thumb">
-        <span class="ph-icon">📷</span>
-        <img id="img_full" alt="">
-        <div class="wm-overlay" id="wm_full">
-          <table class="wm-table">
-            <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-            <tr><td class="wm-key">공&nbsp;정</td><td colspan="3">디지털계량기 교체</td></tr>
-            <tr><td class="wm-key">위&nbsp;치</td><td id="wml_full" colspan="3">—</td></tr>
-            <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">전체사진</td></tr>
-            <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_full"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
-          </table>
-        </div>
+    <input type="file" id="pFull" class="pi" accept="image/*" capture="environment"
+      onchange="onPhoto(this,'pFull','thumb_full','전체사진','sbadge1','snum1')">
+    <button class="photo-btn" id="pbtn_full" onclick="tp('pFull')">
+      <div class="photo-thumb" id="thumb_full">
+        <span class="photo-thumb-ic">📷</span>
+        <img id="pimg_full" alt="">
       </div>
-      <div class="ps-label"><div class="ps-name">📷 전체사진</div><div class="ps-sub" id="psub_full">탭하여 촬영</div></div>
-    </div>
-    <div class="step-nav">
-      <button class="step-nav-btn next" onclick="goStep(2)">다음 → STEP 2</button>
+      <div class="photo-info">
+        <div class="photo-name">📷 전체사진</div>
+        <div class="photo-sub" id="psub_full">탭하여 카메라 열기</div>
+      </div>
+      <div class="photo-check">✓</div>
+    </button>
+    <div class="move-btns">
+      <button class="mv-btn next" onclick="goStep(2)">다음 → STEP 2</button>
     </div>
   </div>
 
-  <!-- STEP 2: 교체전 사진 -->
-  <div class="step-card" id="step2">
-    <div class="step-head">
-      <div class="step-num" id="sn2">2</div>
+  <!-- STEP 2 교체전 사진 -->
+  <div class="step-card" id="s2">
+    <div class="step-hd">
+      <div class="step-num" id="snum2">2</div>
       <div class="step-name">교체 전 사진 촬영</div>
-      <span class="step-status pending" id="ss2">미촬영</span>
+      <span class="step-badge ng" id="sbadge2">미촬영</span>
     </div>
-    <div class="photo-slot" id="sl_before" onclick="tp('pBefore')" style="max-width:50%;margin-left:auto">
-      <input type="file" id="pBefore" class="pi" accept="image/*" capture="environment"
-        onchange="onPhoto(this,'sl_before','img_before','wm_before','교체전','ss2','sn2')">
-      <div class="ps-thumb">
-        <span class="ph-icon">🔍</span>
-        <img id="img_before" alt="">
-        <div class="wm-overlay" id="wm_before">
-          <table class="wm-table">
-            <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-            <tr><td class="wm-key">공&nbsp;정</td><td colspan="3">디지털계량기 교체</td></tr>
-            <tr><td class="wm-key">위&nbsp;치</td><td id="wml_before" colspan="3">—</td></tr>
-            <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">교체전</td></tr>
-            <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_before"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
-          </table>
-        </div>
+    <input type="file" id="pBefore" class="pi" accept="image/*" capture="environment"
+      onchange="onPhoto(this,'pBefore','thumb_before','교체전','sbadge2','snum2')">
+    <button class="photo-btn" id="pbtn_before" onclick="tp('pBefore')">
+      <div class="photo-thumb" id="thumb_before">
+        <span class="photo-thumb-ic">🔍</span>
+        <img id="pimg_before" alt="">
       </div>
-      <div class="ps-label"><div class="ps-name">🔍 교체 전</div><div class="ps-sub" id="psub_before">탭하여 촬영</div></div>
-    </div>
-    <div class="step-nav">
-      <button class="step-nav-btn prev" onclick="goStep(1)">← 이전</button>
-      <button class="step-nav-btn next" onclick="goStep(3)">다음 → STEP 3</button>
+      <div class="photo-info">
+        <div class="photo-name">🔍 교체 전</div>
+        <div class="photo-sub" id="psub_before">탭하여 카메라 열기</div>
+      </div>
+      <div class="photo-check">✓</div>
+    </button>
+    <div class="move-btns">
+      <button class="mv-btn prev" onclick="goStep(1)">← 이전</button>
+      <button class="mv-btn next" onclick="goStep(3)">다음 → STEP 3</button>
     </div>
   </div>
 
-  <!-- STEP 3: 기존 계량기 정보 -->
-  <div class="step-card" id="step3">
-    <div class="step-head">
-      <div class="step-num" id="sn3">3</div>
+  <!-- STEP 3 기존 계량기 -->
+  <div class="step-card" id="s3">
+    <div class="step-hd">
+      <div class="step-num" id="snum3">3</div>
       <div class="step-name">기존 계량기 확인</div>
-      <span class="step-status pending" id="ss3">미입력</span>
+      <span class="step-badge ng" id="sbadge3">미입력</span>
     </div>
-    <div class="fl">
-      <div class="fl-label">밸브 상태 <span class="req">●필수</span></div>
-      <div class="rpg">
-        <label class="rp"><input type="radio" name="bv" value="개(열림)" checked onchange="onFieldChange()"><span>🔓 개(열림)</span></label>
-        <label class="rp"><input type="radio" name="bv" value="폐(닫힘)" onchange="onFieldChange()"><span>🔒 폐(닫힘)</span></label>
-      </div>
-    </div>
-    <div class="fl">
-      <div class="fl-label">지침 <span style="font-size:10px;color:var(--muted)">●선택</span></div>
-      <input type="number" inputmode="numeric" class="fi" id="bRead" placeholder="미확인 시 공란" oninput="onFieldChange()">
-      <div class="save-indicator" id="si_bRead">💾 저장됨</div>
-    </div>
-    <div class="fl">
-      <div class="fl-label">봉인번호 <span style="font-size:10px;color:var(--muted)">●선택</span></div>
-      <input type="text" inputmode="numeric" class="fi" id="bSeal" placeholder="예: 12345-6" oninput="onFieldChange()">
-      <div class="save-indicator" id="si_bSeal">💾 저장됨</div>
-    </div>
-    <div class="step-nav">
-      <button class="step-nav-btn prev" onclick="goStep(2)">← 이전</button>
-      <button class="step-nav-btn next" onclick="goStep(4)">다음 → STEP 4</button>
-    </div>
-  </div>
-
-  <!-- STEP 4: 교체 계량기 정보 -->
-  <div class="step-card" id="step4">
-    <div class="step-head">
-      <div class="step-num" id="sn4">4</div>
-      <div class="step-name">교체 계량기 확인</div>
-      <span class="step-status pending" id="ss4">미입력</span>
-    </div>
-    <div class="fl">
-      <div class="fl-label">교체 후 지침 <span class="req">●필수</span></div>
-      <input type="number" inputmode="numeric" class="fi" id="aRead" placeholder="교체 후 초기값" oninput="onFieldChange()">
-      <div class="save-indicator" id="si_aRead">💾 저장됨</div>
-    </div>
-    <div class="fl">
-      <div class="fl-label">기물번호 <span class="req">●필수</span></div>
-      <input type="text" inputmode="numeric" class="fi" id="aMeter" placeholder="예: 12345-6" oninput="onFieldChange()">
-      <div class="save-indicator" id="si_aMeter">💾 저장됨</div>
-    </div>
-    <div class="fl">
-      <div class="fl-label">봉인번호 <span class="req">●필수</span></div>
-      <input type="text" inputmode="numeric" class="fi" id="aSeal" placeholder="예: 12345-6" oninput="onFieldChange()">
-      <div class="save-indicator" id="si_aSeal">💾 저장됨</div>
-    </div>
-    <div class="fl">
-      <div class="fl-label">밸브 상태 <span class="req">●필수</span></div>
-      <div class="rpg">
-        <label class="rp ok"><input type="radio" name="av" value="이상없음" checked onchange="onFieldChange()"><span>✅ 이상없음</span></label>
-        <label class="rp ng"><input type="radio" name="av" value="밸브고장" onchange="onFieldChange()"><span>⚠️ 밸브고장</span></label>
-      </div>
-    </div>
-    <div class="step-nav">
-      <button class="step-nav-btn prev" onclick="goStep(3)">← 이전</button>
-      <button class="step-nav-btn next" onclick="goStep(5)">다음 → STEP 5</button>
-    </div>
-  </div>
-
-  <!-- STEP 5: 교체후 사진 -->
-  <div class="step-card" id="step5">
-    <div class="step-head">
-      <div class="step-num" id="sn5">5</div>
-      <div class="step-name">교체 후 사진 촬영</div>
-      <span class="step-status pending" id="ss5">미촬영</span>
-    </div>
-    <div class="photo-slot" id="sl_after" onclick="tp('pAfter')" style="max-width:50%;margin-left:auto">
-      <input type="file" id="pAfter" class="pi" accept="image/*" capture="environment"
-        onchange="onPhoto(this,'sl_after','img_after','wm_after','교체후','ss5','sn5')">
-      <div class="ps-thumb">
-        <span class="ph-icon">✨</span>
-        <img id="img_after" alt="">
-        <div class="wm-overlay" id="wm_after">
-          <table class="wm-table">
-            <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-            <tr><td class="wm-key">공&nbsp;정</td><td colspan="3">디지털계량기 교체</td></tr>
-            <tr><td class="wm-key">위&nbsp;치</td><td id="wml_after" colspan="3">—</td></tr>
-            <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">교체후</td></tr>
-            <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_after"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
-          </table>
+    <div class="field-group">
+      <div class="fld">
+        <div class="fld-label">🔧 밸브 상태 <span class="req">필수</span></div>
+        <div class="radio-group">
+          <label class="radio-btn"><input type="radio" name="bv" value="개(열림)" checked onchange="onChg()"><span>🔓 개(열림)</span></label>
+          <label class="radio-btn"><input type="radio" name="bv" value="폐(닫힘)" onchange="onChg()"><span>🔒 폐(닫힘)</span></label>
         </div>
       </div>
-      <div class="ps-label"><div class="ps-name">✨ 교체 후</div><div class="ps-sub" id="psub_after">탭하여 촬영</div></div>
+      <div class="fld">
+        <div class="fld-label">📊 지침 <span class="opt">선택</span></div>
+        <input type="number" inputmode="numeric" class="fi" id="bRead" placeholder="미확인 시 공란" oninput="onChg()">
+        <div class="saved-tag" id="st_bRead">💾 저장됨</div>
+      </div>
+      <div class="fld">
+        <div class="fld-label">🔏 봉인번호 <span class="opt">선택</span></div>
+        <input type="text" inputmode="numeric" class="fi" id="bSeal" placeholder="예: 12345-6" oninput="onChg()">
+        <div class="saved-tag" id="st_bSeal">💾 저장됨</div>
+      </div>
     </div>
-    <div class="step-nav">
-      <button class="step-nav-btn prev" onclick="goStep(4)">← 이전</button>
-      <button class="step-nav-btn next" onclick="goStep(6)">다음 → STEP 6</button>
+    <div class="move-btns">
+      <button class="mv-btn prev" onclick="goStep(2)">← 이전</button>
+      <button class="mv-btn next" onclick="goStep(4)">다음 → STEP 4</button>
     </div>
   </div>
 
-  <!-- STEP 6: 서명/스티커 -->
-  <div class="step-card" id="step6">
-    <div class="step-head">
-      <div class="step-num" id="sn6">6</div>
+  <!-- STEP 4 교체 계량기 -->
+  <div class="step-card" id="s4">
+    <div class="step-hd">
+      <div class="step-num" id="snum4">4</div>
+      <div class="step-name">교체 계량기 확인</div>
+      <span class="step-badge ng" id="sbadge4">미입력</span>
+    </div>
+    <div class="field-group">
+      <div class="fld">
+        <div class="fld-label">📊 교체 후 지침 <span class="req">필수</span></div>
+        <input type="number" inputmode="numeric" class="fi" id="aRead" placeholder="교체 후 초기값" oninput="onChg()">
+        <div class="saved-tag" id="st_aRead">💾 저장됨</div>
+      </div>
+      <div class="fld">
+        <div class="fld-label">🔢 기물번호 <span class="req">필수</span></div>
+        <input type="text" inputmode="numeric" class="fi" id="aMeter" placeholder="예: 12345-6" oninput="onChg()">
+        <div class="saved-tag" id="st_aMeter">💾 저장됨</div>
+      </div>
+      <div class="fld">
+        <div class="fld-label">🔏 봉인번호 <span class="req">필수</span></div>
+        <input type="text" inputmode="numeric" class="fi" id="aSeal" placeholder="예: 12345-6" oninput="onChg()">
+        <div class="saved-tag" id="st_aSeal">💾 저장됨</div>
+      </div>
+      <div class="fld">
+        <div class="fld-label">🔧 밸브 상태 <span class="req">필수</span></div>
+        <div class="radio-group">
+          <label class="radio-btn ok-btn"><input type="radio" name="av" value="이상없음" checked onchange="onChg()"><span>✅ 이상없음</span></label>
+          <label class="radio-btn ng-btn"><input type="radio" name="av" value="밸브고장" onchange="onChg()"><span>⚠️ 밸브고장</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="move-btns">
+      <button class="mv-btn prev" onclick="goStep(3)">← 이전</button>
+      <button class="mv-btn next" onclick="goStep(5)">다음 → STEP 5</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 교체후 사진 -->
+  <div class="step-card" id="s5">
+    <div class="step-hd">
+      <div class="step-num" id="snum5">5</div>
+      <div class="step-name">교체 후 사진 촬영</div>
+      <span class="step-badge ng" id="sbadge5">미촬영</span>
+    </div>
+    <input type="file" id="pAfter" class="pi" accept="image/*" capture="environment"
+      onchange="onPhoto(this,'pAfter','thumb_after','교체후','sbadge5','snum5')">
+    <button class="photo-btn" id="pbtn_after" onclick="tp('pAfter')">
+      <div class="photo-thumb" id="thumb_after">
+        <span class="photo-thumb-ic">✨</span>
+        <img id="pimg_after" alt="">
+      </div>
+      <div class="photo-info">
+        <div class="photo-name">✨ 교체 후</div>
+        <div class="photo-sub" id="psub_after">탭하여 카메라 열기</div>
+      </div>
+      <div class="photo-check">✓</div>
+    </button>
+    <div class="move-btns">
+      <button class="mv-btn prev" onclick="goStep(4)">← 이전</button>
+      <button class="mv-btn next" onclick="goStep(6)">다음 → STEP 6</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 수용가 확인 -->
+  <div class="step-card" id="s6">
+    <div class="step-hd">
+      <div class="step-num" id="snum6">6</div>
       <div class="step-name">수용가 확인</div>
-      <span class="step-status pending" id="ss6">미완료</span>
+      <span class="step-badge ng" id="sbadge6">미완료</span>
     </div>
-    <div class="ctab">
-      <button class="ct active-sign" id="btnSign" onclick="setC('sign')">✍️ 서명받기</button>
-      <button class="ct" id="btnSticker" onclick="setC('sticker')">🏷️ 서명불가(스티커)</button>
+    <div class="confirm-tabs">
+      <button class="ct-btn on-sign" id="ctSign" onclick="setC('sign')">✍️ 서명받기</button>
+      <button class="ct-btn" id="ctSticker" onclick="setC('sticker')">🏷️ 서명불가(스티커)</button>
     </div>
-    <div class="cond active" id="condSign">
-      <div id="signPreviewArea" style="display:none">
-        <div class="sign-done-badge">✅ 서명 완료 — 저장됨</div>
-        <div class="sign-preview-wrap">
-          <img id="signPreviewImg" class="sign-preview-img" alt="서명">
-          <button class="sign-edit-btn" onclick="openSign()">✏️ 재서명</button>
+    <div class="cond on" id="condSign">
+      <div id="signDoneArea" style="display:none">
+        <div class="sign-done-box">
+          <div class="sign-done-label">✅ 서명 완료 — 저장됨</div>
+          <img id="signImg" class="sign-done-img" alt="">
+          <button class="sign-redo" onclick="openSign()">✏️ 재서명</button>
         </div>
       </div>
       <div id="signOpenArea">
-        <button class="sign-open-btn" onclick="openSign()">✍️ 서명란 열기</button>
+        <button class="sign-open-btn" onclick="openSign()">✍️ 서명란 열기 (전체화면)</button>
       </div>
     </div>
     <div class="cond" id="condSticker">
-      <div class="photo-slot" id="sl_sticker" onclick="tp('pSticker')" style="max-width:50%;margin-left:auto">
-        <input type="file" id="pSticker" class="pi" accept="image/*" capture="environment"
-          onchange="onPhoto(this,'sl_sticker','img_sticker','wm_sticker','스티커부착','ss6','sn6')">
-        <div class="ps-thumb">
-          <span class="ph-icon">🏷️</span>
-          <img id="img_sticker" alt="">
-          <div class="wm-overlay" id="wm_sticker">
-            <table class="wm-table">
-              <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-              <tr><td class="wm-key">위&nbsp;치</td><td id="wml_sticker" colspan="3">—</td></tr>
-              <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">스티커부착</td></tr>
-              <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_sticker"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
-            </table>
-          </div>
+      <input type="file" id="pSticker" class="pi" accept="image/*" capture="environment"
+        onchange="onPhoto(this,'pSticker','thumb_sticker','스티커부착','sbadge6','snum6')">
+      <button class="photo-btn" id="pbtn_sticker" onclick="tp('pSticker')">
+        <div class="photo-thumb" id="thumb_sticker">
+          <span class="photo-thumb-ic">🏷️</span>
+          <img id="pimg_sticker" alt="">
         </div>
-        <div class="ps-label"><div class="ps-name">🏷️ 스티커사진</div><div class="ps-sub" id="psub_sticker">탭하여 촬영</div></div>
-      </div>
+        <div class="photo-info">
+          <div class="photo-name">🏷️ 스티커 사진</div>
+          <div class="photo-sub" id="psub_sticker">탭하여 카메라 열기</div>
+        </div>
+        <div class="photo-check">✓</div>
+      </button>
     </div>
-    <div class="step-nav">
-      <button class="step-nav-btn prev" onclick="goStep(5)">← 이전</button>
-      <button class="step-nav-btn save" onclick="saveWork()">💾 작업 임시저장</button>
+    <div class="move-btns">
+      <button class="mv-btn prev" onclick="goStep(5)">← 이전</button>
+      <button class="mv-btn save" onclick="saveWork()">💾 작업 임시저장</button>
     </div>
   </div>
 
-</div><!-- /page -->
+  <div style="height:10px"></div>
+</div><!-- /pane-work -->
 
-<!-- 하단 저장바 -->
-<div class="save-bar">
-  <div class="save-bar-inner">
-    <div class="save-summary">
-      <div class="ss-no" id="barNo">NO. —</div>
-      <div class="ss-addr" id="barAddr">NO를 입력해 주세요</div>
-    </div>
-    <button class="save-work-btn" onclick="saveWork()">💾 임시저장</button>
+<!-- 작업목록 탭 -->
+<div class="tab-pane" id="pane-list">
+  <div class="list-hdr">
+    <div class="list-date" id="listDate">—</div>
+    <div class="list-worker" id="listWorker">—</div>
+    <div class="list-cnt">오늘 작업 <b id="listCnt">0</b>건</div>
+  </div>
+  <div class="work-list" id="workList">
+    <div class="empty-state"><div class="empty-ic">📋</div><div class="empty-tx">오늘 작업한 내용이 없어요</div></div>
   </div>
 </div>
-</div><!-- /tab-content-work -->
 
-<!-- ══ 작업목록 탭 ══ -->
-<div class="tab-content" id="tab-content-list">
-<div class="page">
-  <div class="list-header">
-    <div>
-      <div class="list-date" id="listDate">2026-06-05</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="listWorkerName"></div>
-    </div>
-    <div class="list-count">총 <span id="listTotal">0</span>건</div>
-  </div>
-  <div id="workList"></div>
-</div>
-</div>
-
-<!-- ══ 업로드 탭 ══ -->
-<div class="tab-content" id="tab-content-upload">
-<div class="page">
-  <div class="upload-header">
+<!-- 업로드 탭 -->
+<div class="tab-pane" id="pane-upload">
+  <div class="upload-hdr">
     <div class="upload-title">📤 구글 업로드</div>
-    <div class="upload-sub" id="uploadSubTitle">저녁 8시 이후 와이파이 환경에서 업로드하세요</div>
+    <div class="upload-sub">저녁 8시 이후 와이파이 환경에서 업로드하세요</div>
   </div>
-  <div class="upload-stats">
-    <div class="stat-card"><div class="stat-num total" id="statTotal">0</div><div class="stat-label">전체</div></div>
-    <div class="stat-card"><div class="stat-num wait" id="statWait">0</div><div class="stat-label">대기중</div></div>
-    <div class="stat-card"><div class="stat-num done" id="statDone">0</div><div class="stat-label">완료</div></div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-n all" id="stAll">0</div><div class="stat-l">전체</div></div>
+    <div class="stat"><div class="stat-n wait" id="stWait">0</div><div class="stat-l">대기중</div></div>
+    <div class="stat"><div class="stat-n done" id="stDone">0</div><div class="stat-l">완료</div></div>
   </div>
-  <button class="upload-btn" id="uploadBtn" onclick="startUpload()">☁️ 업로드 시작</button>
-  <div class="upload-list" id="uploadList"></div>
+  <button class="upload-btn" id="upBtn" onclick="startUpload()">☁️ 업로드 시작</button>
+  <div class="upload-items" id="upItems"></div>
 </div>
+
+<!-- 하단 바 -->
+<div class="bot-bar" id="botBar" style="display:none">
+  <div class="bot-info">
+    <div class="bot-no" id="botNo">NO. —</div>
+    <div class="bot-addr" id="botAddr">NO를 입력해 주세요</div>
+  </div>
+  <button class="bot-save" onclick="saveWork()">💾 임시저장</button>
 </div>
 
 <script>
-/* ════════════════════════════════
-   GAS URL
-════════════════════════════════ */
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbxGzSqpjURqgJ5F0LlJaHymUXAEDY5nutDF2KLKtINQFVkVbwXJ9MH34lB147BybmUq/exec';
+var GAS_URL='https://script.google.com/macros/s/AKfycbxGzSqpjURqgJ5F0LlJaHymUXAEDY5nutDF2KLKtINQFVkVbwXJ9MH34lB147BybmUq/exec';
 
-/* ════════════════════════════════
-   Service Worker
-════════════════════════════════ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js').catch(function(){});
+/* SW */
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+/* IndexedDB */
+var db=null;
+function initDB(){
+  return new Promise((res,rej)=>{
+    var r=indexedDB.open('MeterAppDB',1);
+    r.onupgradeneeded=e=>{var d=e.target.result;if(!d.objectStoreNames.contains('works'))d.createObjectStore('works',{keyPath:'key'});if(!d.objectStoreNames.contains('photos'))d.createObjectStore('photos',{keyPath:'key'});};
+    r.onsuccess=e=>{db=e.target.result;res(db);};
+    r.onerror=e=>rej(e);
   });
 }
+var dbPut=(s,d)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readwrite');var r=tx.objectStore(s).put(d);r.onsuccess=()=>res();r.onerror=e=>rej(e);});
+var dbGet=(s,k)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readonly');var r=tx.objectStore(s).get(k);r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e);});
+var dbAll=(s)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readonly');var r=tx.objectStore(s).getAll();r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e);});
+var dbDel=(s,k)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readwrite');var r=tx.objectStore(s).delete(k);r.onsuccess=()=>res();r.onerror=e=>rej(e);});
 
-/* ════════════════════════════════
-   IndexedDB 초기화
-════════════════════════════════ */
-var DB_NAME = 'MeterAppDB', DB_VER = 1, db = null;
-
-function initDB() {
-  return new Promise(function(resolve, reject) {
-    var req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = function(e) {
-      var d = e.target.result;
-      if (!d.objectStoreNames.contains('works')) {
-        d.createObjectStore('works', { keyPath: 'key' });
-      }
-      if (!d.objectStoreNames.contains('photos')) {
-        d.createObjectStore('photos', { keyPath: 'key' });
-      }
-    };
-    req.onsuccess = function(e) { db = e.target.result; resolve(db); };
-    req.onerror   = function(e) { reject(e); };
+/* GAS */
+function gasCall(action,params){
+  return new Promise((res,rej)=>{
+    var cb='_cb_'+Date.now()+'_'+Math.floor(Math.random()*9999);
+    var url=GAS_URL+'?action='+encodeURIComponent(action)+'&cb='+cb;
+    if(params)Object.keys(params).forEach(k=>url+='&'+encodeURIComponent(k)+'='+encodeURIComponent(typeof params[k]==='object'?JSON.stringify(params[k]):params[k]));
+    var t=setTimeout(()=>{delete window[cb];rej(new Error('시간 초과'));},30000);
+    window[cb]=d=>{clearTimeout(t);delete window[cb];res(d);};
+    var s=document.createElement('script');s.src=url;s.onerror=()=>{clearTimeout(t);delete window[cb];rej(new Error('네트워크 오류'));};
+    document.head.appendChild(s);setTimeout(()=>{if(s.parentNode)s.parentNode.removeChild(s);},35000);
   });
 }
-
-function dbPut(store, data) {
-  return new Promise(function(resolve, reject) {
-    var tx  = db.transaction(store, 'readwrite');
-    var req = tx.objectStore(store).put(data);
-    req.onsuccess = function() { resolve(); };
-    req.onerror   = function(e) { reject(e); };
-  });
+function gasPost(action,payload){
+  return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,payload})}).then(r=>r.json());
 }
 
-function dbGet(store, key) {
-  return new Promise(function(resolve, reject) {
-    var tx  = db.transaction(store, 'readonly');
-    var req = tx.objectStore(store).get(key);
-    req.onsuccess = function(e) { resolve(e.target.result); };
-    req.onerror   = function(e) { reject(e); };
+/* 상태 */
+var appDate='',appWorker='',cur=null,noTmr=null,cMode='sign';
+var signCtx=null,signDrw=false,signLast=null,signSaved=false;
+var curStep=1,exitTarget=null;
+var photos={full:null,before:null,after:null,sticker:null,sign:null};
+
+/* 초기화 */
+window.addEventListener('DOMContentLoaded',()=>{
+  initDB().then(()=>{
+    var s=localStorage.getItem('meterSession');
+    if(s){try{var d=JSON.parse(s);if(d.date&&d.worker){appDate=d.date;appWorker=d.worker;launchApp();return;}}catch(e){}}
+    document.getElementById('startDate').value=new Date().toISOString().split('T')[0];
+    var w=localStorage.getItem('workerName');
+    if(w)document.getElementById('startWorker').value=w;
   });
-}
-
-function dbGetAll(store) {
-  return new Promise(function(resolve, reject) {
-    var tx  = db.transaction(store, 'readonly');
-    var req = tx.objectStore(store).getAll();
-    req.onsuccess = function(e) { resolve(e.target.result); };
-    req.onerror   = function(e) { reject(e); };
+  history.pushState(null,null,location.href);
+  history.pushState(null,null,location.href);
+  window.addEventListener('popstate',()=>{
+    autoSave();
+    history.pushState(null,null,location.href);
+    document.getElementById('exitBg').classList.add('open');
+    exitTarget='back';
   });
-}
-
-function dbDelete(store, key) {
-  return new Promise(function(resolve, reject) {
-    var tx  = db.transaction(store, 'readwrite');
-    var req = tx.objectStore(store).delete(key);
-    req.onsuccess = function() { resolve(); };
-    req.onerror   = function(e) { reject(e); };
-  });
-}
-
-/* ════════════════════════════════
-   GAS API 호출 (JSONP)
-════════════════════════════════ */
-function gasCall(action, params) {
-  return new Promise(function(resolve, reject) {
-    var cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random()*9999);
-    var url = GAS_URL + '?action=' + encodeURIComponent(action) + '&cb=' + cbName;
-    if (params) {
-      Object.keys(params).forEach(function(k) {
-        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(
-          typeof params[k] === 'object' ? JSON.stringify(params[k]) : params[k]
-        );
-      });
-    }
-    var timer = setTimeout(function() {
-      delete window[cbName];
-      reject(new Error('요청 시간 초과'));
-    }, 30000);
-    window[cbName] = function(data) {
-      clearTimeout(timer);
-      delete window[cbName];
-      resolve(data);
-    };
-    var s = document.createElement('script');
-    s.src = url;
-    s.onerror = function() { clearTimeout(timer); delete window[cbName]; reject(new Error('네트워크 오류')); };
-    document.head.appendChild(s);
-    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 35000);
-  });
-}
-
-function gasPost(action, payload) {
-  return fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: action, payload: payload })
-  }).then(function(r){ return r.json(); });
-}
-
-/* ════════════════════════════════
-   상태 변수
-════════════════════════════════ */
-var appDate = '', appWorker = '', cur = null, noTmr = null;
-var cMode = 'sign', signCtx = null, signDrw = false, signLast = null, signSaved = false;
-var currentStep = 1, exitTarget = null;
-var photos = { full:null, before:null, after:null, sticker:null, sign:null };
-var WM_KEYS = ['full','before','after','sticker'];
-
-/* ════════════════════════════════
-   앱 시작
-════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', function() {
-  initDB().then(function() {
-    // 저장된 세션 확인
-    var saved = localStorage.getItem('meterSession');
-    if (saved) {
-      try {
-        var s = JSON.parse(saved);
-        appDate   = s.date   || '';
-        appWorker = s.worker || '';
-        if (appDate && appWorker) { launchApp(); return; }
-      } catch(e) {}
-    }
-    // 시작화면 표시
-    document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
-    var savedWorker = localStorage.getItem('workerName');
-    if (savedWorker) document.getElementById('startWorker').value = savedWorker;
-  });
-
-  // 뒤로가기 차단
-  history.pushState(null, null, location.href);
-  history.pushState(null, null, location.href);
-  window.addEventListener('popstate', function() {
-    history.pushState(null, null, location.href);
-    document.getElementById('exitDialog').classList.add('open');
-    exitTarget = 'back';
-  });
-
-  // 백그라운드 저장
-  document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'hidden') quickSave();
-  });
-  window.addEventListener('pagehide', quickSave);
-
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')autoSave();});
+  window.addEventListener('pagehide',autoSave);
   initSignCanvas();
 });
 
-function startApp() {
-  var d = document.getElementById('startDate').value;
-  var w = document.getElementById('startWorker').value.trim();
-  if (!d) { showToast('⚠️ 작업일자를 입력해 주세요.'); return; }
-  if (!w) { showToast('⚠️ 작업자 이름을 입력해 주세요.'); return; }
-  appDate   = d;
-  appWorker = w;
-  localStorage.setItem('meterSession', JSON.stringify({ date: d, worker: w }));
-  localStorage.setItem('workerName', w);
+function startApp(){
+  var d=document.getElementById('startDate').value;
+  var w=document.getElementById('startWorker').value.trim();
+  if(!d){showToast('⚠️ 작업일자를 입력해 주세요.');return;}
+  if(!w){showToast('⚠️ 작업자 이름을 입력해 주세요.');return;}
+  appDate=d;appWorker=w;
+  localStorage.setItem('meterSession',JSON.stringify({date:d,worker:w}));
+  localStorage.setItem('workerName',w);
   launchApp();
 }
 
-function launchApp() {
-  document.getElementById('startScreen').style.display = 'none';
-  document.getElementById('tabNav').style.display = 'flex';
-  // 헤더 업데이트
-  var dp = appDate.split('-');
-  document.getElementById('hdrDate').textContent = dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker;
-  document.getElementById('workerName').textContent = appWorker;
-  // 초기화
-  initStepDots();
-  refreshAllWM();
+function launchApp(){
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('tabs').classList.add('show');
+  document.getElementById('botBar').style.display='flex';
+  var dp=appDate.split('-');
+  document.getElementById('hdrSub').textContent=dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker;
+  document.getElementById('workerChip').textContent=appWorker;
+  initDots();
   updateListTab();
   updateUploadTab();
 }
 
-/* ════════════════════════════════
-   탭 전환
-════════════════════════════════ */
-function switchTab(name) {
-  ['work','list','upload'].forEach(function(t) {
-    document.getElementById('tab-'+t).classList.toggle('active', t===name);
-    document.getElementById('tab-content-'+t).classList.toggle('active', t===name);
+/* 탭 */
+function goTab(name){
+  ['work','list','upload'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('on',t===name);
+    document.getElementById('pane-'+t).classList.toggle('on',t===name);
   });
-  if (name === 'list')   updateListTab();
-  if (name === 'upload') updateUploadTab();
+  if(name==='list')updateListTab();
+  if(name==='upload')updateUploadTab();
 }
 
-/* ════════════════════════════════
-   STEP 이동
-════════════════════════════════ */
-var STEP_NAMES = ['','전체사진 촬영','교체 전 사진 촬영','기존 계량기 확인','교체 계량기 확인','교체 후 사진 촬영','수용가 확인'];
-
-function initStepDots() {
-  var wrap = document.getElementById('stepDots');
-  wrap.innerHTML = '';
-  for (var i = 1; i <= 6; i++) {
-    var d = document.createElement('div');
-    d.className = 'step-dot' + (i===1?' active':'');
-    d.setAttribute('data-step', i);
-    (function(n){ d.onclick = function(){ goStep(n); }; })(i);
-    wrap.appendChild(d);
-  }
+/* STEP */
+var SNAMES=['','전체사진 촬영','교체 전 사진 촬영','기존 계량기 확인','교체 계량기 확인','교체 후 사진 촬영','수용가 확인'];
+function initDots(){
+  var w=document.getElementById('snbDots');w.innerHTML='';
+  for(var i=1;i<=6;i++){var d=document.createElement('div');d.className='snb-dot'+(i===1?' active':'');d.dataset.step=i;(n=>d.onclick=()=>goStep(n))(i);w.appendChild(d);}
+}
+function goStep(n){
+  curStep=n;
+  for(var i=1;i<=6;i++)document.getElementById('s'+i).classList.toggle('on',i===n);
+  document.getElementById('snbTitle').textContent='STEP '+n+' — '+SNAMES[n];
+  document.getElementById('snbCount').textContent=n+' / 6';
+  document.querySelectorAll('.snb-dot').forEach(d=>{var s=parseInt(d.dataset.step);d.className='snb-dot'+(s<n?' done':s===n?' active':'');});
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function goStep(n) {
-  currentStep = n;
-  for (var i = 1; i <= 6; i++) {
-    document.getElementById('step'+i).classList.toggle('active', i===n);
-  }
-  document.getElementById('stepTitle').textContent = 'STEP '+n+' — '+STEP_NAMES[n];
-  document.getElementById('stepCount').textContent = n+' / 6';
-  // 점 업데이트
-  var dots = document.querySelectorAll('.step-dot');
-  dots.forEach(function(d) {
-    var s = parseInt(d.getAttribute('data-step'));
-    d.className = 'step-dot' + (s < n ? ' done' : (s === n ? ' active' : ''));
-  });
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/* ════════════════════════════════
-   NO 입력 → GAS 조회
-════════════════════════════════ */
-function onNoInput(v) {
+/* NO 입력 */
+function onNo(v){
   clearTimeout(noTmr);
-  var box  = document.getElementById('noBox');
-  var tag  = document.getElementById('noTag');
-  var hint = document.getElementById('noHint');
-  box.classList.remove('found','notfound');
-  tag.className = 'no-tag';
-  if (!v) {
-    cur = null; resetInfo(); updateBar(); return;
-  }
-  tag.textContent = '조회 중…'; tag.className = 'no-tag show searching';
-  noTmr = setTimeout(function() {
-    gasCall('getRowByNo', { no: parseInt(v) }).then(function(d) {
-      if (d && !d.error && d.no !== undefined) {
-        box.classList.add('found');
-        tag.textContent = '✓ 확인'; tag.className = 'no-tag show found';
-        hint.textContent = ''; hint.className = 'no-hint';
-        cur = d;
-        renderInfo(v, d);
-        updateBar();
-        refreshAllWM();
-        quickSave();
+  var box=document.getElementById('noBox'),tag=document.getElementById('noTag'),hint=document.getElementById('noHint');
+  box.classList.remove('found','notfound');tag.className='no-tag';
+  if(!v){cur=null;resetCust();updateBot();return;}
+  tag.textContent='조회 중…';tag.className='no-tag show searching';
+  noTmr=setTimeout(()=>{
+    gasCall('getRowByNo',{no:parseInt(v)}).then(d=>{
+      if(d&&!d.error&&d.no!==undefined){
+        box.classList.add('found');tag.textContent='✓ 확인';tag.className='no-tag show found';
+        hint.textContent='';hint.className='no-hint';
+        cur=d;renderCust(v,d);updateBot();autoSave();
       } else {
-        box.classList.add('notfound');
-        tag.textContent = '✗ 없음'; tag.className = 'no-tag show notfound';
-        hint.textContent = d && d.error ? '❌ '+d.error : '⚠ 해당 NO가 없습니다.';
-        hint.className = 'no-hint err';
-        cur = null; resetInfo(); updateBar();
+        box.classList.add('notfound');tag.textContent='✗ 없음';tag.className='no-tag show notfound';
+        hint.textContent=d&&d.error?'❌ '+d.error:'⚠ 해당 NO가 없습니다.';hint.className='no-hint err';
+        cur=null;resetCust();updateBot();
       }
-    }).catch(function(e) {
-      box.classList.add('notfound');
-      tag.textContent = '✗ 오류'; tag.className = 'no-tag show notfound';
-      hint.textContent = '❌ 오프라인 상태입니다.';
-      hint.className = 'no-hint err';
+    }).catch(()=>{
+      box.classList.add('notfound');tag.textContent='✗ 오류';tag.className='no-tag show notfound';
+      hint.textContent='❌ 오프라인 상태입니다.';hint.className='no-hint err';
     });
-  }, 500);
+  },500);
 }
-
-function renderInfo(no, d) {
-  var fields = [
-    {l:'수용가번호',v:d.custNo},{l:'수용가명',v:d.custName},
-    {l:'연락처',v:d.phone},{l:'교체사유',v:d.reason},
-    {l:'구경',v:d.size},{l:'기물번호',v:d.meterNo},
-    {l:'주소',v:d.address,w:true},
-  ];
-  document.getElementById('infoArea').innerHTML =
-    '<div class="info-grid">'+
-    fields.map(function(f){
-      return '<div class="info-chip'+(f.w?' w2':'')+'"><div class="ic-label">'+f.l+'</div><div class="ic-value">'+(f.v||'—')+'</div></div>';
-    }).join('')+'</div>';
+function renderCust(no,d){
+  var f=[{k:'수용가번호',v:d.custNo},{k:'수용가명',v:d.custName},{k:'연락처',v:d.phone},{k:'교체사유',v:d.reason},{k:'구경',v:d.size},{k:'기물번호',v:d.meterNo},{k:'주소',v:d.address,w:true}];
+  document.getElementById('custCard').innerHTML='<div class="cust-grid">'+f.map(x=>'<div class="cust-item'+(x.w?' wide':'')+'"><div class="cust-key">'+x.k+'</div><div class="cust-val">'+(x.v||'—')+'</div></div>').join('')+'</div>';
 }
-function resetInfo() {
-  document.getElementById('infoArea').innerHTML = '<div class="info-empty">NO를 입력하면 정보가 표시됩니다</div>';
-}
+function resetCust(){document.getElementById('custCard').innerHTML='<div class="cust-empty">NO를 입력하면 정보가 표시됩니다</div>';}
 
-/* ════════════════════════════════
-   워터마크
-════════════════════════════════ */
-function refreshAllWM() {
-  var addr = cur ? (cur.address||'—') : '—';
-  var dateStr = '—';
-  if (appDate) {
-    var p = appDate.split('-');
-    dateStr = p[0]+'년 '+parseInt(p[1])+'월 '+parseInt(p[2])+'일';
-  }
-  WM_KEYS.forEach(function(key) {
-    var l = document.getElementById('wml_'+key);
-    var d = document.getElementById('wmd_'+key);
-    if (l) l.textContent = addr;
-    if (d) d.textContent = dateStr;
-  });
-}
-
-/* ════════════════════════════════
-   사진 촬영 → 워터마크 합성 → IndexedDB 저장
-════════════════════════════════ */
-function tp(id) { document.getElementById(id).click(); }
-
-function onPhoto(input, slotId, imgId, wmId, label, ssId, snId) {
-  if (!input.files || !input.files[0]) return;
-  var file = input.files[0];
-  var slot = document.getElementById(slotId);
-  var sub  = document.getElementById('psub_'+slotId.replace('sl_',''));
-  slot.classList.add('ok');
-  if (sub) sub.textContent = '합성 중…';
-
-  compositePhoto(file, label).then(function(result) {
-    if (!result) throw new Error('합성 실패');
-    var dataUrl = 'data:'+result.mime+';base64,'+result.base64;
-    var imgEl = document.getElementById(imgId);
-    if (imgEl) { imgEl.src = dataUrl; imgEl.classList.add('show'); }
-    var wmEl = document.getElementById(wmId);
-    if (wmEl) wmEl.style.display = 'none';
-    if (sub) sub.textContent = '✓ 저장됨';
-
-    // photos 객체에 저장
-    var key = slotId.replace('sl_','');
-    photos[key] = result;
-
-    // IndexedDB에 즉시 저장
-    var no = document.getElementById('noInput').value || '0';
-    var photoKey = 'photo_'+appDate+'_'+no+'_'+key;
-    dbPut('photos', { key: photoKey, data: result, label: label, no: no, date: appDate }).then(function() {
-      saveToGallery(result, label);
-      showToast('📷 '+label+' 갤러리+앱 저장됨 ✅');
-    });
-
-    // step 상태 업데이트
-    if (ssId) {
-      var ss = document.getElementById(ssId);
-      if (ss) { ss.textContent = '저장됨 ✅'; ss.className = 'step-status saved'; }
-    }
-    if (snId) {
-      var sn = document.getElementById(snId);
-      if (sn) sn.className = 'step-num done';
-    }
-    refreshAllWM();
-  }).catch(function() {
-    // 합성 실패 시 원본 저장
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var imgEl = document.getElementById(imgId);
-      if (imgEl) { imgEl.src = e.target.result; imgEl.classList.add('show'); }
-      if (sub) sub.textContent = '✓ 저장됨';
-      var b64 = e.target.result.split(',')[1];
-      var key = slotId.replace('sl_','');
-      photos[key] = { base64: b64, mime: file.type };
-      var no = document.getElementById('noInput').value || '0';
-      dbPut('photos', { key: 'photo_'+appDate+'_'+no+'_'+key, data: {base64:b64,mime:file.type}, label: label, no: no, date: appDate });
-      saveToGallery({base64:b64,mime:file.type}, label);
-      showToast('📷 '+label+' 갤러리+앱 저장됨 ✅');
-      if (ssId) { var ss=document.getElementById(ssId); if(ss){ss.textContent='저장됨 ✅';ss.className='step-status saved';} }
+/* 사진 */
+function tp(id){document.getElementById(id).click();}
+function onPhoto(input,fileId,thumbId,label,badgeId,numId){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0],sub=document.getElementById('psub_'+fileId.replace('p','').toLowerCase());
+  var btn=document.getElementById('pbtn_'+fileId.replace('p','').toLowerCase());
+  if(sub)sub.textContent='합성 중…';
+  compositePhoto(file,label).then(result=>{
+    if(!result)throw new Error('합성 실패');
+    var dataUrl='data:'+result.mime+';base64,'+result.base64;
+    var img=document.getElementById('pimg_'+fileId.replace('p','').toLowerCase());
+    if(img){img.src=dataUrl;img.classList.add('show');}
+    var thumb=document.getElementById(thumbId);
+    if(thumb)thumb.classList.add('taken');
+    if(btn)btn.classList.add('taken');
+    if(sub){sub.textContent='✓ 갤러리+앱 저장됨';sub.classList.add('saved');}
+    var key=fileId.replace('p','').toLowerCase();
+    photos[key]=result;
+    var no=document.getElementById('noInp').value||'0';
+    dbPut('photos',{key:'photo_'+appDate+'_'+no+'_'+key,data:result,label,no,date:appDate});
+    saveToGallery(result,label);
+    if(badgeId){var b=document.getElementById(badgeId);if(b){b.textContent='촬영됨 ✅';b.className='step-badge ok';}}
+    if(numId){var n=document.getElementById(numId);if(n)n.className='step-num done';}
+    showToast('📷 '+label+' 저장됨 ✅');
+  }).catch(()=>{
+    var reader=new FileReader();
+    reader.onload=e=>{
+      var img=document.getElementById('pimg_'+fileId.replace('p','').toLowerCase());
+      if(img){img.src=e.target.result;img.classList.add('show');}
+      var thumb=document.getElementById(thumbId);if(thumb)thumb.classList.add('taken');
+      if(btn)btn.classList.add('taken');
+      if(sub){sub.textContent='✓ 저장됨';sub.classList.add('saved');}
+      var b64=e.target.result.split(',')[1],key=fileId.replace('p','').toLowerCase();
+      photos[key]={base64:b64,mime:file.type};
+      var no=document.getElementById('noInp').value||'0';
+      dbPut('photos',{key:'photo_'+appDate+'_'+no+'_'+key,data:{base64:b64,mime:file.type},label,no,date:appDate});
+      saveToGallery({base64:b64,mime:file.type},label);
+      if(badgeId){var b=document.getElementById(badgeId);if(b){b.textContent='촬영됨 ✅';b.className='step-badge ok';}}
+      showToast('📷 '+label+' 저장됨 ✅');
     };
     reader.readAsDataURL(file);
   });
 }
 
-/* ════════════════════════════════
-   입력 변경 → 즉시 저장 표시
-════════════════════════════════ */
-function onFieldChange() {
-  // 각 필드 저장 표시
-  ['bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
-    var el = document.getElementById(id);
-    var si = document.getElementById('si_'+id);
-    if (el && si) {
-      si.classList.toggle('show', el.value.trim() !== '');
-      if (el.value.trim()) el.classList.add('saved');
-      else el.classList.remove('saved');
-    }
+/* 갤러리 저장 */
+function saveToGallery(data,label){
+  try{
+    var no=document.getElementById('noInp').value||'000';
+    var pad=String(no);while(pad.length<3)pad='0'+pad;
+    var dt=appDate.replace(/-/g,''),ext=data.mime==='image/png'?'.png':'.jpg';
+    var fname='NO'+pad+'_'+label+'_'+dt+ext;
+    var bytes=b64ToArr(data.base64),blob=new Blob([bytes],{type:data.mime});
+    var url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=fname;a.style.display='none';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},2000);
+  }catch(e){console.warn('갤러리 저장 실패:',e);}
+}
+function b64ToArr(b){var bin=atob(b),bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return bytes;}
+
+/* 입력 변경 */
+function onChg(){
+  ['bRead','bSeal','aRead','aMeter','aSeal'].forEach(id=>{
+    var el=document.getElementById(id),st=document.getElementById('st_'+id);
+    if(el&&st){st.classList.toggle('show',!!el.value.trim());if(el.value.trim())el.classList.add('saved');else el.classList.remove('saved');}
   });
-  // STEP 3 상태
-  var ss3 = document.getElementById('ss3');
-  if (ss3) { ss3.textContent = '입력됨 ✅'; ss3.className = 'step-status saved'; }
-  // STEP 4 상태
-  var aRead = document.getElementById('aRead').value;
-  var aMeter = document.getElementById('aMeter').value;
-  var aSeal = document.getElementById('aSeal').value;
-  var ss4 = document.getElementById('ss4');
-  if (ss4 && aRead && aMeter && aSeal) { ss4.textContent = '완료 ✅'; ss4.className = 'step-status saved'; }
-  quickSave();
-}
-
-/* ════════════════════════════════
-   수용가 확인 모드
-════════════════════════════════ */
-function setC(mode) {
-  cMode = mode;
-  document.getElementById('btnSign').className    = 'ct'+(mode==='sign'?' active-sign':'');
-  document.getElementById('btnSticker').className = 'ct'+(mode==='sticker'?' active-sticker':'');
-  document.getElementById('condSign').className    = 'cond'+(mode==='sign'?' active':'');
-  document.getElementById('condSticker').className = 'cond'+(mode==='sticker'?' active':'');
-}
-
-/* ════════════════════════════════
-   서명 캔버스
-════════════════════════════════ */
-function initSignCanvas() {
-  var cv = document.getElementById('scFull');
-  function getPos(e) {
-    var rect = cv.getBoundingClientRect();
-    var src = e.touches ? e.touches[0] : e;
-    return { x:(src.clientX-rect.left)*(cv.offsetWidth/(rect.width||1)), y:(src.clientY-rect.top)*(cv.offsetHeight/(rect.height||1)) };
+  var s3=document.getElementById('sbadge3');if(s3){s3.textContent='입력됨 ✅';s3.className='step-badge ok';}
+  if(document.getElementById('aRead').value&&document.getElementById('aMeter').value&&document.getElementById('aSeal').value){
+    var s4=document.getElementById('sbadge4');if(s4){s4.textContent='완료 ✅';s4.className='step-badge ok';}
+    document.getElementById('snum4').className='step-num done';
   }
-  function dn(e) { e.preventDefault(); if(!signCtx)return; signDrw=true; signLast=getPos(e); signCtx.beginPath(); signCtx.arc(signLast.x,signLast.y,1.5,0,Math.PI*2); signCtx.fill(); }
-  function mv(e) { if(!signDrw||!signCtx)return; e.preventDefault(); var p=getPos(e); signCtx.beginPath(); signCtx.moveTo(signLast.x,signLast.y); signCtx.lineTo(p.x,p.y); signCtx.stroke(); signLast=p; }
-  function up(e) { e.preventDefault(); signDrw=false; signLast=null; }
-  cv.addEventListener('mousedown',dn); cv.addEventListener('mousemove',mv); cv.addEventListener('mouseup',up); cv.addEventListener('mouseleave',up);
-  cv.addEventListener('touchstart',dn,{passive:false}); cv.addEventListener('touchmove',mv,{passive:false}); cv.addEventListener('touchend',up,{passive:false});
-  window.addEventListener('orientationchange', function(){ setTimeout(function(){ if(document.getElementById('signModal').classList.contains('open')) setupSignCanvas(); },400); });
+  autoSave();
 }
 
-function setupSignCanvas() {
-  var cv = document.getElementById('scFull');
-  var dpr = window.devicePixelRatio||1;
-  if (!cv.offsetWidth||!cv.offsetHeight) return;
-  cv.width = cv.offsetWidth*dpr; cv.height = cv.offsetHeight*dpr;
-  var ctx = cv.getContext('2d');
-  ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
-  ctx.strokeStyle='#ffffff'; ctx.fillStyle='#ffffff'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
-  signCtx = ctx;
+/* 수용가 확인 모드 */
+function setC(mode){
+  cMode=mode;
+  document.getElementById('ctSign').className='ct-btn'+(mode==='sign'?' on-sign':'');
+  document.getElementById('ctSticker').className='ct-btn'+(mode==='sticker'?' on-sticker':'');
+  document.getElementById('condSign').className='cond'+(mode==='sign'?' on':'');
+  document.getElementById('condSticker').className='cond'+(mode==='sticker'?' on':'');
 }
 
-function openSign() { document.getElementById('signModal').classList.add('open'); document.body.style.overflow='hidden'; setTimeout(setupSignCanvas,150); }
-function closeSign() { document.getElementById('signModal').classList.remove('open'); document.body.style.overflow=''; }
-function clearSign() { var cv=document.getElementById('scFull'); if(signCtx) signCtx.clearRect(0,0,cv.offsetWidth,cv.offsetHeight); }
-
-function confirmSign() {
-  var cv = document.getElementById('scFull');
-  if (!signCtx) return;
-  var d = signCtx.getImageData(0,0,cv.width,cv.height).data;
-  var ok = false;
-  for (var i=3;i<d.length;i+=4){ if(d[i]>10){ok=true;break;} }
-  if (!ok) { showToast('⚠️ 서명을 해주세요.'); return; }
-  var dataUrl = cv.toDataURL('image/png');
-  document.getElementById('signPreviewImg').src = dataUrl;
-  signSaved = true;
-  document.getElementById('signPreviewArea').style.display = 'block';
-  document.getElementById('signOpenArea').style.display = 'none';
+/* 서명 */
+function initSignCanvas(){
+  var cv=document.getElementById('sc');
+  var gp=e=>{var r=cv.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:(s.clientX-r.left)*(cv.offsetWidth/(r.width||1)),y:(s.clientY-r.top)*(cv.offsetHeight/(r.height||1))};};
+  var dn=e=>{e.preventDefault();if(!signCtx)return;signDrw=true;signLast=gp(e);signCtx.beginPath();signCtx.arc(signLast.x,signLast.y,1.5,0,Math.PI*2);signCtx.fill();};
+  var mv=e=>{if(!signDrw||!signCtx)return;e.preventDefault();var p=gp(e);signCtx.beginPath();signCtx.moveTo(signLast.x,signLast.y);signCtx.lineTo(p.x,p.y);signCtx.stroke();signLast=p;};
+  var up=e=>{e.preventDefault();signDrw=false;signLast=null;};
+  cv.addEventListener('mousedown',dn);cv.addEventListener('mousemove',mv);cv.addEventListener('mouseup',up);cv.addEventListener('mouseleave',up);
+  cv.addEventListener('touchstart',dn,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',up,{passive:false});
+  window.addEventListener('orientationchange',()=>setTimeout(()=>{if(document.getElementById('signModal').classList.contains('open'))setupSign();},400));
+}
+function setupSign(){
+  var cv=document.getElementById('sc'),dpr=window.devicePixelRatio||1;
+  if(!cv.offsetWidth||!cv.offsetHeight)return;
+  cv.width=cv.offsetWidth*dpr;cv.height=cv.offsetHeight*dpr;
+  var ctx=cv.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
+  ctx.strokeStyle='#ffffff';ctx.fillStyle='#ffffff';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';signCtx=ctx;
+}
+function openSign(){document.getElementById('signModal').classList.add('open');document.body.style.overflow='hidden';setTimeout(setupSign,150);}
+function closeSign(){document.getElementById('signModal').classList.remove('open');document.body.style.overflow='';}
+function clearSign(){var cv=document.getElementById('sc');if(signCtx)signCtx.clearRect(0,0,cv.offsetWidth,cv.offsetHeight);}
+function confirmSign(){
+  var cv=document.getElementById('sc');if(!signCtx)return;
+  var d=signCtx.getImageData(0,0,cv.width,cv.height).data,ok=false;
+  for(var i=3;i<d.length;i+=4)if(d[i]>10){ok=true;break;}
+  if(!ok){showToast('⚠️ 서명을 해주세요.');return;}
+  var dataUrl=cv.toDataURL('image/png');
+  document.getElementById('signImg').src=dataUrl;
+  signSaved=true;
+  document.getElementById('signDoneArea').style.display='block';
+  document.getElementById('signOpenArea').style.display='none';
   closeSign();
-
-  // IndexedDB에 서명 저장
-  var no = document.getElementById('noInput').value || '0';
-  var signData = { base64: dataUrl.split(',')[1], mime: 'image/png' };
-  photos['sign'] = signData;
-  dbPut('photos', { key:'photo_'+appDate+'_'+no+'_sign', data:signData, label:'서명', no:no, date:appDate });
-  saveToGallery(signData, '서명');
-
-  // STEP 6 상태 업데이트
-  var ss6 = document.getElementById('ss6');
-  if (ss6) { ss6.textContent='완료 ✅'; ss6.className='step-status saved'; }
-  document.getElementById('sn6').className = 'step-num done';
-
-  showToast('✅ 서명 저장됨');
-  quickSave();
+  var no=document.getElementById('noInp').value||'0';
+  var sd={base64:dataUrl.split(',')[1],mime:'image/png'};
+  photos['sign']=sd;
+  dbPut('photos',{key:'photo_'+appDate+'_'+no+'_sign',data:sd,label:'서명',no,date:appDate});
+  saveToGallery(sd,'서명');
+  var b=document.getElementById('sbadge6');if(b){b.textContent='완료 ✅';b.className='step-badge ok';}
+  document.getElementById('snum6').className='step-num done';
+  showToast('✅ 서명 저장됨');autoSave();
 }
 
-/* ════════════════════════════════
-   임시저장 (IndexedDB)
-════════════════════════════════ */
-function quickSave() {
-  if (!appDate || !appWorker) return;
-  var no = document.getElementById('noInput').value;
-  if (!no) return;
-  try {
-    var data = {
-      key       : appDate+'_'+no,
-      no        : no,
-      date      : appDate,
-      worker    : appWorker,
-      cur       : cur,
-      bValve    : document.querySelector('input[name="bv"]:checked') ? document.querySelector('input[name="bv"]:checked').value : '개(열림)',
-      bRead     : document.getElementById('bRead').value,
-      bSeal     : document.getElementById('bSeal').value,
-      aRead     : document.getElementById('aRead').value,
-      aMeter    : document.getElementById('aMeter').value,
-      aSeal     : document.getElementById('aSeal').value,
-      aValve    : document.querySelector('input[name="av"]:checked') ? document.querySelector('input[name="av"]:checked').value : '이상없음',
-      cMode     : cMode,
-      signSaved : signSaved,
-      uploaded  : false,
-      savedAt   : Date.now(),
-    };
-    dbPut('works', data);
-  } catch(e) {}
+/* 자동저장 */
+function autoSave(){
+  if(!appDate||!appWorker)return;
+  var no=document.getElementById('noInp').value;if(!no)return;
+  try{
+    dbPut('works',{
+      key:appDate+'_'+no,no,date:appDate,worker:appWorker,cur,
+      bValve:document.querySelector('input[name="bv"]:checked')?.value||'개(열림)',
+      bRead:document.getElementById('bRead').value,
+      bSeal:document.getElementById('bSeal').value,
+      aRead:document.getElementById('aRead').value,
+      aMeter:document.getElementById('aMeter').value,
+      aSeal:document.getElementById('aSeal').value,
+      aValve:document.querySelector('input[name="av"]:checked')?.value||'이상없음',
+      cMode,signSaved,uploaded:false,savedAt:Date.now()
+    });
+  }catch(e){}
 }
 
-/* ════════════════════════════════
-   작업 임시저장 (완료 처리)
-════════════════════════════════ */
-function saveWork() {
-  var no = document.getElementById('noInput').value;
-  if (!no || !cur) { showToast('⚠️ NO를 먼저 입력해 주세요.'); return; }
-  if (!document.getElementById('aRead').value)  { showToast('⚠️ 교체 후 지침을 입력해 주세요.'); return; }
-  if (!document.getElementById('aMeter').value) { showToast('⚠️ 기물번호를 입력해 주세요.'); return; }
-  if (!document.getElementById('aSeal').value)  { showToast('⚠️ 봉인번호를 입력해 주세요.'); return; }
-  if (!photos.full && !photos.before && !photos.after) { showToast('⚠️ 사진을 촬영해 주세요.'); return; }
-  if (cMode==='sign' && !signSaved) { showToast('⚠️ 서명을 받아주세요.'); return; }
-  if (cMode==='sticker' && !photos.sticker) { showToast('⚠️ 스티커 사진을 촬영해 주세요.'); return; }
+/* 하단 바 */
+function updateBot(){
+  var no=document.getElementById('noInp').value;
+  if(cur&&no){document.getElementById('botNo').textContent='NO. '+String(no).padStart(3,'0');document.getElementById('botAddr').textContent=cur.address||'주소 없음';}
+  else{document.getElementById('botNo').textContent='NO. —';document.getElementById('botAddr').textContent='NO를 입력해 주세요';}
+}
 
-  quickSave();
+/* 작업 저장 */
+function saveWork(){
+  var no=document.getElementById('noInp').value;
+  if(!no||!cur){showToast('⚠️ NO를 먼저 입력해 주세요.');return;}
+  if(!document.getElementById('aRead').value){showToast('⚠️ 교체 후 지침을 입력해 주세요.');return;}
+  if(!document.getElementById('aMeter').value){showToast('⚠️ 기물번호를 입력해 주세요.');return;}
+  if(!document.getElementById('aSeal').value){showToast('⚠️ 봉인번호를 입력해 주세요.');return;}
+  if(!photos.full&&!photos.before&&!photos.after){showToast('⚠️ 사진을 최소 1장 촬영해 주세요.');return;}
+  if(cMode==='sign'&&!signSaved){showToast('⚠️ 서명을 받아주세요.');return;}
+  if(cMode==='sticker'&&!photos.sticker){showToast('⚠️ 스티커 사진을 촬영해 주세요.');return;}
+  autoSave();
   showToast('✅ NO '+String(no).padStart(3,'0')+' 임시저장 완료!');
-
-  // 폼 초기화
-  setTimeout(function() { resetForm(); switchTab('list'); }, 800);
+  setTimeout(()=>{resetForm();goTab('list');},700);
 }
 
-/* ════════════════════════════════
-   하단 바
-════════════════════════════════ */
-function updateBar() {
-  var no = document.getElementById('noInput').value;
-  if (cur && no) {
-    document.getElementById('barNo').textContent   = 'NO. '+String(no).padStart(3,'0');
-    document.getElementById('barAddr').textContent = cur.address||'주소 없음';
-  } else {
-    document.getElementById('barNo').textContent   = 'NO. —';
-    document.getElementById('barAddr').textContent = 'NO를 입력해 주세요';
-  }
-}
-
-/* ════════════════════════════════
-   폼 초기화
-════════════════════════════════ */
-function resetForm() {
-  document.getElementById('noInput').value = '';
+/* 폼 초기화 */
+function resetForm(){
+  document.getElementById('noInp').value='';
   document.getElementById('noBox').classList.remove('found','notfound');
-  document.getElementById('noTag').className = 'no-tag';
-  document.getElementById('noHint').textContent = 'NO 입력 시 수용가 정보를 불러옵니다';
-  document.getElementById('noHint').className = 'no-hint';
-  cur = null; resetInfo(); updateBar();
-  ['bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id){
-    document.getElementById(id).value = '';
-    document.getElementById(id).classList.remove('saved');
-    var si = document.getElementById('si_'+id);
-    if (si) si.classList.remove('show');
+  document.getElementById('noTag').className='no-tag';
+  document.getElementById('noHint').textContent='NO 입력 시 수용가 정보를 자동으로 불러옵니다';
+  document.getElementById('noHint').className='no-hint';
+  cur=null;resetCust();updateBot();
+  ['bRead','bSeal','aRead','aMeter','aSeal'].forEach(id=>{
+    var el=document.getElementById(id);if(el){el.value='';el.classList.remove('saved');}
+    var st=document.getElementById('st_'+id);if(st)st.classList.remove('show');
   });
-  document.querySelectorAll('input[name="bv"]')[0].checked = true;
-  document.querySelectorAll('input[name="av"]')[0].checked = true;
-  ['sl_full','sl_before','sl_after','sl_sticker'].forEach(function(id){
-    var el = document.getElementById(id); if(!el)return;
-    el.classList.remove('ok');
+  document.querySelectorAll('input[name="bv"]')[0].checked=true;
+  document.querySelectorAll('input[name="av"]')[0].checked=true;
+  ['full','before','after','sticker'].forEach(k=>{
+    var img=document.getElementById('pimg_'+k);if(img){img.src='';img.classList.remove('show');}
+    var thumb=document.getElementById('thumb_'+k);if(thumb)thumb.classList.remove('taken');
+    var btn=document.getElementById('pbtn_'+k);if(btn)btn.classList.remove('taken');
+    var sub=document.getElementById('psub_p'+k);if(sub){sub.textContent='탭하여 카메라 열기';sub.classList.remove('saved');}
   });
-  ['img_full','img_before','img_after','img_sticker'].forEach(function(id){
-    var el = document.getElementById(id); if(el){el.src='';el.classList.remove('show');}
-  });
-  ['ss1','ss2','ss3','ss4','ss5','ss6'].forEach(function(id){
-    var el = document.getElementById(id); if(el){el.textContent=id==='ss3'||id==='ss4'?'미입력':'미촬영';el.className='step-status pending';}
-  });
-  for(var i=1;i<=6;i++){var el=document.getElementById('sn'+i);if(el)el.className='step-num';}
-  signSaved = false; signCtx = null;
-  document.getElementById('signPreviewArea').style.display = 'none';
-  document.getElementById('signOpenArea').style.display = 'block';
-  document.getElementById('signPreviewImg').src = '';
-  photos = { full:null, before:null, after:null, sticker:null, sign:null };
-  setC('sign');
-  goStep(1);
+  for(var i=1;i<=6;i++){
+    var b=document.getElementById('sbadge'+i);if(b){b.textContent=i<=2||i===5?'미촬영':i===6?'미완료':'미입력';b.className='step-badge ng';}
+    var n=document.getElementById('snum'+i);if(n)n.className='step-num';
+  }
+  signSaved=false;signCtx=null;
+  document.getElementById('signDoneArea').style.display='none';
+  document.getElementById('signOpenArea').style.display='block';
+  document.getElementById('signImg').src='';
+  photos={full:null,before:null,after:null,sticker:null,sign:null};
+  setC('sign');goStep(1);
 }
 
-/* ════════════════════════════════
-   작업목록 탭
-════════════════════════════════ */
-function updateListTab() {
-  if (!appDate) return;
-  document.getElementById('listDate').textContent = appDate;
-  document.getElementById('listWorkerName').textContent = appWorker;
-  dbGetAll('works').then(function(all) {
-    var works = all.filter(function(w){ return w.date === appDate && w.worker === appWorker; });
-    works.sort(function(a,b){ return parseInt(a.no)-parseInt(b.no); });
-    document.getElementById('listTotal').textContent = works.length;
-    var html = '';
-    if (works.length === 0) {
-      html = '<div class="empty-list"><div class="empty-icon">📋</div><div class="empty-text">오늘 작업한 내용이 없어요</div></div>';
-    } else {
-      works.forEach(function(w) {
-        var pad = String(w.no).padStart(3,'0');
-        var name = w.cur ? (w.cur.custName||'—') : '—';
-        var addr = w.cur ? (w.cur.address||'—') : '—';
-        var badge = w.uploaded
-          ? '<span class="badge uploaded">☁️ 업로드완료</span>'
-          : '<span class="badge pending">💾 업로드대기</span>';
-        var sign = w.signSaved ? '<span class="badge saved">✍️ 서명</span>' : '';
-        html += '<div class="work-item" onclick="showDetail(\''+w.key+'\')">'+
-          '<div class="wi-no">NO.'+pad+'</div>'+
-          '<div class="wi-info"><div class="wi-name">'+name+'</div><div class="wi-addr">'+addr+'</div></div>'+
-          '<div class="wi-badges">'+badge+sign+'</div>'+
-          '</div>';
-      });
-    }
-    document.getElementById('workList').innerHTML = html;
-  });
+/* 작업목록 */
+async function updateListTab(){
+  if(!appDate)return;
+  document.getElementById('listDate').textContent=appDate;
+  document.getElementById('listWorker').textContent=appWorker;
+  var all=await dbAll('works');
+  var works=all.filter(w=>w.date===appDate&&w.worker===appWorker).sort((a,b)=>parseInt(a.no)-parseInt(b.no));
+  document.getElementById('listCnt').textContent=works.length;
+  if(!works.length){document.getElementById('workList').innerHTML='<div class="empty-state"><div class="empty-ic">📋</div><div class="empty-tx">오늘 작업한 내용이 없어요</div></div>';return;}
+  document.getElementById('workList').innerHTML=works.map(w=>{
+    var pad=String(w.no).padStart(3,'0');
+    var name=w.cur?(w.cur.custName||'—'):'—';
+    var addr=w.cur?(w.cur.address||'—'):'—';
+    return '<div class="work-item" onclick="showDetail(\''+w.key+'\')">'+
+      '<div class="wi-no">'+pad+'</div>'+
+      '<div class="wi-info"><div class="wi-name">'+name+'</div><div class="wi-addr">'+addr+'</div></div>'+
+      '<div class="wi-status">'+
+        (w.uploaded?'<span class="wi-badge done">☁️ 완료</span>':'<span class="wi-badge wait">⏳ 대기</span>')+
+        (w.signSaved?'<span class="wi-badge sign">✍️</span>':'')+
+      '</div></div>';
+  }).join('');
 }
 
-/* ════════════════════════════════
-   작업 상세
-════════════════════════════════ */
-function showDetail(key) {
-  dbGet('works', key).then(function(w) {
-    if (!w) return;
-    var pad = String(w.no).padStart(3,'0');
-    var html = '<div class="detail-hdr">'+
-      '<div class="detail-title">NO.'+pad+' 작업상세</div>'+
-      '<button class="detail-close" onclick="closeDetail()">✕</button>'+
-      '</div>';
-
-    html += '<div class="detail-section"><div class="detail-section-title">수용가 정보</div>';
-    if (w.cur) {
-      [['수용가명',w.cur.custName],['연락처',w.cur.phone],['주소',w.cur.address],['구경',w.cur.size]].forEach(function(r){
-        html += '<div class="detail-row"><div class="dr-key">'+r[0]+'</div><div class="dr-val">'+(r[1]||'—')+'</div></div>';
-      });
-    }
-    html += '</div>';
-
-    html += '<div class="detail-section"><div class="detail-section-title">교체 전</div>';
-    [['밸브상태',w.bValve],['지침',w.bRead||'미기재'],['봉인번호',w.bSeal||'미기재']].forEach(function(r){
-      html += '<div class="detail-row"><div class="dr-key">'+r[0]+'</div><div class="dr-val">'+r[1]+'</div></div>';
-    });
-    html += '</div>';
-
-    html += '<div class="detail-section"><div class="detail-section-title">교체 후</div>';
-    [['지침',w.aRead],['기물번호',w.aMeter],['봉인번호',w.aSeal],['밸브상태',w.aValve]].forEach(function(r){
-      html += '<div class="detail-row"><div class="dr-key">'+r[0]+'</div><div class="dr-val">'+(r[1]||'—')+'</div></div>';
-    });
-    html += '</div>';
-
-    html += '<div class="detail-section"><div class="detail-section-title">저장상태</div>';
-    html += '<div class="detail-row"><div class="dr-key">확인방식</div><div class="dr-val">'+(w.cMode==='sign'?'서명':'스티커')+'</div></div>';
-    html += '<div class="detail-row"><div class="dr-key">업로드상태</div><div class="dr-val">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+'</div></div>';
-    html += '</div>';
-
-    html += '<button class="delete-btn" onclick="deleteWork(\''+key+'\')">🗑 이 작업 삭제</button>';
-
-    document.getElementById('detailBox').innerHTML = html;
-    document.getElementById('detailModal').classList.add('open');
-  });
+/* 상세 */
+async function showDetail(key){
+  var w=await dbGet('works',key);if(!w)return;
+  var pad=String(w.no).padStart(3,'0');
+  var html='<div class="det-hdr"><div class="det-title">NO.'+pad+'</div><button class="det-close" onclick="closeDet()">✕</button></div>';
+  html+='<div class="det-sec"><div class="det-sec-title">수용가 정보</div>';
+  if(w.cur)[['수용가명',w.cur.custName],['연락처',w.cur.phone],['주소',w.cur.address],['구경',w.cur.size]].forEach(r=>html+='<div class="det-row"><div class="det-k">'+r[0]+'</div><div class="det-v">'+(r[1]||'—')+'</div></div>');
+  html+='</div><div class="det-sec"><div class="det-sec-title">교체 전</div>';
+  [['밸브',w.bValve],['지침',w.bRead||'미기재'],['봉인',w.bSeal||'미기재']].forEach(r=>html+='<div class="det-row"><div class="det-k">'+r[0]+'</div><div class="det-v">'+r[1]+'</div></div>');
+  html+='</div><div class="det-sec"><div class="det-sec-title">교체 후</div>';
+  [['지침',w.aRead],['기물번호',w.aMeter],['봉인',w.aSeal],['밸브',w.aValve]].forEach(r=>html+='<div class="det-row"><div class="det-k">'+r[0]+'</div><div class="det-v">'+(r[1]||'—')+'</div></div>');
+  html+='</div><div class="det-sec"><div class="det-sec-title">상태</div>';
+  html+='<div class="det-row"><div class="det-k">확인방식</div><div class="det-v">'+(w.cMode==='sign'?'서명':'스티커')+'</div></div>';
+  html+='<div class="det-row"><div class="det-k">업로드</div><div class="det-v">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+'</div></div>';
+  html+='</div><button class="del-btn" onclick="delWork(\''+key+'\')">🗑 이 작업 삭제</button>';
+  document.getElementById('detBox').innerHTML=html;
+  document.getElementById('detBg').classList.add('open');
+}
+function closeDet(){document.getElementById('detBg').classList.remove('open');}
+async function delWork(key){
+  if(!confirm('삭제하시겠습니까?'))return;
+  var no=key.split('_')[1];
+  ['full','before','after','sticker','sign'].forEach(k=>dbDel('photos','photo_'+appDate+'_'+no+'_'+k));
+  await dbDel('works',key);closeDet();updateListTab();updateUploadTab();showToast('🗑 삭제됐습니다.');
 }
 
-function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
-
-function deleteWork(key) {
-  if (!confirm('이 작업을 삭제하시겠습니까?')) return;
-  // 사진도 삭제
-  var no = key.split('_')[1];
-  ['full','before','after','sticker','sign'].forEach(function(k) {
-    dbDelete('photos', 'photo_'+appDate+'_'+no+'_'+k);
-  });
-  dbDelete('works', key).then(function() {
-    closeDetail();
-    updateListTab();
-    updateUploadTab();
-    showToast('🗑 삭제됐습니다.');
-  });
+/* 업로드 탭 */
+async function updateUploadTab(){
+  if(!appDate)return;
+  var all=await dbAll('works');
+  var works=all.filter(w=>w.date===appDate&&w.worker===appWorker);
+  var total=works.length,done=works.filter(w=>w.uploaded).length,wait=total-done;
+  document.getElementById('stAll').textContent=total;
+  document.getElementById('stWait').textContent=wait;
+  document.getElementById('stDone').textContent=done;
+  var btn=document.getElementById('upBtn');
+  btn.disabled=wait===0;
+  btn.textContent=wait>0?'☁️ '+wait+'건 업로드 시작':'✅ 모두 완료';
+  document.getElementById('upItems').innerHTML=works.map(w=>{
+    var pad=String(w.no).padStart(3,'0');
+    var name=w.cur?(w.cur.custName||'—'):'—';
+    return '<div class="ui-item" id="ui_'+w.key+'">'+
+      '<div class="ui-row">'+
+        '<div class="ui-no">'+pad+'</div>'+
+        '<div class="ui-info"><div class="ui-name">'+name+'</div><div class="ui-prog" id="up_'+w.key+'">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+'</div></div>'+
+        '<div class="ui-ic">'+(w.uploaded?'✅':'⏳')+'</div>'+
+      '</div>'+
+      '<div class="prog-wrap"><div class="prog-bar" id="pb_'+w.key+'" style="width:'+(w.uploaded?100:0)+'%"></div></div>'+
+    '</div>';
+  }).join('')||'<div class="empty-state"><div class="empty-ic">☁️</div><div class="empty-tx">업로드할 작업이 없어요</div></div>';
 }
 
-/* ════════════════════════════════
-   업로드 탭
-════════════════════════════════ */
-function updateUploadTab() {
-  if (!appDate) return;
-  dbGetAll('works').then(function(all) {
-    var works = all.filter(function(w){ return w.date===appDate && w.worker===appWorker; });
-    var total = works.length;
-    var done  = works.filter(function(w){ return w.uploaded; }).length;
-    var wait  = total - done;
-    document.getElementById('statTotal').textContent = total;
-    document.getElementById('statWait').textContent  = wait;
-    document.getElementById('statDone').textContent  = done;
-
-    var btn = document.getElementById('uploadBtn');
-    btn.disabled = wait === 0;
-    btn.textContent = wait > 0 ? '☁️ '+wait+'건 업로드 시작' : '✅ 모두 업로드 완료';
-
-    var html = '';
-    works.forEach(function(w) {
-      var pad = String(w.no).padStart(3,'0');
-      var name = w.cur ? (w.cur.custName||'—') : '—';
-      html += '<div class="upload-item" id="ui_'+w.key+'">'+
-        '<div class="ui-no">NO.'+pad+'</div>'+
-        '<div class="ui-info">'+
-          '<div class="ui-name">'+name+'</div>'+
-          '<div class="ui-progress" id="up_'+w.key+'">'+(w.uploaded?'✅ 업로드 완료':'⏳ 업로드 대기중')+'</div>'+
-          '<div class="progress-bar-wrap"><div class="progress-bar" id="pb_'+w.key+'" style="width:'+(w.uploaded?'100':'0')+'%"></div></div>'+
-        '</div>'+
-        '<div class="ui-status">'+(w.uploaded?'✅':'⏳')+'</div>'+
-        '</div>';
-    });
-    document.getElementById('uploadList').innerHTML = html || '<div class="empty-list"><div class="empty-icon">☁️</div><div class="empty-text">업로드할 작업이 없어요</div></div>';
-  });
-}
-
-/* ════════════════════════════════
-   업로드 실행
-════════════════════════════════ */
-async function startUpload() {
-  var all = await dbGetAll('works');
-  var works = all.filter(function(w){ return w.date===appDate && w.worker===appWorker && !w.uploaded; });
-  if (works.length === 0) { showToast('✅ 업로드할 작업이 없어요.'); return; }
-
-  document.getElementById('uploadBtn').disabled = true;
-  document.getElementById('uploadBtn').textContent = '업로드 중...';
-
-  for (var i = 0; i < works.length; i++) {
-    var w = works[i];
-    var pad = String(w.no).padStart(3,'0');
-    var upEl = document.getElementById('up_'+w.key);
-    var pbEl = document.getElementById('pb_'+w.key);
-
-    try {
-      // 1. 사진 불러오기
-      if (upEl) upEl.textContent = '📷 사진 불러오는 중...';
-      if (pbEl) pbEl.style.width = '20%';
-
-      var photoKeys = ['full','before','after','sticker','sign'];
-      var uploadPhotos = {};
-      for (var j = 0; j < photoKeys.length; j++) {
-        var pk = photoKeys[j];
-        var photoRec = await dbGet('photos', 'photo_'+appDate+'_'+w.no+'_'+pk);
-        if (photoRec) uploadPhotos[pk] = photoRec.data;
+/* 업로드 실행 */
+async function startUpload(){
+  var all=await dbAll('works');
+  var works=all.filter(w=>w.date===appDate&&w.worker===appWorker&&!w.uploaded);
+  if(!works.length){showToast('✅ 업로드할 작업이 없어요.');return;}
+  document.getElementById('upBtn').disabled=true;
+  document.getElementById('upBtn').textContent='업로드 중…';
+  for(var w of works){
+    var pad=String(w.no).padStart(3,'0');
+    var upEl=document.getElementById('up_'+w.key),pbEl=document.getElementById('pb_'+w.key);
+    try{
+      if(upEl)upEl.textContent='📷 사진 불러오는 중…';if(pbEl)pbEl.style.width='20%';
+      var ups={};
+      for(var pk of['full','before','after','sticker','sign']){
+        var pr=await dbGet('photos','photo_'+appDate+'_'+w.no+'_'+pk);
+        if(pr)ups[pk]=pr.data;
       }
-
-      // 2. 드라이브 사진 업로드
-      if (upEl) upEl.textContent = '☁️ 드라이브 저장 중...';
-      if (pbEl) pbEl.style.width = '50%';
-
-      var photoResult = await gasPost('savePhotos', { no: w.no, workDate: w.date, photos: uploadPhotos });
-      if (!photoResult.success) throw new Error(photoResult.msg);
-
-      // 3. 시트 기록
-      if (upEl) upEl.textContent = '📊 시트 기록 중...';
-      if (pbEl) pbEl.style.width = '80%';
-
-      var payload = {
-        no           : w.no,
-        workDate     : w.date,
-        beforeValve  : w.bValve,
-        beforeReading: w.bRead,
-        beforeSeal   : w.bSeal,
-        afterReading : w.aRead,
-        afterMeterNo : w.aMeter,
-        afterSeal    : w.aSeal,
-        afterValve   : w.aValve,
-        confirmType  : w.cMode,
-        worker       : w.worker,
-        photoFolderUrl: photoResult.folderUrl,
-      };
-      var saveResult = await gasPost('saveRecord', payload);
-      if (!saveResult.success) throw new Error(saveResult.msg);
-
-      // 4. 완료 처리
-      w.uploaded = true;
-      w.uploadedAt = Date.now();
-      await dbPut('works', w);
-      if (pbEl) pbEl.style.width = '100%';
-      if (upEl) upEl.textContent = '✅ 업로드 완료';
-      var statusEl = document.querySelector('#ui_'+w.key+' .ui-status');
-      if (statusEl) statusEl.textContent = '✅';
-      showToast('✅ NO'+pad+' 업로드 완료');
-
-    } catch(e) {
-      if (upEl) upEl.textContent = '❌ 실패: '+e.message;
-      if (pbEl) pbEl.style.backgroundColor = 'var(--red)';
-      showToast('❌ NO'+pad+' 실패: '+e.message);
+      if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
+      var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups});
+      if(!pr2.success)throw new Error(pr2.msg);
+      if(upEl)upEl.textContent='📊 시트 기록 중…';if(pbEl)pbEl.style.width='80%';
+      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,photoFolderUrl:pr2.folderUrl});
+      if(!sr.success)throw new Error(sr.msg);
+      w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
+      if(pbEl)pbEl.style.width='100%';if(upEl)upEl.textContent='✅ 완료';
+      var ic=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic)ic.textContent='✅';
+      showToast('✅ NO'+pad+' 완료');
+    }catch(e){
+      if(upEl)upEl.textContent='❌ 실패: '+e.message;
+      if(pbEl)pbEl.style.background='var(--red)';
+      showToast('❌ NO'+pad+' 실패');
     }
   }
-
   updateUploadTab();
 }
 
-/* ════════════════════════════════
-   갤러리 저장 (즉시)
-════════════════════════════════ */
-function saveToGallery(photoData, label) {
-  if (!photoData || !photoData.base64) return;
-  try {
-    var no      = document.getElementById('noInput').value || '000';
-    var pad     = String(no); while (pad.length < 3) pad = '0'+pad;
-    var dateTag = appDate.replace(/-/g,'');
-    var ext     = photoData.mime === 'image/png' ? '.png' : '.jpg';
-    var fname   = 'NO'+pad+'_'+label+'_'+dateTag+ext;
-    var bytes   = base64ToUint8Array(photoData.base64);
-    var blob    = new Blob([bytes], { type: photoData.mime });
-    var url     = URL.createObjectURL(blob);
-    var a       = document.createElement('a');
-    a.href      = url;
-    a.download  = fname;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
-  } catch(e) { console.warn('갤러리 저장 실패:', e); }
-}
-
-function base64ToUint8Array(b64) {
-  var bin = atob(b64), len = bin.length, bytes = new Uint8Array(len);
-  for (var i=0; i<len; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
-}
-
-/* ════════════════════════════════
-   워터마크 합성
-════════════════════════════════ */
-function compositePhoto(file, label) {
-  return new Promise(function(res, rej) {
-    if (!file) { res(null); return; }
-    var addr = cur ? (cur.address||'—') : '—';
-    var dateStr = '—';
-    if (appDate) {
-      var dp = appDate.split('-');
-      dateStr = dp[0]+'.'+parseInt(dp[1])+'.'+parseInt(dp[2]);
-    }
-    var fontReady = (document.fonts&&document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-    fontReady.then(function() {
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        var img = new Image();
-        img.onload = function() {
-          try {
-            var W0=img.naturalWidth||img.width, H0=img.naturalHeight||img.height;
-            var SCALE=0.577, W=Math.round(W0*SCALE), H=Math.round(H0*SCALE);
-            var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
-            var ctx=cv.getContext('2d');
-            ctx.drawImage(img,0,0,W,H);
-            var sc=W/1280, tW=Math.round(W*0.44), rowH=Math.round(32*sc);
-            var fSz=Math.max(Math.round(14*sc),11), pad=Math.round(6*sc);
-            var lw=Math.max(Math.round(sc),0.5), keyW=Math.round(tW*0.20);
-            var rows=[
-              {key:'공사명',val:'2026년 디지털계량기 교체공사(서남광산)'},
-              {key:'공  정',val:'디지털계량기 교체'},
-              {key:'위  치',val:addr},
-              {key:'내  용',val:label},
-              {key:'일  자',val:dateStr,extra:'시공사',extraVal:'(주)양정건설'},
-            ];
-            var tH=rowH*rows.length, tX=0, tY=H-tH;
-            ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fillRect(tX,tY,tW,tH);
-            ctx.strokeStyle='#222'; ctx.lineWidth=lw*1.5;
-            ctx.strokeRect(tX+lw*0.75,tY+lw*0.75,tW-lw*1.5,tH-lw*1.5);
-            ctx.lineWidth=lw; ctx.strokeStyle='#444'; ctx.textBaseline='middle';
-            rows.forEach(function(row,i){
-              var rY=tY+rowH*i, midY=rY+rowH/2;
-              if(i>0){ctx.beginPath();ctx.moveTo(tX,rY);ctx.lineTo(tX+tW,rY);ctx.stroke();}
-              if(!row.extra){
-                ctx.fillStyle='rgba(200,220,245,0.85)'; ctx.fillRect(tX,rY,keyW,rowH);
-                ctx.beginPath();ctx.moveTo(tX+keyW,rY);ctx.lineTo(tX+keyW,rY+rowH);ctx.stroke();
-                ctx.fillStyle='#111'; ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';
-                ctx.fillText(row.key,tX+pad,midY);
-                ctx.font=fSz+'px "Noto Sans KR",sans-serif';
-                ctx.fillText(ell(ctx,row.val,tW-keyW-pad*2),tX+keyW+pad,midY);
-              } else {
-                var dVW=Math.round((tW-keyW*2)*0.38),col2=tX+keyW,col3=col2+dVW,col4=col3+keyW;
-                ctx.fillStyle='rgba(200,220,245,0.85)';ctx.fillRect(tX,rY,keyW,rowH);ctx.fillRect(col3,rY,keyW,rowH);
-                [col2,col3,col4].forEach(function(x){ctx.beginPath();ctx.moveTo(x,rY);ctx.lineTo(x,rY+rowH);ctx.stroke();});
-                ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';
-                ctx.fillText(row.key,tX+pad,midY);
-                ctx.font=fSz+'px "Noto Sans KR",sans-serif';
-                ctx.fillText(ell(ctx,row.val,dVW-pad*2),col2+pad,midY);
-                ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.extra,col3+pad,midY);
-                ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.extraVal,tW-keyW-dVW-keyW-pad),col4+pad,midY);
+/* 워터마크 */
+function compositePhoto(file,label){
+  return new Promise((res,rej)=>{
+    if(!file){res(null);return;}
+    var addr=cur?(cur.address||'—'):'—';
+    var ds=appDate?appDate.split('-').map((v,i)=>i===0?v:parseInt(v)).join('.'):' — ';
+    var fr=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+    fr.then(()=>{
+      var reader=new FileReader();
+      reader.onload=ev=>{
+        var img=new Image();
+        img.onload=()=>{
+          try{
+            var W0=img.naturalWidth||img.width,H0=img.naturalHeight||img.height;
+            var S=0.577,W=Math.round(W0*S),H=Math.round(H0*S);
+            var cv=document.createElement('canvas');cv.width=W;cv.height=H;
+            var ctx=cv.getContext('2d');ctx.drawImage(img,0,0,W,H);
+            var sc=W/1280,tW=Math.round(W*.44),rH=Math.round(32*sc),fSz=Math.max(Math.round(14*sc),11),pd=Math.round(6*sc),lw=Math.max(Math.round(sc),.5),kW=Math.round(tW*.20);
+            var rows=[{k:'공사명',v:'2026년 디지털계량기 교체공사(서남광산)'},{k:'공  정',v:'디지털계량기 교체'},{k:'위  치',v:addr},{k:'내  용',v:label},{k:'일  자',v:ds,ex:'시공사',exv:'(주)양정건설'}];
+            var tH=rH*rows.length,tY=H-tH;
+            ctx.fillStyle='rgba(255,255,255,.95)';ctx.fillRect(0,tY,tW,tH);
+            ctx.strokeStyle='#222';ctx.lineWidth=lw*1.5;ctx.strokeRect(lw*.75,tY+lw*.75,tW-lw*1.5,tH-lw*1.5);
+            ctx.lineWidth=lw;ctx.strokeStyle='#444';ctx.textBaseline='middle';
+            rows.forEach((row,i)=>{
+              var rY=tY+rH*i,mY=rY+rH/2;
+              if(i>0){ctx.beginPath();ctx.moveTo(0,rY);ctx.lineTo(tW,rY);ctx.stroke();}
+              if(!row.ex){
+                ctx.fillStyle='rgba(200,220,245,.85)';ctx.fillRect(0,rY,kW,rH);
+                ctx.beginPath();ctx.moveTo(kW,rY);ctx.lineTo(kW,rY+rH);ctx.stroke();
+                ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.k,pd,mY);
+                ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.v,tW-kW-pd*2),kW+pd,mY);
+              }else{
+                var dVW=Math.round((tW-kW*2)*.38),c2=kW,c3=c2+dVW,c4=c3+kW;
+                ctx.fillStyle='rgba(200,220,245,.85)';ctx.fillRect(0,rY,kW,rH);ctx.fillRect(c3,rY,kW,rH);
+                [c2,c3,c4].forEach(x=>{ctx.beginPath();ctx.moveTo(x,rY);ctx.lineTo(x,rY+rH);ctx.stroke();});
+                ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.k,pd,mY);
+                ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.v,dVW-pd*2),c2+pd,mY);
+                ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.ex,c3+pd,mY);
+                ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.exv,tW-kW-dVW-kW-pd),c4+pd,mY);
               }
             });
-            res({base64:cv.toDataURL('image/jpeg',0.75).split(',')[1],mime:'image/jpeg'});
-          } catch(e){rej(e);}
+            res({base64:cv.toDataURL('image/jpeg',.75).split(',')[1],mime:'image/jpeg'});
+          }catch(e){rej(e);}
         };
-        img.onerror=function(){rej(new Error('이미지 로드 실패'));};
+        img.onerror=()=>rej(new Error('이미지 로드 실패'));
         img.src=ev.target.result;
       };
-      reader.onerror=function(){rej(new Error('파일 읽기 실패'));};
+      reader.onerror=()=>rej(new Error('파일 읽기 실패'));
       reader.readAsDataURL(file);
     });
   });
 }
-function ell(ctx,text,maxW){if(!text)return'—';if(ctx.measureText(text).width<=maxW)return text;var t=text;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
+function ell(ctx,t,mW){if(!t)return'—';if(ctx.measureText(t).width<=mW)return t;while(t.length>1&&ctx.measureText(t+'…').width>mW)t=t.slice(0,-1);return t+'…';}
 
-/* ════════════════════════════════
-   종료 다이얼로그
-════════════════════════════════ */
-function closeExitDialog(){document.getElementById('exitDialog').classList.remove('open');exitTarget=null;}
-function forceExit(){
-  document.getElementById('exitDialog').classList.remove('open');
-  if(exitTarget==='back') history.go(-2);
-  else {window.close();setTimeout(function(){window.location.href='about:blank';},300);}
-}
+/* 종료 */
+function closeExit(){document.getElementById('exitBg').classList.remove('open');exitTarget=null;}
+function doExit(){document.getElementById('exitBg').classList.remove('open');if(exitTarget==='back')history.go(-2);else{window.close();setTimeout(()=>window.location.href='about:blank',300);}}
 
-/* ════════════════════════════════
-   유틸
-════════════════════════════════ */
+/* 유틸 */
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),3000);}
 function showLoading(msg){document.getElementById('ltxt').textContent=msg||'처리 중…';document.getElementById('lov').classList.add('on');}
 function hideLoading(){document.getElementById('lov').classList.remove('on');}
-function showToast(msg){
-  var t=document.getElementById('toastEl');
-  t.textContent=msg; t.classList.add('on');
-  clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('on');},3000);
-}
 </script>
 </body>
 </html>
