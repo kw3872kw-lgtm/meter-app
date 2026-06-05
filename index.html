@@ -120,19 +120,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:#d4f0f7;min-height:100vh;c
 .step-status.partial{background:var(--amber-pale);color:#7a5000}
 
 /* ── 사진 슬롯 ── */
-.photo-slot{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:column;margin-bottom:10px}
+.photo-slot{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:row;align-items:center;margin-bottom:10px;min-height:80px}
 .photo-slot:active{transform:scale(0.98)}
 .photo-slot.ok{border-style:solid;border-color:var(--green);background:#fff}
-.ps-thumb{width:100%;aspect-ratio:16/4;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;border-radius:var(--r-xl) var(--r-xl) 0 0;overflow:hidden;position:relative}
+.ps-thumb{width:90px;height:70px;flex-shrink:0;aspect-ratio:unset;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;border-radius:var(--r-lg) 0 0 var(--r-lg);overflow:hidden;position:relative}
 .ps-thumb img{width:100%;height:100%;object-fit:cover;display:none}
 .ps-thumb img.show{display:block}
 .ps-thumb .ph-icon{font-size:36px;opacity:.3}
 .photo-slot.ok .ph-icon{display:none}
-.ps-label{padding:6px 10px;display:flex;align-items:center;justify-content:space-between}
-.ps-name{font-size:14px;font-weight:700;color:var(--ink)}
+.ps-label{padding:8px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.ps-name{font-size:16px;font-weight:700;color:var(--ink)}
 .ps-sub{font-size:11px;color:var(--muted)}
 .ps-saved{font-size:11px;font-weight:700;color:var(--green)}
-.photo-slot.ok::after{content:'✓ 저장됨';position:absolute;top:8px;right:10px;font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:3px 8px;border-radius:20px;z-index:10}
+.photo-slot.ok::after{content:'✓ 저장됨';position:absolute;top:6px;right:8px;font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:3px 8px;border-radius:20px;z-index:10}
 input.pi{display:none}
 
 /* ── 워터마크 오버레이 ── */
@@ -416,7 +416,7 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
       <div class="step-name">전체사진 촬영</div>
       <span class="step-status pending" id="ss1">미촬영</span>
     </div>
-    <div class="photo-slot" id="sl_full" onclick="tp('pFull')">
+    <div class="photo-slot" id="sl_full" onclick="tp('pFull')" style="max-width:50%;margin-left:auto">
       <input type="file" id="pFull" class="pi" accept="image/*" capture="environment"
         onchange="onPhoto(this,'sl_full','img_full','wm_full','전체사진','ss1','sn1')">
       <div class="ps-thumb">
@@ -446,7 +446,7 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
       <div class="step-name">교체 전 사진 촬영</div>
       <span class="step-status pending" id="ss2">미촬영</span>
     </div>
-    <div class="photo-slot" id="sl_before" onclick="tp('pBefore')">
+    <div class="photo-slot" id="sl_before" onclick="tp('pBefore')" style="max-width:50%;margin-left:auto">
       <input type="file" id="pBefore" class="pi" accept="image/*" capture="environment"
         onchange="onPhoto(this,'sl_before','img_before','wm_before','교체전','ss2','sn2')">
       <div class="ps-thumb">
@@ -542,7 +542,7 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
       <div class="step-name">교체 후 사진 촬영</div>
       <span class="step-status pending" id="ss5">미촬영</span>
     </div>
-    <div class="photo-slot" id="sl_after" onclick="tp('pAfter')">
+    <div class="photo-slot" id="sl_after" onclick="tp('pAfter')" style="max-width:50%;margin-left:auto">
       <input type="file" id="pAfter" class="pi" accept="image/*" capture="environment"
         onchange="onPhoto(this,'sl_after','img_after','wm_after','교체후','ss5','sn5')">
       <div class="ps-thumb">
@@ -590,7 +590,7 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
       </div>
     </div>
     <div class="cond" id="condSticker">
-      <div class="photo-slot" id="sl_sticker" onclick="tp('pSticker')">
+      <div class="photo-slot" id="sl_sticker" onclick="tp('pSticker')" style="max-width:50%;margin-left:auto">
         <input type="file" id="pSticker" class="pi" accept="image/*" capture="environment"
           onchange="onPhoto(this,'sl_sticker','img_sticker','wm_sticker','스티커부착','ss6','sn6')">
         <div class="ps-thumb">
