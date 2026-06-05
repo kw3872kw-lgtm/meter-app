@@ -3,17 +3,15 @@
   "short_name": "계량기교체",
   "description": "서남광산 고장디지털 계량기 교체 작업 앱",
   "start_url": "./index.html",
-  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#07192e",
+  "background_color": "#d4f0f7",
   "theme_color": "#07192e",
   "lang": "ko",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "prefer_related_applications": false
+  "categories": ["utilities", "productivity"],
+  "screenshots": []
 }
