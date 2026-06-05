@@ -11,247 +11,288 @@
 <title>디지털계량기 교체 앱</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="계량기교체">
-<meta name="theme-color" content="#07192e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
   --ink:#07192e;--ink-mid:#0d3050;--ink-soft:#1a5280;
-  --sea:#00b8cc;--sea-bright:#00d9ef;--sea-pale:rgba(0,184,204,0.10);--sea-border:rgba(0,184,204,0.22);
-  --foam:#eaf8fb;--sky:#d4f0f7;--white:#ffffff;
+  --sea:#00b8cc;--sea-bright:#00d9ef;
+  --foam:#eaf8fb;--white:#fff;
   --red:#f03e5c;--red-pale:rgba(240,62,92,0.10);
   --green:#00c48c;--green-pale:rgba(0,196,140,0.10);
-  --amber:#f5a623;--amber-pale:rgba(245,166,35,0.10);
+  --amber:#f5a623;--amber-pale:rgba(245,166,35,0.12);
   --muted:#7ea8c0;--border:rgba(0,184,204,0.18);
-  --r-sm:5px;--r-md:10px;--r-lg:16px;--r-xl:22px;
+  --r-sm:6px;--r-md:11px;--r-lg:16px;--r-xl:20px;
   --sh-sm:0 2px 8px rgba(7,25,46,0.07);
-  --sh-md:0 6px 20px rgba(7,25,46,0.11);
-  --sh-lg:0 14px 44px rgba(7,25,46,0.16);
+  --sh-md:0 5px 18px rgba(7,25,46,0.12);
   --t:0.2s cubic-bezier(.4,0,.2,1);
+  --fs-xs:11px;--fs-sm:12px;--fs-base:13px;--fs-md:14px;--fs-lg:16px;--fs-xl:18px;
 }
+html{font-size:13px;-webkit-text-size-adjust:100%;width:100%;overflow-x:hidden;}
+body{font-family:'Noto Sans KR',sans-serif;background:#d4f0f7;min-height:100vh;color:var(--ink);overflow-x:hidden;padding-bottom:70px;}
 
-html{
-  font-size:18px;
-  -webkit-text-size-adjust:100%;
-  -ms-text-size-adjust:100%;
-  width:100%;
-  overflow-x:hidden;
-}
-
-body{
-  font-family:'Noto Sans KR',sans-serif;
-  background:#d4f0f7;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 10% 0%,rgba(0,184,204,0.13) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 40% at 90% 100%,rgba(26,82,128,0.10) 0%,transparent 60%);
-  min-height:100vh;
-  color:var(--ink);
-  overflow-x:hidden;
-  padding-bottom:100px;
-  width:100%;
-  max-width:100%;
-}
-.hdr{position:sticky;top:0;z-index:200;background:rgba(7,25,46,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,217,239,0.15)}
-.hdr-inner{max-width:100%;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 16px}
-.hdr-brand{display:flex;align-items:center;gap:10px}
-.hdr-icon{width:34px;height:34px;border-radius:var(--r-sm);background:linear-gradient(135deg,var(--sea),var(--ink-soft));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--white);line-height:1}
-.hdr-sub{font-size:11px;color:rgba(0,217,239,0.7);letter-spacing:.6px;margin-top:2px}
-.worker-pill{display:flex;align-items:center;gap:6px;background:rgba(0,184,204,0.12);border:1px solid rgba(0,184,204,0.25);border-radius:20px;padding:5px 14px;font-size:13px;color:rgba(0,217,239,0.85)}
-.wpulse{width:6px;height:6px;border-radius:50%;background:var(--sea-bright);animation:blink 2s ease-in-out infinite}
+/* ── 헤더 ── */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(7,25,46,0.97);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,217,239,0.15)}
+.hdr-inner{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 12px}
+.hdr-brand{display:flex;align-items:center;gap:8px}
+.hdr-icon{width:28px;height:28px;border-radius:5px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));display:flex;align-items:center;justify-content:center;font-size:14px}
+.hdr-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:#fff;line-height:1}
+.hdr-sub{font-size:10px;color:rgba(0,217,239,0.7);margin-top:1px}
+.worker-pill{display:flex;align-items:center;gap:5px;background:rgba(0,184,204,0.12);border:1px solid rgba(0,184,204,0.25);border-radius:20px;padding:4px 10px;font-size:11px;color:rgba(0,217,239,0.85)}
+.wpulse{width:5px;height:5px;border-radius:50%;background:var(--sea-bright);animation:blink 2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.wave{height:28px;overflow:hidden}
-.wave svg{width:200%;height:100%;animation:wv 7s linear infinite}
-@keyframes wv{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.page{max-width:100%;width:100%;margin:0 auto;padding:16px 14px 0}
-.no-banner{background:rgba(7,25,46,0.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);padding:20px 22px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--sh-md)}
-.no-banner-label{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:var(--sea-bright);flex-shrink:0}
-.no-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,184,204,0.3);border-radius:var(--r-md);overflow:hidden;transition:border-color var(--t),box-shadow var(--t);flex-shrink:0}
-.no-wrap.focused{border-color:var(--sea);box-shadow:0 0 0 3px rgba(0,184,204,0.18)}
-.no-wrap.found{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,196,140,0.15)}
-.no-wrap.notfound{border-color:var(--red);box-shadow:0 0 0 3px rgba(240,62,92,0.12)}
-.no-pre{padding:10px 10px 10px 16px;font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--sea)}
-.no-wrap input{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:var(--white);letter-spacing:2px;width:100px;padding:10px 4px}
-.no-wrap input::placeholder{color:rgba(255,255,255,0.2);font-size:24px}
-.no-tag{margin-right:12px;padding:5px 10px;border-radius:4px;font-size:13px;font-weight:700;opacity:0;transition:opacity var(--t)}
+
+/* ── 탭 네비게이션 ── */
+.tab-nav{display:flex;background:rgba(7,25,46,0.95);border-bottom:1px solid rgba(0,184,204,0.15)}
+.tab-btn{flex:1;padding:8px 4px;background:none;border:none;font-family:'Noto Sans KR',sans-serif;font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all var(--t);border-bottom:2px solid transparent}
+.tab-btn.active{color:var(--sea-bright);border-bottom-color:var(--sea-bright)}
+.tab-icon{font-size:16px}
+
+/* ── 탭 콘텐츠 ── */
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── 공통 페이지 패딩 ── */
+.page{padding:10px 10px 0}
+
+/* ── 시작화면 (날짜+작업자) ── */
+.start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 120px);padding:20px}
+.start-card{background:#fff;border-radius:var(--r-xl);padding:24px 20px;width:100%;max-width:340px;box-shadow:var(--sh-md);text-align:center}
+.start-logo{font-size:48px;margin-bottom:12px}
+.start-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--ink);margin-bottom:4px}
+.start-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.start-field{margin-bottom:14px;text-align:left}
+.start-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block}
+.start-input{width:100%;padding:11px 14px;background:var(--foam);border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color var(--t)}
+.start-input:focus{border-color:var(--sea);background:#fff}
+.start-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-lg);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(0,184,204,0.3);transition:all var(--t)}
+.start-btn:active{transform:scale(0.98)}
+
+/* ── NO 배너 ── */
+.no-banner{background:rgba(7,25,46,0.88);backdrop-filter:blur(12px);border:1px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.no-label{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--sea-bright);flex-shrink:0}
+.no-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1.5px solid rgba(0,184,204,0.3);border-radius:var(--r-md);overflow:hidden;transition:border-color var(--t)}
+.no-wrap.found{border-color:var(--green)}
+.no-wrap.notfound{border-color:var(--red)}
+.no-pre{padding:7px 8px 7px 12px;font-family:'DM Mono',monospace;font-size:15px;color:var(--sea)}
+.no-wrap input{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:#fff;letter-spacing:2px;width:85px;padding:7px 4px}
+.no-wrap input::placeholder{color:rgba(255,255,255,0.2);font-size:18px}
+.no-tag{margin-right:8px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;opacity:0;transition:opacity var(--t)}
 .no-tag.show{opacity:1}
 .no-tag.found{background:var(--green-pale);color:var(--green)}
 .no-tag.notfound{background:var(--red-pale);color:var(--red)}
 .no-tag.searching{background:rgba(255,255,255,0.08);color:var(--muted)}
-.no-hint{font-size:14px;color:var(--muted);flex:1;min-width:180px}
+.no-hint{font-size:12px;color:var(--muted);flex:1;min-width:140px}
 .no-hint.err{color:var(--red)}
-.grid-2{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
-.card{background:rgba(255,255,255,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.95);border-radius:var(--r-xl);box-shadow:var(--sh-sm);overflow:hidden;transition:box-shadow var(--t);animation:rise .35s ease both;margin-bottom:16px}
-.card:hover{box-shadow:var(--sh-md)}
-@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.card-head{display:flex;align-items:center;gap:12px;padding:18px 20px 16px;border-bottom:1px solid var(--border)}
-.card-icon{width:40px;height:40px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.card-icon.blue{background:linear-gradient(135deg,rgba(0,184,204,0.18),rgba(26,82,128,0.12))}
-.card-icon.green{background:linear-gradient(135deg,rgba(0,196,140,0.18),rgba(0,160,100,0.10))}
-.card-icon.amber{background:linear-gradient(135deg,rgba(245,166,35,0.18),rgba(200,130,0,0.10))}
-.card-icon.ink{background:linear-gradient(135deg,rgba(7,25,46,0.12),rgba(26,82,128,0.08))}
-.card-label{font-size:17px;font-weight:700;color:var(--ink);flex:1}
-.cbadge{font-size:12px;font-weight:700;letter-spacing:.3px;padding:4px 10px;border-radius:4px}
-.cbadge.req{background:var(--red-pale);color:var(--red)}
-.cbadge.opt{background:rgba(7,25,46,0.06);color:var(--muted)}
-.cbadge.done{background:var(--green-pale);color:var(--green)}
-.card-body{padding:20px 20px}
-.info-empty{text-align:center;padding:28px 0;color:var(--muted);font-size:15px}
-.info-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.info-chip{background:linear-gradient(135deg,rgba(0,184,204,0.07),rgba(26,82,128,0.04));border:1px solid var(--sea-border);border-radius:var(--r-md);padding:13px 15px}
+
+/* ── 수용가 정보 ── */
+.info-card{background:rgba(255,255,255,0.9);border-radius:var(--r-lg);padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.95)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.info-chip{background:rgba(0,184,204,0.06);border:1px solid rgba(0,184,204,0.15);border-radius:var(--r-md);padding:8px 10px}
 .info-chip.w2{grid-column:1/-1}
-.ic-label{font-size:13px;color:var(--muted);margin-bottom:5px;font-weight:500}
-.ic-value{font-size:17px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(max-width:360px){.info-chips{grid-template-columns:1fr}}
-.fl{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
-.fl:last-child{margin-bottom:0}
-.fl-label{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.1px}
-.fi{width:100%;padding:15px 16px;background:var(--foam);border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:17px;color:var(--ink);outline:none;transition:border-color var(--t),box-shadow var(--t),background var(--t);-webkit-appearance:none;appearance:none}
-.fi::placeholder{color:var(--muted);font-size:15px}
-.fi:focus{border-color:var(--sea);background:var(--white);box-shadow:0 0 0 4px rgba(0,184,204,0.12)}
-.fi[type=date]{cursor:pointer;font-family:'DM Mono',monospace;font-size:16px}
-.rpg{display:flex;gap:10px;flex-wrap:wrap}
-.rp{display:flex;align-items:center;gap:8px;padding:13px 20px;border:1.5px solid rgba(0,184,204,0.2);border-radius:100px;cursor:pointer;font-size:16px;color:var(--muted);background:var(--foam);transition:all var(--t);user-select:none;min-width:120px;justify-content:center}
-.rp input{display:none}
-.rp:has(input:checked){border-color:var(--sea);background:linear-gradient(135deg,rgba(0,184,204,0.12),rgba(26,82,128,0.07));color:var(--ink-soft);font-weight:700;box-shadow:0 0 0 4px rgba(0,184,204,0.1)}
-.rp.ok:has(input:checked){border-color:var(--green);background:var(--green-pale);color:var(--green);box-shadow:0 0 0 4px rgba(0,196,140,0.1)}
-.rp.ng:has(input:checked){border-color:var(--red);background:var(--red-pale);color:var(--red);box-shadow:0 0 0 4px rgba(240,62,92,0.1)}
-.ri{font-size:20px}
-.ba-wrap{display:flex;flex-direction:column;gap:16px;margin-bottom:16px}
-.ba-col{background:rgba(255,255,255,0.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.95);border-radius:var(--r-xl);box-shadow:var(--sh-sm);overflow:hidden;transition:box-shadow var(--t)}
-.ba-col:hover{box-shadow:var(--sh-md)}
-.ba-head{display:flex;align-items:center;gap:10px;padding:16px 20px 14px;border-bottom:1px solid var(--border)}
-.ba-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
-.ba-before .ba-dot{background:var(--amber)}
-.ba-after .ba-dot{background:var(--green)}
-.ba-title{font-size:16px;font-weight:700;letter-spacing:.2px}
-.ba-before .ba-title{color:var(--amber)}
-.ba-after .ba-title{color:var(--green)}
-.ba-body{padding:18px 20px}
-.ba-arrow{display:none}
-.pg{display:grid;grid-template-columns:1fr;gap:16px}
-.ps{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:column}
-.ps:hover{border-color:var(--sea);background:rgba(0,184,204,0.06);box-shadow:var(--sh-sm)}
-.ps:active{transform:scale(0.98)}
-.ps.disabled{opacity:.3;pointer-events:none}
-.ps.ok{border-style:solid;border-color:var(--green);background:rgba(255,255,255,0.9)}
-.ps-thumb{width:100%;aspect-ratio:16/9;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:var(--r-xl) var(--r-xl) 0 0}
+.ic-label{font-size:10px;color:var(--muted);margin-bottom:2px;font-weight:500}
+.ic-value{font-size:12px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-empty{text-align:center;padding:16px;color:var(--muted);font-size:12px}
+
+/* ── STEP 진행바 ── */
+.step-bar{background:rgba(255,255,255,0.9);border-radius:var(--r-lg);padding:10px 12px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.95)}
+.step-bar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.step-title{font-size:13px;font-weight:700;color:var(--ink)}
+.step-count{font-size:11px;color:var(--muted)}
+.step-dots{display:flex;gap:5px}
+.step-dot{width:28px;height:5px;border-radius:3px;background:rgba(0,184,204,0.15);transition:all var(--t);cursor:pointer}
+.step-dot.done{background:var(--green)}
+.step-dot.active{background:var(--sea)}
+
+/* ── STEP 카드 ── */
+.step-card{background:rgba(255,255,255,0.92);border-radius:var(--r-xl);padding:14px 14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.95);box-shadow:var(--sh-sm);display:none;animation:rise .3s ease}
+.step-card.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.step-num{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--sea),var(--ink-soft));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#fff;flex-shrink:0}
+.step-num.done{background:var(--green)}
+.step-name{font-size:14px;font-weight:700;color:var(--ink);flex:1}
+.step-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px}
+.step-status.saved{background:var(--green-pale);color:var(--green)}
+.step-status.pending{background:var(--red-pale);color:var(--red)}
+.step-status.partial{background:var(--amber-pale);color:#7a5000}
+
+/* ── 사진 슬롯 ── */
+.photo-slot{border:2px dashed rgba(0,184,204,0.3);border-radius:var(--r-xl);cursor:pointer;background:rgba(234,248,251,0.5);transition:all var(--t);position:relative;overflow:hidden;display:flex;flex-direction:column;margin-bottom:10px}
+.photo-slot:active{transform:scale(0.98)}
+.photo-slot.ok{border-style:solid;border-color:var(--green);background:#fff}
+.ps-thumb{width:100%;aspect-ratio:16/9;background:rgba(7,25,46,0.04);display:flex;align-items:center;justify-content:center;border-radius:var(--r-xl) var(--r-xl) 0 0;overflow:hidden;position:relative}
 .ps-thumb img{width:100%;height:100%;object-fit:cover;display:none}
 .ps-thumb img.show{display:block}
-.ps-thumb .ph-icon{font-size:52px;opacity:.3}
-.ps.ok .ps-thumb .ph-icon{display:none}
-.wm-overlay{position:absolute;bottom:0;left:0;width:100%;background:rgba(255,255,255,0.93);border-top:1.5px solid #333;font-family:'Noto Sans KR',sans-serif;font-size:9px;line-height:1.4;display:none;pointer-events:none}
-.ps.ok .wm-overlay{display:block}
+.ps-thumb .ph-icon{font-size:36px;opacity:.3}
+.photo-slot.ok .ph-icon{display:none}
+.ps-label{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.ps-name{font-size:13px;font-weight:700;color:var(--ink)}
+.ps-sub{font-size:11px;color:var(--muted)}
+.ps-saved{font-size:11px;font-weight:700;color:var(--green)}
+.photo-slot.ok::after{content:'✓ 저장됨';position:absolute;top:8px;right:10px;font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:3px 8px;border-radius:20px;z-index:10}
+input.pi{display:none}
+
+/* ── 워터마크 오버레이 ── */
+.wm-overlay{position:absolute;bottom:0;left:0;width:100%;background:rgba(255,255,255,0.92);border-top:1px solid #333;font-size:8px;line-height:1.4;display:none;pointer-events:none}
+.photo-slot.ok .wm-overlay{display:block}
 .wm-table{width:100%;border-collapse:collapse}
-.wm-table tr td{border:0.5px solid #555;padding:2px 5px;vertical-align:middle;color:#111}
-.wm-table .wm-key{font-weight:700;white-space:nowrap;width:28%;background:rgba(210,235,255,0.7)}
-.wm-table .wm-val{font-weight:400}
-.ps-label{padding:16px 18px;display:flex;align-items:center;justify-content:space-between}
-.pl{font-size:18px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px}
-.psub{font-size:14px;color:var(--muted)}
-.pdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:4px;vertical-align:middle}
-.ps.ok::after{content:'✓ 업로드됨';position:absolute;top:12px;right:14px;font-size:13px;font-weight:700;color:var(--white);background:var(--green);padding:4px 12px;border-radius:20px;z-index:10}
-input.pi-input{display:none}
-.status-row{display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(255,255,255,.6);border:1px solid rgba(0,184,204,0.12);border-radius:var(--r-md);font-size:15px;color:var(--ink)}
-.sr-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.sr-icon.b{background:rgba(0,184,204,0.1)}
-.sr-icon.a{background:var(--amber-pale)}
-.sr-path{font-size:12px;color:var(--muted);margin-top:3px}
-.gap6{display:flex;flex-direction:column;gap:10px}
-.mt8{margin-top:10px}
-.mt12{margin-top:14px}
-.ctab{display:flex;border:2px solid var(--sea-border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:16px}
-.ct{flex:1;padding:15px;background:transparent;border:none;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all var(--t);border-right:1px solid var(--sea-border)}
+.wm-table td{border:0.5px solid #555;padding:1px 4px;color:#111}
+.wm-key{font-weight:700;white-space:nowrap;width:26%;background:rgba(210,235,255,0.7)}
+
+/* ── 입력 필드 ── */
+.fl{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fl:last-child{margin-bottom:0}
+.fl-label{font-size:12px;font-weight:600;color:var(--muted)}
+.fl-label .req{color:var(--red);font-size:10px;margin-left:2px}
+.fi{width:100%;padding:10px 12px;background:var(--foam);border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color var(--t);-webkit-appearance:none}
+.fi:focus{border-color:var(--sea);background:#fff}
+.fi.saved{border-color:var(--green);background:rgba(0,196,140,0.05)}
+.fi::placeholder{color:var(--muted);font-size:12px}
+.save-indicator{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--green);margin-top:3px;opacity:0;transition:opacity var(--t)}
+.save-indicator.show{opacity:1}
+
+/* ── 라디오 버튼 ── */
+.rpg{display:flex;gap:8px;flex-wrap:wrap}
+.rp{display:flex;align-items:center;gap:6px;padding:9px 14px;border:1.5px solid rgba(0,184,204,0.2);border-radius:100px;cursor:pointer;font-size:13px;color:var(--muted);background:var(--foam);transition:all var(--t);user-select:none}
+.rp input{display:none}
+.rp:has(input:checked){border-color:var(--sea);background:rgba(0,184,204,0.1);color:var(--ink-soft);font-weight:700}
+.rp.ok:has(input:checked){border-color:var(--green);background:var(--green-pale);color:var(--green)}
+.rp.ng:has(input:checked){border-color:var(--red);background:var(--red-pale);color:var(--red)}
+
+/* ── 서명 ── */
+.ctab{display:flex;border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px}
+.ct{flex:1;padding:10px;background:transparent;border:none;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all var(--t);border-right:1px solid rgba(0,184,204,0.2)}
 .ct:last-child{border-right:none}
-.ct.active-sign{background:linear-gradient(135deg,rgba(0,184,204,0.15),rgba(26,82,128,0.1));color:var(--ink-soft);font-weight:700}
+.ct.active-sign{background:rgba(0,184,204,0.1);color:var(--ink-soft);font-weight:700}
 .ct.active-sticker{background:var(--amber-pale);color:#8a5e00;font-weight:700}
 .cond{display:none}
 .cond.active{display:block}
-.sign-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:#0a1f38;flex-direction:column;align-items:stretch;justify-content:stretch}
+.sign-open-btn{width:100%;padding:16px;background:rgba(0,184,204,0.08);border:1.5px dashed rgba(0,184,204,0.35);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:var(--sea);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.sign-preview-wrap{border:1.5px solid var(--green);border-radius:var(--r-lg);overflow:hidden;background:#fff;position:relative;margin-bottom:8px}
+.sign-preview-img{display:block;width:100%;max-height:100px;object-fit:contain}
+.sign-done-badge{display:flex;align-items:center;gap:5px;padding:4px 8px;background:var(--green-pale);border-radius:4px;font-size:11px;color:var(--green);font-weight:700;margin-bottom:6px}
+.sign-edit-btn{position:absolute;top:6px;right:6px;padding:4px 10px;border:none;border-radius:var(--r-md);background:rgba(0,184,204,0.15);color:var(--sea);font-size:11px;font-weight:700;cursor:pointer}
+
+/* ── 서명 모달 ── */
+.sign-modal{display:none;position:fixed;inset:0;z-index:400;background:#0a1f38;flex-direction:column}
 .sign-modal.open{display:flex}
-.sign-modal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(0,184,204,0.10);border-bottom:1px solid rgba(0,184,204,0.2);flex-shrink:0}
-.sign-modal-title{font-size:15px;font-weight:700;color:var(--sea-bright);display:flex;align-items:center;gap:8px}
-.sign-modal-actions{display:flex;gap:8px;align-items:center}
+.sign-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,184,204,0.1);border-bottom:1px solid rgba(0,184,204,0.2);flex-shrink:0}
+.sign-modal-title{font-size:14px;font-weight:700;color:var(--sea-bright)}
+.sign-modal-actions{display:flex;gap:6px}
+.sm-btn{padding:8px 16px;border:none;border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.sm-btn.clear{background:rgba(240,62,92,0.15);color:var(--red)}
+.sm-btn.cancel{background:rgba(255,255,255,0.08);color:var(--muted)}
+.sm-btn.confirm{background:linear-gradient(135deg,var(--sea),var(--ink-soft));color:#fff}
+.sign-guide{text-align:center;padding:8px;font-size:13px;color:rgba(0,217,239,0.65);flex-shrink:0}
+.sign-canvas-wrap{flex:1;padding:0 12px 16px;display:flex}
+canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);touch-action:none}
+
+/* ── 단계 이동 버튼 ── */
+.step-nav{display:flex;gap:8px;margin-bottom:10px}
+.step-nav-btn{flex:1;padding:12px;border:none;border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center;gap:6px}
+.step-nav-btn.prev{background:rgba(255,255,255,0.7);color:var(--muted);border:1px solid var(--border)}
+.step-nav-btn.next{background:linear-gradient(135deg,var(--sea),var(--ink-soft));color:#fff;box-shadow:0 3px 12px rgba(0,184,204,0.3)}
+.step-nav-btn.save{background:linear-gradient(135deg,var(--green),#00a070);color:#fff;box-shadow:0 3px 12px rgba(0,196,140,0.3)}
+.step-nav-btn:active{transform:scale(0.97)}
+
+/* ── 작업목록 탭 ── */
+.list-header{background:rgba(7,25,46,0.88);border-radius:var(--r-xl);padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.list-date{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea-bright)}
+.list-count{font-size:12px;color:var(--muted)}
+.list-count span{color:var(--sea-bright);font-weight:700;font-size:16px}
+.work-item{background:rgba(255,255,255,0.92);border-radius:var(--r-lg);padding:11px 13px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.95);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t)}
+.work-item:active{transform:scale(0.99)}
+.wi-no{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea);min-width:55px}
+.wi-info{flex:1}
+.wi-name{font-size:13px;font-weight:700;color:var(--ink)}
+.wi-addr{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wi-badges{display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.badge.saved{background:var(--green-pale);color:var(--green)}
+.badge.pending{background:var(--amber-pale);color:#7a5000}
+.badge.uploaded{background:rgba(0,184,204,0.1);color:var(--sea)}
+.empty-list{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px;opacity:.4}
+.empty-text{font-size:13px}
+
+/* ── 업로드 탭 ── */
+.upload-header{background:rgba(7,25,46,0.88);border-radius:var(--r-xl);padding:14px;margin-bottom:10px;text-align:center}
+.upload-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--sea-bright);margin-bottom:4px}
+.upload-sub{font-size:11px;color:var(--muted)}
+.upload-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-card{background:rgba(255,255,255,0.9);border-radius:var(--r-lg);padding:12px 10px;text-align:center}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:1}
+.stat-num.total{color:var(--sea)}
+.stat-num.done{color:var(--green)}
+.stat-num.wait{color:var(--amber)}
+.stat-label{font-size:10px;color:var(--muted);margin-top:2px}
+.upload-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-xl);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(0,184,204,0.3);transition:all var(--t);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.upload-btn:disabled{opacity:.5;cursor:not-allowed}
+.upload-btn:active:not(:disabled){transform:scale(0.98)}
+.upload-list{display:flex;flex-direction:column;gap:6px}
+.upload-item{background:rgba(255,255,255,0.92);border-radius:var(--r-lg);padding:10px 12px;display:flex;align-items:center;gap:10px}
+.ui-no{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--sea);min-width:50px}
+.ui-info{flex:1}
+.ui-name{font-size:12px;font-weight:700;color:var(--ink)}
+.ui-progress{font-size:10px;color:var(--muted);margin-top:2px}
+.ui-status{font-size:18px}
+.progress-bar-wrap{width:100%;height:4px;background:rgba(0,184,204,0.1);border-radius:2px;margin-top:4px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--sea),var(--green));border-radius:2px;transition:width .5s ease;width:0%}
+
+/* ── 하단 저장바 ── */
+.save-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(7,25,46,0.97);backdrop-filter:blur(16px);border-top:1px solid rgba(0,184,204,0.18);padding:10px 14px}
+.save-bar-inner{display:flex;align-items:center;gap:10px}
+.save-summary{flex:1}
+.ss-no{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea-bright);line-height:1}
+.ss-addr{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.save-work-btn{padding:11px 20px;background:linear-gradient(135deg,var(--green),#00a070);border:none;border-radius:var(--r-xl);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 3px 12px rgba(0,196,140,0.3);white-space:nowrap;flex-shrink:0}
+.save-work-btn:active{transform:scale(0.97)}
+
+/* ── 로딩 오버레이 ── */
+.lov{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.lov.on{display:flex}
+.lsp{width:38px;height:38px;border-radius:50%;border:3px solid rgba(0,184,204,0.2);border-top-color:var(--sea-bright);animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltxt{font-size:12px;color:rgba(255,255,255,.9)}
+
+/* ── 토스트 ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:#fff;border:1px solid rgba(0,184,204,0.25);padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;box-shadow:var(--sh-md);transition:transform .32s cubic-bezier(.34,1.56,.64,1);z-index:400;white-space:nowrap;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+/* ── 종료 다이얼로그 ── */
 .exit-dialog{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center}
 .exit-dialog.open{display:flex}
-.exit-box{background:#fff;border-radius:var(--r-xl);padding:28px 24px 20px;max-width:320px;width:90%;text-align:center;box-shadow:var(--sh-lg);animation:rise .25s ease}
-.exit-box-icon{font-size:40px;margin-bottom:12px}
-.exit-box-title{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px}
-.exit-box-msg{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:22px}
-.exit-btns{display:flex;gap:10px}
-.exit-btn{flex:1;padding:14px;border:none;border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all var(--t)}
-.exit-btn.cancel{background:var(--foam);color:var(--muted);border:1.5px solid var(--border)}
+.exit-box{background:#fff;border-radius:var(--r-xl);padding:24px 20px 18px;max-width:300px;width:90%;text-align:center;box-shadow:var(--sh-md)}
+.exit-icon{font-size:36px;margin-bottom:10px}
+.exit-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.exit-msg{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.exit-btns{display:flex;gap:8px}
+.exit-btn{flex:1;padding:12px;border:none;border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.exit-btn.cancel{background:var(--foam);color:var(--muted);border:1px solid var(--border)}
 .exit-btn.ok{background:linear-gradient(135deg,var(--red),#c0003a);color:#fff}
-.sm-btn{padding:13px 26px;border:none;border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all var(--t)}
-.sm-btn.clear{background:rgba(240,62,92,0.15);color:var(--red)}
-.sm-btn.confirm{background:linear-gradient(135deg,var(--sea),var(--ink-soft));color:var(--white);box-shadow:0 3px 12px rgba(0,184,204,0.35)}
-.sm-btn.cancel{background:rgba(255,255,255,0.08);color:var(--muted)}
-.sign-modal-guide{text-align:center;padding:12px 20px 8px;font-size:16px;color:rgba(0,217,239,0.65);flex-shrink:0;letter-spacing:.3px}
-.sign-modal-canvas-wrap{flex:1;display:flex;align-items:stretch;padding:0 16px 20px}
-canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px solid rgba(0,184,204,0.2);border-radius:var(--r-xl);cursor:crosshair;touch-action:none}
-.sign-preview-wrap{border:1.5px solid var(--green);border-radius:var(--r-lg);overflow:hidden;background:var(--white);position:relative}
-.sign-preview-img{display:block;width:100%;max-height:120px;object-fit:contain;background:var(--white)}
-.sign-preview-edit{position:absolute;top:8px;right:8px;padding:5px 12px;border:none;border-radius:var(--r-md);background:rgba(0,184,204,0.15);color:var(--sea);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--t)}
-.sign-done-badge{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--green-pale);border-radius:var(--r-sm);font-size:12px;color:var(--green);font-weight:700;margin-bottom:8px}
-.save-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(7,25,46,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(0,184,204,0.18);padding:14px 18px}
-.save-bar-inner{max-width:100%;width:100%;margin:0 auto;display:flex;align-items:center;gap:14px}
-.save-summary{flex:1;display:flex;flex-direction:column;gap:3px}
-.ss-no{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--sea-bright);line-height:1}
-.ss-addr{font-size:13px;color:var(--muted)}
-.save-btn{padding:16px 32px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-xl);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--white);cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(0,184,204,0.35);transition:transform var(--t),box-shadow var(--t);white-space:nowrap;flex-shrink:0}
-.lov{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,25,46,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;flex-direction:column;gap:14px}
-.lov.on{display:flex}
-.lsp{width:42px;height:42px;border-radius:50%;border:3px solid rgba(0,184,204,0.2);border-top-color:var(--sea-bright);animation:spin .75s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ltxt{font-size:13px;color:rgba(255,255,255,.9);font-weight:500}
-.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:var(--white);border:1px solid rgba(0,184,204,0.25);padding:13px 24px;border-radius:100px;font-size:15px;font-weight:500;box-shadow:var(--sh-lg);transition:transform .32s cubic-bezier(.34,1.56,.64,1);z-index:400;white-space:nowrap;pointer-events:none}
-.toast.on{transform:translateX(-50%) translateY(0)}
-.done-banner{display:none;background:linear-gradient(135deg,rgba(0,196,140,0.15),rgba(0,160,100,0.08));border:2px solid var(--green);border-radius:var(--r-xl);padding:24px 20px;margin-bottom:16px;text-align:center;animation:rise .4s ease}
-.done-banner.show{display:block}
-.done-icon{font-size:52px;margin-bottom:10px}
-.done-title{font-size:20px;font-weight:700;color:var(--green);margin-bottom:6px}
-.done-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:18px}
-.done-new-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-lg);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--white);cursor:pointer;box-shadow:0 4px 16px rgba(0,184,204,0.3);transition:all var(--t)}
 
-/* PWA 설치 배너 */
-.install-banner{
-  display:none;
-  background:linear-gradient(135deg,rgba(0,184,204,0.15),rgba(7,25,46,0.9));
-  border:1.5px solid rgba(0,184,204,0.35);
-  border-radius:var(--r-lg);
-  padding:14px 16px;
-  margin-bottom:14px;
-  align-items:center;
-  gap:12px;
-  animation:rise .4s ease;
-}
-.install-banner.show{display:flex}
-.install-icon{font-size:24px;flex-shrink:0}
-.install-text{flex:1}
-.install-text strong{display:block;font-size:14px;color:var(--white);margin-bottom:2px}
-.install-text span{font-size:12px;color:var(--muted)}
-.install-btn{padding:10px 18px;background:linear-gradient(135deg,var(--sea),var(--ink-soft));border:none;border-radius:var(--r-md);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:var(--white);cursor:pointer;white-space:nowrap;flex-shrink:0}
-.install-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0}
-
-/* iOS 설치 안내 모달 */
-.ios-guide{display:none;position:fixed;inset:0;z-index:600;background:rgba(7,25,46,0.85);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center}
-.ios-guide.open{display:flex}
-.ios-guide-box{background:#1a3a5c;border:1px solid rgba(0,184,204,0.3);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:28px 24px 40px;width:100%;max-width:480px;animation:slideUp .35s ease}
+/* ── 작업 상세 모달 ── */
+.detail-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(7,25,46,0.5);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+.detail-modal.open{display:flex}
+.detail-box{background:#f0f8fb;border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-height:80vh;overflow-y:auto;padding:16px 14px 80px;animation:slideUp .3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.ios-guide-title{font-size:18px;font-weight:700;color:var(--white);margin-bottom:6px;text-align:center}
-.ios-guide-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:20px}
-.ios-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
-.ios-step{display:flex;align-items:center;gap:12px;background:rgba(0,184,204,0.08);border-radius:var(--r-md);padding:14px}
-.ios-step-num{width:28px;height:28px;border-radius:50%;background:var(--sea);color:var(--white);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ios-step-text{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5}
-.ios-guide-close{width:100%;padding:14px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;color:var(--white);cursor:pointer}
+.detail-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.detail-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--sea)}
+.detail-close{background:rgba(7,25,46,0.1);border:none;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.detail-section{background:#fff;border-radius:var(--r-lg);padding:12px;margin-bottom:10px}
+.detail-section-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,184,204,0.08)}
+.detail-row:last-child{border-bottom:none}
+.dr-key{font-size:12px;color:var(--muted)}
+.dr-val{font-size:12px;font-weight:600;color:var(--ink)}
+.detail-photos{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.detail-photo{aspect-ratio:4/3;border-radius:var(--r-md);overflow:hidden;background:rgba(0,184,204,0.05);border:1px solid var(--border)}
+.detail-photo img{width:100%;height:100%;object-fit:cover}
+.detail-photo-label{font-size:10px;color:var(--muted);text-align:center;margin-top:3px}
+.delete-btn{width:100%;padding:12px;background:var(--red-pale);border:1px solid var(--red);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;color:var(--red);cursor:pointer;margin-top:10px}
 </style>
 </head>
 <body>
@@ -259,12 +300,12 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
 <div class="lov" id="lov"><div class="lsp"></div><div class="ltxt" id="ltxt">처리 중…</div></div>
 <div class="toast" id="toastEl"></div>
 
-<!-- 종료 확인 다이얼로그 -->
+<!-- 종료 다이얼로그 -->
 <div class="exit-dialog" id="exitDialog">
   <div class="exit-box">
-    <div class="exit-box-icon">⚠️</div>
-    <div class="exit-box-title">앱을 종료하시겠습니까?</div>
-    <div class="exit-box-msg">입력 중인 내용이 있습니다.<br>저장하지 않으면 모든 내용이 사라집니다.</div>
+    <div class="exit-icon">⚠️</div>
+    <div class="exit-title">앱을 종료하시겠습니까?</div>
+    <div class="exit-msg">작업 중인 내용은 임시저장됩니다.<br>나중에 이어서 작업하실 수 있어요.</div>
     <div class="exit-btns">
       <button class="exit-btn cancel" onclick="closeExitDialog()">계속 작업</button>
       <button class="exit-btn ok" onclick="forceExit()">종료</button>
@@ -272,64 +313,77 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
   </div>
 </div>
 
-<!-- iOS 설치 안내 -->
-<div class="ios-guide" id="iosGuide">
-  <div class="ios-guide-box">
-    <div class="ios-guide-title">📱 홈 화면에 앱 추가하기</div>
-    <div class="ios-guide-sub">아래 단계를 따라 앱처럼 설치하세요</div>
-    <div class="ios-steps">
-      <div class="ios-step"><div class="ios-step-num">1</div><div class="ios-step-text">하단 Safari 공유 버튼 <strong style="color:var(--sea)">[ ⬆ ]</strong> 을 탭하세요</div></div>
-      <div class="ios-step"><div class="ios-step-num">2</div><div class="ios-step-text"><strong style="color:var(--sea)">"홈 화면에 추가"</strong> 를 선택하세요</div></div>
-      <div class="ios-step"><div class="ios-step-num">3</div><div class="ios-step-text">오른쪽 상단 <strong style="color:var(--sea)">"추가"</strong> 를 탭하면 설치 완료!</div></div>
-    </div>
-    <button class="ios-guide-close" onclick="document.getElementById('iosGuide').classList.remove('open')">확인</button>
-  </div>
+<!-- 작업 상세 모달 -->
+<div class="detail-modal" id="detailModal">
+  <div class="detail-box" id="detailBox"></div>
 </div>
 
-<!-- HEADER -->
+<!-- 서명 모달 -->
+<div class="sign-modal" id="signModal">
+  <div class="sign-modal-hdr">
+    <div class="sign-modal-title">✍️ 수용가 서명</div>
+    <div class="sign-modal-actions">
+      <button class="sm-btn clear" onclick="clearSign()">🗑 지우기</button>
+      <button class="sm-btn cancel" onclick="closeSign()">취소</button>
+      <button class="sm-btn confirm" onclick="confirmSign()">✓ 완료</button>
+    </div>
+  </div>
+  <div class="sign-guide">손가락으로 서명해 주세요</div>
+  <div class="sign-canvas-wrap"><canvas id="scFull"></canvas></div>
+</div>
+
+<!-- 헤더 -->
 <header class="hdr">
   <div class="hdr-inner">
     <div class="hdr-brand">
       <div class="hdr-icon">💧</div>
       <div>
         <div class="hdr-title">계량기 교체 앱</div>
-        <div class="hdr-sub">서남광산 고장디지털 교체공사</div>
+        <div class="hdr-sub" id="hdrDate">날짜 로딩중...</div>
       </div>
     </div>
     <div class="worker-pill"><div class="wpulse"></div><span id="workerName">로딩중</span></div>
   </div>
 </header>
 
-<div class="wave">
-  <svg viewBox="0 0 1200 28" preserveAspectRatio="none" fill="none">
-    <path d="M0 14 Q150 0 300 14 Q450 28 600 14 Q750 0 900 14 Q1050 28 1200 14 Q1350 0 1500 14 Q1650 28 1800 14 Q1950 0 2100 14 Q2250 28 2400 14" stroke="rgba(0,184,204,0.2)" stroke-width="1.5" fill="none"/>
-  </svg>
+<!-- 탭 네비게이션 -->
+<div class="tab-nav" id="tabNav" style="display:none">
+  <button class="tab-btn active" onclick="switchTab('work')" id="tab-work">
+    <span class="tab-icon">✏️</span>작업입력
+  </button>
+  <button class="tab-btn" onclick="switchTab('list')" id="tab-list">
+    <span class="tab-icon">📋</span>작업목록
+  </button>
+  <button class="tab-btn" onclick="switchTab('upload')" id="tab-upload">
+    <span class="tab-icon">📤</span>업로드
+  </button>
 </div>
 
+<!-- ══ 시작화면 ══ -->
+<div id="startScreen" class="start-screen">
+  <div class="start-card">
+    <div class="start-logo">💧</div>
+    <div class="start-title">계량기 교체 앱</div>
+    <div class="start-sub">서남광산 고장디지털 교체공사</div>
+    <div class="start-field">
+      <label class="start-label">작업일자</label>
+      <input type="date" class="start-input" id="startDate">
+    </div>
+    <div class="start-field">
+      <label class="start-label">작업자 이름</label>
+      <input type="text" class="start-input" id="startWorker" placeholder="이름 입력">
+    </div>
+    <button class="start-btn" onclick="startApp()">🚀 작업 시작</button>
+  </div>
+</div>
+
+<!-- ══ 작업입력 탭 ══ -->
+<div class="tab-content active" id="tab-content-work">
 <div class="page">
 
-  <!-- PWA 설치 배너 -->
-  <div class="install-banner" id="installBanner">
-    <span class="install-icon">📲</span>
-    <div class="install-text">
-      <strong>앱으로 설치하기</strong>
-      <span>홈 화면에 추가하면 앱처럼 사용 가능!</span>
-    </div>
-    <button class="install-btn" id="installBtn" onclick="installPWA()">설치</button>
-    <button class="install-close" onclick="dismissInstall()">✕</button>
-  </div>
-
-  <!-- 저장 완료 배너 -->
-  <div class="done-banner" id="doneBanner">
-    <div class="done-icon">✅</div>
-    <div class="done-title" id="doneTitle">저장 완료!</div>
-    <div class="done-sub" id="doneSub">드라이브·시트·기기에 저장되었습니다.</div>
-    <button class="done-new-btn" onclick="resetForm()">➕ 새 작업 시작</button>
-  </div>
-
-  <!-- ① NO 입력 -->
+  <!-- NO 입력 -->
   <div class="no-banner">
-    <div class="no-banner-label">작업 NO</div>
+    <div class="no-label">NO</div>
     <div class="no-wrap" id="noBox">
       <span class="no-pre">NO.</span>
       <input type="number" id="noInput" placeholder="001" min="1" max="999"
@@ -338,222 +392,349 @@ canvas#scFull{display:block;width:100%;flex:1;background:#0d2540;border:1.5px so
         onblur="document.getElementById('noBox').classList.remove('focused')">
       <span class="no-tag" id="noTag"></span>
     </div>
-    <div class="no-hint" id="noHint">ℹ NO 입력 시 시트에서 수용가 정보를 자동으로 불러옵니다</div>
+    <div class="no-hint" id="noHint">NO 입력 시 수용가 정보를 불러옵니다</div>
   </div>
 
-  <!-- ② 수용가 정보 + 작업일자 -->
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon blue">📋</div>
-        <div class="card-label">수용가 정보</div>
-        <span class="cbadge req" id="infoBadge">미조회</span>
-      </div>
-      <div class="card-body" id="infoArea">
-        <div class="info-empty">NO를 입력하면 정보가 표시됩니다</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon ink">📅</div>
-        <div class="card-label">작업일자 &amp; 저장 항목</div>
-      </div>
-      <div class="card-body">
-        <div class="fl">
-          <div class="fl-label">작업일자</div>
-          <input type="date" class="fi" id="workDate">
-        </div>
-        <div class="gap6 mt8">
-          <div class="status-row"><div class="sr-icon b">📊</div><div><div>고장디지털 리스트 기록</div><div class="sr-path">서남광산 고장디지털 교체 → 서남광산 고장디지털 리스트</div></div></div>
-          <div class="status-row"><div class="sr-icon a">📁</div><div><div>드라이브 사진 저장</div><div class="sr-path" id="drivePath">3.작업사진 / 광산구 / 교체 / —월 / —일</div></div></div>
-        </div>
-      </div>
-    </div>
+  <!-- 수용가 정보 -->
+  <div class="info-card">
+    <div id="infoArea"><div class="info-empty">NO를 입력하면 정보가 표시됩니다</div></div>
   </div>
 
-  <!-- ③ 교체 전/후 -->
-  <div class="ba-wrap">
-    <div class="ba-col ba-before">
-      <div class="ba-head"><div class="ba-dot"></div><div class="ba-title">교체 전 상태</div><span class="cbadge req" style="margin-left:auto">필수/선택</span></div>
-      <div class="ba-body">
-        <div class="fl">
-          <div class="fl-label">밸브 상태 <span style="color:var(--red);font-size:9px">●필수</span></div>
-          <div class="rpg">
-            <label class="rp"><input type="radio" name="bv" value="개(열림)" checked><span class="ri">🔓</span>개(열림)</label>
-            <label class="rp"><input type="radio" name="bv" value="폐(닫힘)"><span class="ri">🔒</span>폐(닫힘)</label>
-          </div>
-        </div>
-        <div class="fl"><div class="fl-label">지침 <span style="color:var(--muted);font-size:9px">●선택</span></div><input type="number" inputmode="numeric" class="fi" id="bRead" placeholder="미확인 시 공란"></div>
-        <div class="fl"><div class="fl-label">봉인번호 <span style="color:var(--muted);font-size:9px">●선택</span></div><input type="text" inputmode="numeric" class="fi" id="bSeal" placeholder="예: 12345-6"></div>
-      </div>
+  <!-- STEP 진행바 -->
+  <div class="step-bar">
+    <div class="step-bar-top">
+      <div class="step-title" id="stepTitle">STEP 1 — 전체사진 촬영</div>
+      <div class="step-count" id="stepCount">1 / 6</div>
     </div>
-    <div class="ba-col ba-after">
-      <div class="ba-head"><div class="ba-dot"></div><div class="ba-title">교체 후 상태</div><span class="cbadge req" style="margin-left:auto">모두 필수</span></div>
-      <div class="ba-body">
-        <div class="fl"><div class="fl-label">지침 <span style="color:var(--red);font-size:9px">●필수</span></div><input type="number" inputmode="numeric" class="fi" id="aRead" placeholder="교체 후 초기값"></div>
-        <div class="fl"><div class="fl-label">기물번호 <span style="color:var(--red);font-size:9px">●필수</span></div><input type="text" inputmode="numeric" class="fi" id="aMeter" placeholder="예: 12345-6"></div>
-        <div class="fl"><div class="fl-label">봉인번호 <span style="color:var(--red);font-size:9px">●필수</span></div><input type="text" inputmode="numeric" class="fi" id="aSeal" placeholder="예: 12345-6"></div>
-        <div class="fl">
-          <div class="fl-label">밸브 상태 <span style="color:var(--red);font-size:9px">●필수</span></div>
-          <div class="rpg">
-            <label class="rp ok"><input type="radio" name="av" value="이상없음" checked><span class="ri">✅</span>이상없음</label>
-            <label class="rp ng"><input type="radio" name="av" value="밸브고장"><span class="ri">⚠️</span>밸브고장</label>
-          </div>
+    <div class="step-dots" id="stepDots"></div>
+  </div>
+
+  <!-- STEP 1: 전체사진 -->
+  <div class="step-card active" id="step1">
+    <div class="step-head">
+      <div class="step-num" id="sn1">1</div>
+      <div class="step-name">전체사진 촬영</div>
+      <span class="step-status pending" id="ss1">미촬영</span>
+    </div>
+    <div class="photo-slot" id="sl_full" onclick="tp('pFull')">
+      <input type="file" id="pFull" class="pi" accept="image/*" capture="environment"
+        onchange="onPhoto(this,'sl_full','img_full','wm_full','전체사진','ss1','sn1')">
+      <div class="ps-thumb">
+        <span class="ph-icon">📷</span>
+        <img id="img_full" alt="">
+        <div class="wm-overlay" id="wm_full">
+          <table class="wm-table">
+            <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+            <tr><td class="wm-key">공&nbsp;정</td><td colspan="3">디지털계량기 교체</td></tr>
+            <tr><td class="wm-key">위&nbsp;치</td><td id="wml_full" colspan="3">—</td></tr>
+            <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">전체사진</td></tr>
+            <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_full"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
+          </table>
         </div>
       </div>
+      <div class="ps-label"><div class="ps-name">📷 전체사진</div><div class="ps-sub" id="psub_full">탭하여 촬영</div></div>
+    </div>
+    <div class="step-nav">
+      <button class="step-nav-btn next" onclick="goStep(2)">다음 → STEP 2</button>
     </div>
   </div>
 
-  <!-- ④ 사진 업로드 -->
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-head">
-      <div class="card-icon amber">📷</div>
-      <div class="card-label">현장 사진 업로드</div>
-      <span class="cbadge req">전체·전·후 필수</span>
+  <!-- STEP 2: 교체전 사진 -->
+  <div class="step-card" id="step2">
+    <div class="step-head">
+      <div class="step-num" id="sn2">2</div>
+      <div class="step-name">교체 전 사진 촬영</div>
+      <span class="step-status pending" id="ss2">미촬영</span>
     </div>
-    <div class="card-body">
-      <div class="pg">
-        <div class="ps" id="sl_full" onclick="tp('pFull')">
-          <input type="file" id="pFull" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_full','sb_full','img_full','wm_full','전체사진')">
-          <div class="ps-thumb"><span class="ph-icon">📷</span><img id="img_full" alt="">
-            <div class="wm-overlay" id="wm_full"><table class="wm-table">
-              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
-              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_full" colspan="3">—</td></tr>
-              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">전체사진</td></tr>
-              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_full"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
-            </table></div>
-          </div>
-          <div class="ps-label"><div class="pl">전체사진<span class="pdot"></span></div><div class="psub" id="sb_full">필수</div></div>
-        </div>
-        <div class="ps" id="sl_before" onclick="tp('pBefore')">
-          <input type="file" id="pBefore" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_before','sb_before','img_before','wm_before','교체전')">
-          <div class="ps-thumb"><span class="ph-icon">🔍</span><img id="img_before" alt="">
-            <div class="wm-overlay" id="wm_before"><table class="wm-table">
-              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
-              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_before" colspan="3">—</td></tr>
-              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">교체전</td></tr>
-              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_before"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
-            </table></div>
-          </div>
-          <div class="ps-label"><div class="pl">교체 전<span class="pdot"></span></div><div class="psub" id="sb_before">필수</div></div>
-        </div>
-        <div class="ps" id="sl_after" onclick="tp('pAfter')">
-          <input type="file" id="pAfter" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_after','sb_after','img_after','wm_after','교체후')">
-          <div class="ps-thumb"><span class="ph-icon">✨</span><img id="img_after" alt="">
-            <div class="wm-overlay" id="wm_after"><table class="wm-table">
-              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
-              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_after" colspan="3">—</td></tr>
-              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">교체후</td></tr>
-              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_after"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
-            </table></div>
-          </div>
-          <div class="ps-label"><div class="pl">교체 후<span class="pdot"></span></div><div class="psub" id="sb_after">필수</div></div>
-        </div>
-        <div class="ps disabled" id="sl_sticker" onclick="tp('pSticker')">
-          <input type="file" id="pSticker" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_sticker','sb_sticker','img_sticker','wm_sticker','스티커부착')">
-          <div class="ps-thumb"><span class="ph-icon">🏷️</span><img id="img_sticker" alt="">
-            <div class="wm-overlay" id="wm_sticker"><table class="wm-table">
-              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
-              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_sticker" colspan="3">—</td></tr>
-              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">스티커부착</td></tr>
-              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_sticker"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
-            </table></div>
-          </div>
-          <div class="ps-label"><div class="pl">스티커사진</div><div class="psub" id="sb_sticker">서명불가 시 활성</div></div>
+    <div class="photo-slot" id="sl_before" onclick="tp('pBefore')">
+      <input type="file" id="pBefore" class="pi" accept="image/*" capture="environment"
+        onchange="onPhoto(this,'sl_before','img_before','wm_before','교체전','ss2','sn2')">
+      <div class="ps-thumb">
+        <span class="ph-icon">🔍</span>
+        <img id="img_before" alt="">
+        <div class="wm-overlay" id="wm_before">
+          <table class="wm-table">
+            <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+            <tr><td class="wm-key">공&nbsp;정</td><td colspan="3">디지털계량기 교체</td></tr>
+            <tr><td class="wm-key">위&nbsp;치</td><td id="wml_before" colspan="3">—</td></tr>
+            <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">교체전</td></tr>
+            <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_before"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
+          </table>
         </div>
       </div>
+      <div class="ps-label"><div class="ps-name">🔍 교체 전</div><div class="ps-sub" id="psub_before">탭하여 촬영</div></div>
+    </div>
+    <div class="step-nav">
+      <button class="step-nav-btn prev" onclick="goStep(1)">← 이전</button>
+      <button class="step-nav-btn next" onclick="goStep(3)">다음 → STEP 3</button>
     </div>
   </div>
 
-  <!-- ⑤ 수용가 확인 -->
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-head">
-      <div class="card-icon green">✍️</div>
-      <div class="card-label">수용가 확인</div>
-      <span class="cbadge req">서명 또는 스티커</span>
+  <!-- STEP 3: 기존 계량기 정보 -->
+  <div class="step-card" id="step3">
+    <div class="step-head">
+      <div class="step-num" id="sn3">3</div>
+      <div class="step-name">기존 계량기 확인</div>
+      <span class="step-status pending" id="ss3">미입력</span>
     </div>
-    <div class="card-body">
-      <div class="ctab">
-        <button class="ct active-sign" id="btnSign" onclick="setC('sign')">✍️ 서명받기</button>
-        <button class="ct" id="btnSticker" onclick="setC('sticker')">🏷️ 서명불가 (스티커)</button>
+    <div class="fl">
+      <div class="fl-label">밸브 상태 <span class="req">●필수</span></div>
+      <div class="rpg">
+        <label class="rp"><input type="radio" name="bv" value="개(열림)" checked onchange="onFieldChange()"><span>🔓 개(열림)</span></label>
+        <label class="rp"><input type="radio" name="bv" value="폐(닫힘)" onchange="onFieldChange()"><span>🔒 폐(닫힘)</span></label>
       </div>
-      <div class="cond active" id="condSign">
-        <div id="signPreviewArea" style="display:none">
-          <div class="sign-done-badge">✅ 서명 완료</div>
-          <div class="sign-preview-wrap">
-            <img id="signPreviewImg" class="sign-preview-img" alt="서명">
-            <button class="sign-preview-edit" onclick="openSignModal()">✏️ 다시 서명</button>
+    </div>
+    <div class="fl">
+      <div class="fl-label">지침 <span style="font-size:10px;color:var(--muted)">●선택</span></div>
+      <input type="number" inputmode="numeric" class="fi" id="bRead" placeholder="미확인 시 공란" oninput="onFieldChange()">
+      <div class="save-indicator" id="si_bRead">💾 저장됨</div>
+    </div>
+    <div class="fl">
+      <div class="fl-label">봉인번호 <span style="font-size:10px;color:var(--muted)">●선택</span></div>
+      <input type="text" inputmode="numeric" class="fi" id="bSeal" placeholder="예: 12345-6" oninput="onFieldChange()">
+      <div class="save-indicator" id="si_bSeal">💾 저장됨</div>
+    </div>
+    <div class="step-nav">
+      <button class="step-nav-btn prev" onclick="goStep(2)">← 이전</button>
+      <button class="step-nav-btn next" onclick="goStep(4)">다음 → STEP 4</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: 교체 계량기 정보 -->
+  <div class="step-card" id="step4">
+    <div class="step-head">
+      <div class="step-num" id="sn4">4</div>
+      <div class="step-name">교체 계량기 확인</div>
+      <span class="step-status pending" id="ss4">미입력</span>
+    </div>
+    <div class="fl">
+      <div class="fl-label">교체 후 지침 <span class="req">●필수</span></div>
+      <input type="number" inputmode="numeric" class="fi" id="aRead" placeholder="교체 후 초기값" oninput="onFieldChange()">
+      <div class="save-indicator" id="si_aRead">💾 저장됨</div>
+    </div>
+    <div class="fl">
+      <div class="fl-label">기물번호 <span class="req">●필수</span></div>
+      <input type="text" inputmode="numeric" class="fi" id="aMeter" placeholder="예: 12345-6" oninput="onFieldChange()">
+      <div class="save-indicator" id="si_aMeter">💾 저장됨</div>
+    </div>
+    <div class="fl">
+      <div class="fl-label">봉인번호 <span class="req">●필수</span></div>
+      <input type="text" inputmode="numeric" class="fi" id="aSeal" placeholder="예: 12345-6" oninput="onFieldChange()">
+      <div class="save-indicator" id="si_aSeal">💾 저장됨</div>
+    </div>
+    <div class="fl">
+      <div class="fl-label">밸브 상태 <span class="req">●필수</span></div>
+      <div class="rpg">
+        <label class="rp ok"><input type="radio" name="av" value="이상없음" checked onchange="onFieldChange()"><span>✅ 이상없음</span></label>
+        <label class="rp ng"><input type="radio" name="av" value="밸브고장" onchange="onFieldChange()"><span>⚠️ 밸브고장</span></label>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="step-nav-btn prev" onclick="goStep(3)">← 이전</button>
+      <button class="step-nav-btn next" onclick="goStep(5)">다음 → STEP 5</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: 교체후 사진 -->
+  <div class="step-card" id="step5">
+    <div class="step-head">
+      <div class="step-num" id="sn5">5</div>
+      <div class="step-name">교체 후 사진 촬영</div>
+      <span class="step-status pending" id="ss5">미촬영</span>
+    </div>
+    <div class="photo-slot" id="sl_after" onclick="tp('pAfter')">
+      <input type="file" id="pAfter" class="pi" accept="image/*" capture="environment"
+        onchange="onPhoto(this,'sl_after','img_after','wm_after','교체후','ss5','sn5')">
+      <div class="ps-thumb">
+        <span class="ph-icon">✨</span>
+        <img id="img_after" alt="">
+        <div class="wm-overlay" id="wm_after">
+          <table class="wm-table">
+            <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+            <tr><td class="wm-key">공&nbsp;정</td><td colspan="3">디지털계량기 교체</td></tr>
+            <tr><td class="wm-key">위&nbsp;치</td><td id="wml_after" colspan="3">—</td></tr>
+            <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">교체후</td></tr>
+            <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_after"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="ps-label"><div class="ps-name">✨ 교체 후</div><div class="ps-sub" id="psub_after">탭하여 촬영</div></div>
+    </div>
+    <div class="step-nav">
+      <button class="step-nav-btn prev" onclick="goStep(4)">← 이전</button>
+      <button class="step-nav-btn next" onclick="goStep(6)">다음 → STEP 6</button>
+    </div>
+  </div>
+
+  <!-- STEP 6: 서명/스티커 -->
+  <div class="step-card" id="step6">
+    <div class="step-head">
+      <div class="step-num" id="sn6">6</div>
+      <div class="step-name">수용가 확인</div>
+      <span class="step-status pending" id="ss6">미완료</span>
+    </div>
+    <div class="ctab">
+      <button class="ct active-sign" id="btnSign" onclick="setC('sign')">✍️ 서명받기</button>
+      <button class="ct" id="btnSticker" onclick="setC('sticker')">🏷️ 서명불가(스티커)</button>
+    </div>
+    <div class="cond active" id="condSign">
+      <div id="signPreviewArea" style="display:none">
+        <div class="sign-done-badge">✅ 서명 완료 — 저장됨</div>
+        <div class="sign-preview-wrap">
+          <img id="signPreviewImg" class="sign-preview-img" alt="서명">
+          <button class="sign-edit-btn" onclick="openSign()">✏️ 재서명</button>
+        </div>
+      </div>
+      <div id="signOpenArea">
+        <button class="sign-open-btn" onclick="openSign()">✍️ 서명란 열기</button>
+      </div>
+    </div>
+    <div class="cond" id="condSticker">
+      <div class="photo-slot" id="sl_sticker" onclick="tp('pSticker')">
+        <input type="file" id="pSticker" class="pi" accept="image/*" capture="environment"
+          onchange="onPhoto(this,'sl_sticker','img_sticker','wm_sticker','스티커부착','ss6','sn6')">
+        <div class="ps-thumb">
+          <span class="ph-icon">🏷️</span>
+          <img id="img_sticker" alt="">
+          <div class="wm-overlay" id="wm_sticker">
+            <table class="wm-table">
+              <tr><td class="wm-key">공사명</td><td colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
+              <tr><td class="wm-key">위&nbsp;치</td><td id="wml_sticker" colspan="3">—</td></tr>
+              <tr><td class="wm-key">내&nbsp;용</td><td colspan="3">스티커부착</td></tr>
+              <tr><td class="wm-key">일&nbsp;자</td><td id="wmd_sticker"></td><td class="wm-key">시공사</td><td>(주)양정건설</td></tr>
+            </table>
           </div>
         </div>
-        <div id="signOpenArea">
-          <button onclick="openSignModal()" style="width:100%;padding:22px;background:linear-gradient(135deg,rgba(0,184,204,0.1),rgba(26,82,128,0.07));border:1.5px dashed rgba(0,184,204,0.35);border-radius:var(--r-lg);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;color:var(--sea);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all var(--t)">
-            ✍️ 서명란 열기 (전체화면)
-          </button>
-        </div>
+        <div class="ps-label"><div class="ps-name">🏷️ 스티커사진</div><div class="ps-sub" id="psub_sticker">탭하여 촬영</div></div>
       </div>
-      <div class="cond" id="condSticker">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">ℹ 모든 항목이 기재된 스티커를 부착 후 사진을 업로드하세요</div>
-        <div class="ps" id="sl_sticker2" style="max-width:160px" onclick="tp('pSticker2')">
-          <input type="file" id="pSticker2" class="pi-input" accept="image/*" capture="environment" onchange="onPhoto(this,'sl_sticker2','sb_sticker2','img_sticker2','wm_sticker2','스티커부착')">
-          <div class="ps-thumb" style="border-radius:var(--r-lg) var(--r-lg) 0 0"><span class="ph-icon">📸</span><img id="img_sticker2" alt="">
-            <div class="wm-overlay" id="wm_sticker2"><table class="wm-table">
-              <tr><td class="wm-key">공사명</td><td class="wm-val" colspan="3">2026년 디지털계량기 교체공사(서남광산)</td></tr>
-              <tr><td class="wm-key">공&nbsp;&nbsp;정</td><td class="wm-val" colspan="3">디지털계량기 교체</td></tr>
-              <tr><td class="wm-key">위&nbsp;&nbsp;치</td><td class="wm-val" id="wml_sticker2" colspan="3">—</td></tr>
-              <tr><td class="wm-key">내&nbsp;&nbsp;용</td><td class="wm-val" colspan="3">스티커부착</td></tr>
-              <tr><td class="wm-key">일&nbsp;&nbsp;자</td><td class="wm-val" id="wmd_sticker2"></td><td class="wm-key">시공사</td><td class="wm-val">(주)양정건설</td></tr>
-            </table></div>
-          </div>
-          <div class="ps-label"><div class="pl">스티커사진<span class="pdot"></span></div><div class="psub" id="sb_sticker2">업로드</div></div>
-        </div>
-      </div>
+    </div>
+    <div class="step-nav">
+      <button class="step-nav-btn prev" onclick="goStep(5)">← 이전</button>
+      <button class="step-nav-btn save" onclick="saveWork()">💾 작업 임시저장</button>
     </div>
   </div>
 
 </div><!-- /page -->
 
-<!-- 서명 전체화면 모달 -->
-<div class="sign-modal" id="signModal">
-  <div class="sign-modal-header">
-    <div class="sign-modal-title">✍️ 수용가 서명</div>
-    <div class="sign-modal-actions">
-      <button class="sm-btn clear" onclick="clearFullSign()">🗑 지우기</button>
-      <button class="sm-btn cancel" onclick="closeSignModal()">취소</button>
-      <button class="sm-btn confirm" onclick="confirmSign()">✓ 서명 완료</button>
-    </div>
-  </div>
-  <div class="sign-modal-guide">손가락으로 자유롭게 서명하세요</div>
-  <div class="sign-modal-canvas-wrap">
-    <canvas id="scFull"></canvas>
-  </div>
-</div>
-
-<!-- 하단 저장 바 -->
+<!-- 하단 저장바 -->
 <div class="save-bar">
   <div class="save-bar-inner">
     <div class="save-summary">
       <div class="ss-no" id="barNo">NO. —</div>
       <div class="ss-addr" id="barAddr">NO를 입력해 주세요</div>
     </div>
-    <button onclick="showExitDialog(null)" style="padding:14px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--r-lg);color:rgba(255,255,255,0.5);font-size:22px;cursor:pointer;flex-shrink:0;transition:all var(--t)" title="종료">✕</button>
-    <button class="save-btn" onclick="handleSave()">💾 저장하기</button>
+    <button class="save-work-btn" onclick="saveWork()">💾 임시저장</button>
   </div>
+</div>
+</div><!-- /tab-content-work -->
+
+<!-- ══ 작업목록 탭 ══ -->
+<div class="tab-content" id="tab-content-list">
+<div class="page">
+  <div class="list-header">
+    <div>
+      <div class="list-date" id="listDate">2026-06-05</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px" id="listWorkerName"></div>
+    </div>
+    <div class="list-count">총 <span id="listTotal">0</span>건</div>
+  </div>
+  <div id="workList"></div>
+</div>
+</div>
+
+<!-- ══ 업로드 탭 ══ -->
+<div class="tab-content" id="tab-content-upload">
+<div class="page">
+  <div class="upload-header">
+    <div class="upload-title">📤 구글 업로드</div>
+    <div class="upload-sub" id="uploadSubTitle">저녁 8시 이후 와이파이 환경에서 업로드하세요</div>
+  </div>
+  <div class="upload-stats">
+    <div class="stat-card"><div class="stat-num total" id="statTotal">0</div><div class="stat-label">전체</div></div>
+    <div class="stat-card"><div class="stat-num wait" id="statWait">0</div><div class="stat-label">대기중</div></div>
+    <div class="stat-card"><div class="stat-num done" id="statDone">0</div><div class="stat-label">완료</div></div>
+  </div>
+  <button class="upload-btn" id="uploadBtn" onclick="startUpload()">☁️ 업로드 시작</button>
+  <div class="upload-list" id="uploadList"></div>
+</div>
 </div>
 
 <script>
-/* ════════════════════════════════════════════
-   설정 — Apps Script 배포 URL
-════════════════════════════════════════════ */
+/* ════════════════════════════════
+   GAS URL
+════════════════════════════════ */
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbxGzSqpjURqgJ5F0LlJaHymUXAEDY5nutDF2KLKtINQFVkVbwXJ9MH34lB147BybmUq/exec';
 
-/* ════════════════════════════════════════════
-   GAS API 호출 헬퍼 (fetch 기반 JSONP 방식)
-   Apps Script doGet은 ?action=xxx&...로 라우팅
-════════════════════════════════════════════ */
+/* ════════════════════════════════
+   Service Worker
+════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+
+/* ════════════════════════════════
+   IndexedDB 초기화
+════════════════════════════════ */
+var DB_NAME = 'MeterAppDB', DB_VER = 1, db = null;
+
+function initDB() {
+  return new Promise(function(resolve, reject) {
+    var req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = function(e) {
+      var d = e.target.result;
+      if (!d.objectStoreNames.contains('works')) {
+        d.createObjectStore('works', { keyPath: 'key' });
+      }
+      if (!d.objectStoreNames.contains('photos')) {
+        d.createObjectStore('photos', { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = function(e) { db = e.target.result; resolve(db); };
+    req.onerror   = function(e) { reject(e); };
+  });
+}
+
+function dbPut(store, data) {
+  return new Promise(function(resolve, reject) {
+    var tx  = db.transaction(store, 'readwrite');
+    var req = tx.objectStore(store).put(data);
+    req.onsuccess = function() { resolve(); };
+    req.onerror   = function(e) { reject(e); };
+  });
+}
+
+function dbGet(store, key) {
+  return new Promise(function(resolve, reject) {
+    var tx  = db.transaction(store, 'readonly');
+    var req = tx.objectStore(store).get(key);
+    req.onsuccess = function(e) { resolve(e.target.result); };
+    req.onerror   = function(e) { reject(e); };
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise(function(resolve, reject) {
+    var tx  = db.transaction(store, 'readonly');
+    var req = tx.objectStore(store).getAll();
+    req.onsuccess = function(e) { resolve(e.target.result); };
+    req.onerror   = function(e) { reject(e); };
+  });
+}
+
+function dbDelete(store, key) {
+  return new Promise(function(resolve, reject) {
+    var tx  = db.transaction(store, 'readwrite');
+    var req = tx.objectStore(store).delete(key);
+    req.onsuccess = function() { resolve(); };
+    req.onerror   = function(e) { reject(e); };
+  });
+}
+
+/* ════════════════════════════════
+   GAS API 호출 (JSONP)
+════════════════════════════════ */
 function gasCall(action, params) {
   return new Promise(function(resolve, reject) {
     var cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random()*9999);
@@ -576,17 +757,12 @@ function gasCall(action, params) {
     };
     var s = document.createElement('script');
     s.src = url;
-    s.onerror = function() {
-      clearTimeout(timer);
-      delete window[cbName];
-      reject(new Error('네트워크 오류'));
-    };
+    s.onerror = function() { clearTimeout(timer); delete window[cbName]; reject(new Error('네트워크 오류')); };
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 35000);
   });
 }
 
-/* POST용 fetch 헬퍼 (사진/saveRecord) */
 function gasPost(action, payload) {
   return fetch(GAS_URL, {
     method: 'POST',
@@ -595,201 +771,128 @@ function gasPost(action, payload) {
   }).then(function(r){ return r.json(); });
 }
 
-/* ════════════════════════════════════════════
-   PWA Service Worker 등록
-════════════════════════════════════════════ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./sw.js').then(function(reg) {
-      console.log('SW 등록 완료:', reg.scope);
-    }).catch(function(err) {
-      console.log('SW 등록 실패:', err);
-    });
-  });
-}
-
-/* ════════════════════════════════════════════
-   PWA 설치 프롬프트
-════════════════════════════════════════════ */
-var deferredPrompt = null;
-var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-var isInStandalone = window.matchMedia('(display-mode: standalone)').matches
-                  || window.navigator.standalone === true;
-
-window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (!isInStandalone && !localStorage.getItem('installDismissed')) {
-    document.getElementById('installBanner').classList.add('show');
-  }
-});
-
-function installPWA() {
-  if (isIOS) {
-    document.getElementById('iosGuide').classList.add('open');
-    return;
-  }
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function(r) {
-    deferredPrompt = null;
-    document.getElementById('installBanner').classList.remove('show');
-  });
-}
-
-function dismissInstall() {
-  document.getElementById('installBanner').classList.remove('show');
-  localStorage.setItem('installDismissed', '1');
-}
-
-// iOS에서 아직 설치 안 된 경우 배너 표시
-window.addEventListener('DOMContentLoaded', function() {
-  if (isIOS && !isInStandalone && !localStorage.getItem('installDismissed')) {
-    setTimeout(function() {
-      document.getElementById('installBanner').classList.add('show');
-    }, 2000);
-  }
-});
-
-/* ════════════════════════════════════════════
+/* ════════════════════════════════
    상태 변수
-════════════════════════════════════════════ */
-var cur    = null;
-var noTmr  = null;
-var cMode  = 'sign';
-var wkName = '작업자';
-var WM_KEYS = ['full','before','after','sticker','sticker2'];
+════════════════════════════════ */
+var appDate = '', appWorker = '', cur = null, noTmr = null;
+var cMode = 'sign', signCtx = null, signDrw = false, signLast = null, signSaved = false;
+var currentStep = 1, exitTarget = null;
+var photos = { full:null, before:null, after:null, sticker:null, sign:null };
+var WM_KEYS = ['full','before','after','sticker'];
 
-/* ── 자동저장 / 자동복원 ── */
-function autoSave() {
-  try {
-    var data = {
-      no       : document.getElementById('noInput').value,
-      workDate : document.getElementById('workDate').value,
-      bRead    : document.getElementById('bRead').value,
-      bSeal    : document.getElementById('bSeal').value,
-      aRead    : document.getElementById('aRead').value,
-      aMeter   : document.getElementById('aMeter').value,
-      aSeal    : document.getElementById('aSeal').value,
-      bValve   : document.querySelector('input[name="bv"]:checked').value,
-      aValve   : document.querySelector('input[name="av"]:checked').value,
-      cMode    : cMode,
-      cur      : cur,
-      sign     : signSaved ? document.getElementById('signPreviewImg').src : null,
-      ts       : Date.now(),
-    };
-    localStorage.setItem('meterAutoSave', JSON.stringify(data));
-  } catch(e) {}
-}
-
-function autoLoad() {
-  try {
-    var raw = localStorage.getItem('meterAutoSave');
-    if (!raw) return false;
-    var data = JSON.parse(raw);
-    if (!data) return false;
-    var hasData = data.no || data.aRead || data.aMeter || data.sign;
-    if (!hasData) return false;
-
-    document.getElementById('noInput').value  = data.no       || '';
-    document.getElementById('workDate').value = data.workDate || new Date().toISOString().split('T')[0];
-    document.getElementById('bRead').value    = data.bRead    || '';
-    document.getElementById('bSeal').value    = data.bSeal    || '';
-    document.getElementById('aRead').value    = data.aRead    || '';
-    document.getElementById('aMeter').value   = data.aMeter   || '';
-    document.getElementById('aSeal').value    = data.aSeal    || '';
-
-    var bvEl = document.querySelector('input[name="bv"][value="'+data.bValve+'"]');
-    if (bvEl) bvEl.checked = true;
-    var avEl = document.querySelector('input[name="av"][value="'+data.aValve+'"]');
-    if (avEl) avEl.checked = true;
-
-    if (data.cMode) setC(data.cMode);
-
-    if (data.sign) {
-      document.getElementById('signPreviewImg').src = data.sign;
-      signSaved = true;
-      document.getElementById('signPreviewArea').style.display = 'block';
-      document.getElementById('signOpenArea').style.display    = 'none';
-    }
-
-    if (data.cur) {
-      cur = data.cur;
-      renderInfo(data.no, data.cur);
-      updateBar();
-      refreshAllWM();
-      document.getElementById('noBox').classList.add('found');
-      var tag = document.getElementById('noTag');
-      tag.textContent = '\u2713 확인'; tag.className = 'no-tag show found';
-    }
-    showToast('\u2705 이전 작업 내용을 복원했습니다.');
-    return true;
-  } catch(e) { return false; }
-}
-
-/* ════════════════════════════════════════════
-   초기화
-════════════════════════════════════════════ */
+/* ════════════════════════════════
+   앱 시작
+════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
-  updateDrive();
-  refreshAllWM();
-  initSign();
-  document.getElementById('workDate').addEventListener('change', refreshAllWM);
-
-  // 자동저장 복원
-  autoLoad();
-
-  // 2초마다 자동저장
-  setInterval(autoSave, 2000);
-
-  // 입력시 즉시 저장
-  ['noInput','bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
-    document.getElementById(id).addEventListener('input', autoSave);
+  initDB().then(function() {
+    // 저장된 세션 확인
+    var saved = localStorage.getItem('meterSession');
+    if (saved) {
+      try {
+        var s = JSON.parse(saved);
+        appDate   = s.date   || '';
+        appWorker = s.worker || '';
+        if (appDate && appWorker) { launchApp(); return; }
+      } catch(e) {}
+    }
+    // 시작화면 표시
+    document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
+    var savedWorker = localStorage.getItem('workerName');
+    if (savedWorker) document.getElementById('startWorker').value = savedWorker;
   });
-  document.getElementById('workDate').addEventListener('change', autoSave);
-
-  // 백그라운드/종료 시 즉시 저장
-  document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'hidden') autoSave();
-  });
-  window.addEventListener('pagehide', autoSave);
 
   // 뒤로가기 차단
   history.pushState(null, null, location.href);
   history.pushState(null, null, location.href);
   window.addEventListener('popstate', function() {
-    autoSave();
     history.pushState(null, null, location.href);
-    exitTarget = 'back';
     document.getElementById('exitDialog').classList.add('open');
+    exitTarget = 'back';
   });
 
-  // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
-  gasCall('getWorkerName').then(function(n) {
-    wkName = n || '작업자';
-    document.getElementById('workerName').textContent = wkName;
-  }).catch(function() {
-    // 오프라인이거나 실패 시 저장된 이름 사용
-    var saved = localStorage.getItem('workerName');
-    if (saved) {
-      wkName = saved;
-      document.getElementById('workerName').textContent = wkName;
-    } else {
-      // 이름 직접 입력 요청
-      var name = prompt('작업자 이름을 입력해 주세요:');
-      if (name) {
-        wkName = name;
-        localStorage.setItem('workerName', name);
-        document.getElementById('workerName').textContent = wkName;
-      }
-    }
+  // 백그라운드 저장
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') quickSave();
   });
+  window.addEventListener('pagehide', quickSave);
+
+  initSignCanvas();
 });
 
-/* ════════════════════════════════════════════
+function startApp() {
+  var d = document.getElementById('startDate').value;
+  var w = document.getElementById('startWorker').value.trim();
+  if (!d) { showToast('⚠️ 작업일자를 입력해 주세요.'); return; }
+  if (!w) { showToast('⚠️ 작업자 이름을 입력해 주세요.'); return; }
+  appDate   = d;
+  appWorker = w;
+  localStorage.setItem('meterSession', JSON.stringify({ date: d, worker: w }));
+  localStorage.setItem('workerName', w);
+  launchApp();
+}
+
+function launchApp() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('tabNav').style.display = 'flex';
+  // 헤더 업데이트
+  var dp = appDate.split('-');
+  document.getElementById('hdrDate').textContent = dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker;
+  document.getElementById('workerName').textContent = appWorker;
+  // 초기화
+  initStepDots();
+  refreshAllWM();
+  updateListTab();
+  updateUploadTab();
+}
+
+/* ════════════════════════════════
+   탭 전환
+════════════════════════════════ */
+function switchTab(name) {
+  ['work','list','upload'].forEach(function(t) {
+    document.getElementById('tab-'+t).classList.toggle('active', t===name);
+    document.getElementById('tab-content-'+t).classList.toggle('active', t===name);
+  });
+  if (name === 'list')   updateListTab();
+  if (name === 'upload') updateUploadTab();
+}
+
+/* ════════════════════════════════
+   STEP 이동
+════════════════════════════════ */
+var STEP_NAMES = ['','전체사진 촬영','교체 전 사진 촬영','기존 계량기 확인','교체 계량기 확인','교체 후 사진 촬영','수용가 확인'];
+
+function initStepDots() {
+  var wrap = document.getElementById('stepDots');
+  wrap.innerHTML = '';
+  for (var i = 1; i <= 6; i++) {
+    var d = document.createElement('div');
+    d.className = 'step-dot' + (i===1?' active':'');
+    d.setAttribute('data-step', i);
+    (function(n){ d.onclick = function(){ goStep(n); }; })(i);
+    wrap.appendChild(d);
+  }
+}
+
+function goStep(n) {
+  currentStep = n;
+  for (var i = 1; i <= 6; i++) {
+    document.getElementById('step'+i).classList.toggle('active', i===n);
+  }
+  document.getElementById('stepTitle').textContent = 'STEP '+n+' — '+STEP_NAMES[n];
+  document.getElementById('stepCount').textContent = n+' / 6';
+  // 점 업데이트
+  var dots = document.querySelectorAll('.step-dot');
+  dots.forEach(function(d) {
+    var s = parseInt(d.getAttribute('data-step'));
+    d.className = 'step-dot' + (s < n ? ' done' : (s === n ? ' active' : ''));
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ════════════════════════════════
    NO 입력 → GAS 조회
-════════════════════════════════════════════ */
+════════════════════════════════ */
 function onNoInput(v) {
   clearTimeout(noTmr);
   var box  = document.getElementById('noBox');
@@ -797,15 +900,10 @@ function onNoInput(v) {
   var hint = document.getElementById('noHint');
   box.classList.remove('found','notfound');
   tag.className = 'no-tag';
-
   if (!v) {
-    hint.textContent = 'ℹ NO 입력 시 시트에서 수용가 정보를 자동으로 불러옵니다';
-    hint.className = 'no-hint';
-    cur = null; resetInfo(); updateBar(); refreshAllWM();
-    return;
+    cur = null; resetInfo(); updateBar(); return;
   }
   tag.textContent = '조회 중…'; tag.className = 'no-tag show searching';
-
   noTmr = setTimeout(function() {
     gasCall('getRowByNo', { no: parseInt(v) }).then(function(d) {
       if (d && !d.error && d.no !== undefined) {
@@ -815,544 +913,624 @@ function onNoInput(v) {
         cur = d;
         renderInfo(v, d);
         updateBar();
-        updateDrive();
         refreshAllWM();
+        quickSave();
       } else {
         box.classList.add('notfound');
         tag.textContent = '✗ 없음'; tag.className = 'no-tag show notfound';
-        hint.textContent = d && d.error ? '❌ ' + d.error : '⚠ 해당 NO가 없습니다.';
+        hint.textContent = d && d.error ? '❌ '+d.error : '⚠ 해당 NO가 없습니다.';
         hint.className = 'no-hint err';
-        cur = null; resetInfo(); updateBar(); refreshAllWM();
+        cur = null; resetInfo(); updateBar();
       }
     }).catch(function(e) {
       box.classList.add('notfound');
       tag.textContent = '✗ 오류'; tag.className = 'no-tag show notfound';
-      hint.textContent = '❌ 서버 오류: ' + e.message;
+      hint.textContent = '❌ 오프라인 상태입니다.';
       hint.className = 'no-hint err';
     });
   }, 500);
 }
 
-/* ════════════════════════════════════════════
-   수용가 정보 렌더
-════════════════════════════════════════════ */
 function renderInfo(no, d) {
-  document.getElementById('infoBadge').textContent = 'NO ' + String(no).padStart(3,'0');
-  document.getElementById('infoBadge').className = 'cbadge done';
   var fields = [
-    {l:'수용가번호',v:d.custNo},{l:'수용가명',v:d.custName},{l:'연락처',v:d.phone},
-    {l:'교체사유',v:d.reason},{l:'구경',v:d.size},{l:'기물번호',v:d.meterNo},
+    {l:'수용가번호',v:d.custNo},{l:'수용가명',v:d.custName},
+    {l:'연락처',v:d.phone},{l:'교체사유',v:d.reason},
+    {l:'구경',v:d.size},{l:'기물번호',v:d.meterNo},
     {l:'주소',v:d.address,w:true},
   ];
   document.getElementById('infoArea').innerHTML =
-    '<div class="info-chips">' +
-    fields.map(function(f) {
+    '<div class="info-grid">'+
+    fields.map(function(f){
       return '<div class="info-chip'+(f.w?' w2':'')+'"><div class="ic-label">'+f.l+'</div><div class="ic-value">'+(f.v||'—')+'</div></div>';
-    }).join('') + '</div>';
+    }).join('')+'</div>';
 }
 function resetInfo() {
-  document.getElementById('infoBadge').textContent = '미조회';
-  document.getElementById('infoBadge').className = 'cbadge req';
   document.getElementById('infoArea').innerHTML = '<div class="info-empty">NO를 입력하면 정보가 표시됩니다</div>';
 }
 
-/* ════════════════════════════════════════════
-   워터마크 위치·날짜 전체 갱신
-════════════════════════════════════════════ */
+/* ════════════════════════════════
+   워터마크
+════════════════════════════════ */
 function refreshAllWM() {
-  var addr = cur ? (cur.address || '—') : '—';
-  var dateVal = document.getElementById('workDate').value;
+  var addr = cur ? (cur.address||'—') : '—';
   var dateStr = '—';
-  if (dateVal) {
-    var p = dateVal.split('-');
+  if (appDate) {
+    var p = appDate.split('-');
     dateStr = p[0]+'년 '+parseInt(p[1])+'월 '+parseInt(p[2])+'일';
   }
   WM_KEYS.forEach(function(key) {
-    var locEl  = document.getElementById('wml_'+key);
-    var dateEl = document.getElementById('wmd_'+key);
-    if (locEl)  locEl.textContent  = addr;
-    if (dateEl) dateEl.textContent = dateStr;
+    var l = document.getElementById('wml_'+key);
+    var d = document.getElementById('wmd_'+key);
+    if (l) l.textContent = addr;
+    if (d) d.textContent = dateStr;
   });
 }
 
-/* ════════════════════════════════════════════
-   사진
-════════════════════════════════════════════ */
+/* ════════════════════════════════
+   사진 촬영 → 워터마크 합성 → IndexedDB 저장
+════════════════════════════════ */
 function tp(id) { document.getElementById(id).click(); }
 
-function onPhoto(input, slotId, subId, imgId, wmId, label) {
+function onPhoto(input, slotId, imgId, wmId, label, ssId, snId) {
   if (!input.files || !input.files[0]) return;
   var file = input.files[0];
-  var nm   = file.name;
   var slot = document.getElementById(slotId);
-  var sub  = document.getElementById(subId);
-  slot.classList.add('ok'); slot.classList.remove('disabled');
+  var sub  = document.getElementById('psub_'+slotId.replace('sl_',''));
+  slot.classList.add('ok');
   if (sub) sub.textContent = '합성 중…';
 
   compositePhoto(file, label).then(function(result) {
-    if (!result || !result.base64) throw new Error('합성 실패');
+    if (!result) throw new Error('합성 실패');
     var dataUrl = 'data:'+result.mime+';base64,'+result.base64;
     var imgEl = document.getElementById(imgId);
     if (imgEl) { imgEl.src = dataUrl; imgEl.classList.add('show'); }
     var wmEl = document.getElementById(wmId);
     if (wmEl) wmEl.style.display = 'none';
-    if (sub) sub.textContent = '✓ '+(nm.length>10 ? nm.substring(0,10)+'…' : nm);
-    saveOnePhotoToDevice(result, label);
+    if (sub) sub.textContent = '✓ 저장됨';
+
+    // photos 객체에 저장
+    var key = slotId.replace('sl_','');
+    photos[key] = result;
+
+    // IndexedDB에 즉시 저장
+    var no = document.getElementById('noInput').value || '0';
+    var photoKey = 'photo_'+appDate+'_'+no+'_'+key;
+    dbPut('photos', { key: photoKey, data: result, label: label, no: no, date: appDate }).then(function() {
+      showToast('📷 '+label+' 저장됨 ✅');
+    });
+
+    // step 상태 업데이트
+    if (ssId) {
+      var ss = document.getElementById(ssId);
+      if (ss) { ss.textContent = '저장됨 ✅'; ss.className = 'step-status saved'; }
+    }
+    if (snId) {
+      var sn = document.getElementById(snId);
+      if (sn) sn.className = 'step-num done';
+    }
+    refreshAllWM();
   }).catch(function() {
+    // 합성 실패 시 원본 저장
     var reader = new FileReader();
     reader.onload = function(e) {
       var imgEl = document.getElementById(imgId);
       if (imgEl) { imgEl.src = e.target.result; imgEl.classList.add('show'); }
-      if (sub) sub.textContent = '✓ '+(nm.length>10 ? nm.substring(0,10)+'…' : nm);
-      saveOnePhotoToDevice({ base64: e.target.result.split(',')[1], mime: file.type }, label);
+      if (sub) sub.textContent = '✓ 저장됨';
+      var b64 = e.target.result.split(',')[1];
+      var key = slotId.replace('sl_','');
+      photos[key] = { base64: b64, mime: file.type };
+      var no = document.getElementById('noInput').value || '0';
+      dbPut('photos', { key: 'photo_'+appDate+'_'+no+'_'+key, data: {base64:b64,mime:file.type}, label: label, no: no, date: appDate });
+      showToast('📷 '+label+' 저장됨 ✅');
+      if (ssId) { var ss=document.getElementById(ssId); if(ss){ss.textContent='저장됨 ✅';ss.className='step-status saved';} }
     };
     reader.readAsDataURL(file);
   });
-  refreshAllWM();
 }
 
-function saveOnePhotoToDevice(photoData, label) {
-  if (!photoData || !photoData.base64) return;
-  try {
-    var no      = document.getElementById('noInput').value || '000';
-    var pad     = String(no); while (pad.length < 3) pad = '0'+pad;
-    var dateVal = document.getElementById('workDate').value || '';
-    var dateTag = dateVal.replace(/-/g,'');
-    var ext     = photoData.mime === 'image/png' ? '.png' : '.jpg';
-    var fname   = 'NO'+pad+'_'+label+'_'+dateTag+ext;
-    var bytes   = base64ToUint8Array(photoData.base64);
-    var blob    = new Blob([bytes], { type: photoData.mime });
-    var url     = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = fname; a.style.display = 'none';
-    document.body.appendChild(a); a.click();
-    setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
-    showToast('📷 '+label+' 저장됨');
-  } catch(e) { console.warn('즉시 저장 실패:', e.message); }
+/* ════════════════════════════════
+   입력 변경 → 즉시 저장 표시
+════════════════════════════════ */
+function onFieldChange() {
+  // 각 필드 저장 표시
+  ['bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
+    var el = document.getElementById(id);
+    var si = document.getElementById('si_'+id);
+    if (el && si) {
+      si.classList.toggle('show', el.value.trim() !== '');
+      if (el.value.trim()) el.classList.add('saved');
+      else el.classList.remove('saved');
+    }
+  });
+  // STEP 3 상태
+  var ss3 = document.getElementById('ss3');
+  if (ss3) { ss3.textContent = '입력됨 ✅'; ss3.className = 'step-status saved'; }
+  // STEP 4 상태
+  var aRead = document.getElementById('aRead').value;
+  var aMeter = document.getElementById('aMeter').value;
+  var aSeal = document.getElementById('aSeal').value;
+  var ss4 = document.getElementById('ss4');
+  if (ss4 && aRead && aMeter && aSeal) { ss4.textContent = '완료 ✅'; ss4.className = 'step-status saved'; }
+  quickSave();
 }
 
-/* ════════════════════════════════════════════
-   하단 바 / 드라이브 경로
-════════════════════════════════════════════ */
-function updateBar() {
-  var no = document.getElementById('noInput').value;
-  if (cur && no) {
-    document.getElementById('barNo').textContent   = 'NO. '+String(no).padStart(3,'0');
-    document.getElementById('barAddr').textContent = cur.address || '주소 없음';
-  } else {
-    document.getElementById('barNo').textContent   = 'NO. —';
-    document.getElementById('barAddr').textContent = 'NO를 입력해 주세요';
-  }
-}
-function updateDrive() {
-  var d = new Date();
-  document.getElementById('drivePath').textContent =
-    '3.작업사진 / 광산구 / 교체 / '+(d.getMonth()+1)+'월 / '+d.getDate()+'일';
-}
-
-/* ════════════════════════════════════════════
+/* ════════════════════════════════
    수용가 확인 모드
-════════════════════════════════════════════ */
+════════════════════════════════ */
 function setC(mode) {
   cMode = mode;
-  document.getElementById('btnSign').className    = 'ct'+(mode==='sign'    ? ' active-sign'    : '');
-  document.getElementById('btnSticker').className = 'ct'+(mode==='sticker' ? ' active-sticker' : '');
-  document.getElementById('condSign').className    = 'cond'+(mode==='sign'    ? ' active' : '');
-  document.getElementById('condSticker').className = 'cond'+(mode==='sticker' ? ' active' : '');
-  var ss = document.getElementById('sl_sticker');
-  if (mode==='sticker') ss.classList.remove('disabled');
-  else ss.classList.add('disabled');
+  document.getElementById('btnSign').className    = 'ct'+(mode==='sign'?' active-sign':'');
+  document.getElementById('btnSticker').className = 'ct'+(mode==='sticker'?' active-sticker':'');
+  document.getElementById('condSign').className    = 'cond'+(mode==='sign'?' active':'');
+  document.getElementById('condSticker').className = 'cond'+(mode==='sticker'?' active':'');
 }
 
-/* ════════════════════════════════════════════
-   서명 전체화면 모달
-════════════════════════════════════════════ */
-var signCtx = null, signDrw = false, signLast = null, signSaved = false;
+/* ════════════════════════════════
+   서명 캔버스
+════════════════════════════════ */
+function initSignCanvas() {
+  var cv = document.getElementById('scFull');
+  function getPos(e) {
+    var rect = cv.getBoundingClientRect();
+    var src = e.touches ? e.touches[0] : e;
+    return { x:(src.clientX-rect.left)*(cv.offsetWidth/(rect.width||1)), y:(src.clientY-rect.top)*(cv.offsetHeight/(rect.height||1)) };
+  }
+  function dn(e) { e.preventDefault(); if(!signCtx)return; signDrw=true; signLast=getPos(e); signCtx.beginPath(); signCtx.arc(signLast.x,signLast.y,1.5,0,Math.PI*2); signCtx.fill(); }
+  function mv(e) { if(!signDrw||!signCtx)return; e.preventDefault(); var p=getPos(e); signCtx.beginPath(); signCtx.moveTo(signLast.x,signLast.y); signCtx.lineTo(p.x,p.y); signCtx.stroke(); signLast=p; }
+  function up(e) { e.preventDefault(); signDrw=false; signLast=null; }
+  cv.addEventListener('mousedown',dn); cv.addEventListener('mousemove',mv); cv.addEventListener('mouseup',up); cv.addEventListener('mouseleave',up);
+  cv.addEventListener('touchstart',dn,{passive:false}); cv.addEventListener('touchmove',mv,{passive:false}); cv.addEventListener('touchend',up,{passive:false});
+  window.addEventListener('orientationchange', function(){ setTimeout(function(){ if(document.getElementById('signModal').classList.contains('open')) setupSignCanvas(); },400); });
+}
 
 function setupSignCanvas() {
   var cv = document.getElementById('scFull');
-  var dpr = window.devicePixelRatio || 1;
-  if (!cv.offsetWidth || !cv.offsetHeight) return;
-  var snap = (signSaved && cv.width > 0) ? cv.toDataURL() : null;
-  cv.width  = cv.offsetWidth  * dpr;
-  cv.height = cv.offsetHeight * dpr;
+  var dpr = window.devicePixelRatio||1;
+  if (!cv.offsetWidth||!cv.offsetHeight) return;
+  cv.width = cv.offsetWidth*dpr; cv.height = cv.offsetHeight*dpr;
   var ctx = cv.getContext('2d');
-  ctx.setTransform(1,0,0,1,0,0);
-  ctx.scale(dpr, dpr);
-  ctx.strokeStyle = '#ffffff'; ctx.fillStyle = '#ffffff';
-  ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
+  ctx.strokeStyle='#ffffff'; ctx.fillStyle='#ffffff'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
   signCtx = ctx;
-  if (snap) {
-    var img = new Image();
-    img.onload = function() { ctx.drawImage(img, 0, 0, cv.offsetWidth, cv.offsetHeight); };
-    img.src = snap;
-  }
 }
 
-function signGetPos(e) {
-  var cv = document.getElementById('scFull');
-  var rect = cv.getBoundingClientRect();
-  var src = e.touches ? e.touches[0] : e;
-  var ratX = cv.offsetWidth  / (rect.width  || 1);
-  var ratY = cv.offsetHeight / (rect.height || 1);
-  return { x:(src.clientX-rect.left)*ratX, y:(src.clientY-rect.top)*ratY };
-}
-
-function initSign() {
-  var cv = document.getElementById('scFull');
-  function dn(e) { e.preventDefault(); if(!signCtx)return; signDrw=true; signLast=signGetPos(e); signCtx.beginPath(); signCtx.arc(signLast.x,signLast.y,signCtx.lineWidth/2,0,Math.PI*2); signCtx.fill(); }
-  function mv(e) { if(!signDrw||!signCtx)return; e.preventDefault(); var p=signGetPos(e); signCtx.beginPath(); signCtx.moveTo(signLast.x,signLast.y); signCtx.lineTo(p.x,p.y); signCtx.stroke(); signLast=p; }
-  function up(e) { e.preventDefault(); signDrw=false; signLast=null; }
-  cv.addEventListener('mousedown',dn); cv.addEventListener('mousemove',mv); cv.addEventListener('mouseup',up); cv.addEventListener('mouseleave',up);
-  cv.addEventListener('touchstart',dn,{passive:false}); cv.addEventListener('touchmove',mv,{passive:false}); cv.addEventListener('touchend',up,{passive:false}); cv.addEventListener('touchcancel',up,{passive:false});
-  window.addEventListener('orientationchange', function() { setTimeout(function() { if(document.getElementById('signModal').classList.contains('open')) setupSignCanvas(); }, 400); });
-  window.addEventListener('resize', function() { if(document.getElementById('signModal').classList.contains('open')) setTimeout(setupSignCanvas, 200); });
-}
-
-function openSignModal() {
-  document.getElementById('signModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(function() {
-    setupSignCanvas();
-    var prevSrc = document.getElementById('signPreviewImg').src;
-    if (signSaved && prevSrc && prevSrc.startsWith('data:')) {
-      var img = new Image();
-      img.onload = function() { var cv=document.getElementById('scFull'); if(signCtx) signCtx.drawImage(img,0,0,cv.offsetWidth,cv.offsetHeight); };
-      img.src = prevSrc;
-    }
-  }, 150);
-}
-function closeSignModal() { document.getElementById('signModal').classList.remove('open'); document.body.style.overflow = ''; }
-function clearFullSign() { var cv=document.getElementById('scFull'); if(signCtx) signCtx.clearRect(0,0,cv.offsetWidth,cv.offsetHeight); }
+function openSign() { document.getElementById('signModal').classList.add('open'); document.body.style.overflow='hidden'; setTimeout(setupSignCanvas,150); }
+function closeSign() { document.getElementById('signModal').classList.remove('open'); document.body.style.overflow=''; }
+function clearSign() { var cv=document.getElementById('scFull'); if(signCtx) signCtx.clearRect(0,0,cv.offsetWidth,cv.offsetHeight); }
 
 function confirmSign() {
   var cv = document.getElementById('scFull');
-  if (!signCtx) { showToast('⚠️ 서명란을 다시 열어주세요.'); return; }
-  var imgData = signCtx.getImageData(0,0,cv.width,cv.height).data;
-  var hasMark = false;
-  for (var i=3; i<imgData.length; i+=4) { if(imgData[i]>10){ hasMark=true; break; } }
-  if (!hasMark) { showToast('⚠️ 서명란에 서명을 해주세요.'); return; }
+  if (!signCtx) return;
+  var d = signCtx.getImageData(0,0,cv.width,cv.height).data;
+  var ok = false;
+  for (var i=3;i<d.length;i+=4){ if(d[i]>10){ok=true;break;} }
+  if (!ok) { showToast('⚠️ 서명을 해주세요.'); return; }
   var dataUrl = cv.toDataURL('image/png');
   document.getElementById('signPreviewImg').src = dataUrl;
   signSaved = true;
   document.getElementById('signPreviewArea').style.display = 'block';
   document.getElementById('signOpenArea').style.display = 'none';
-  closeSignModal();
-  showToast('✅ 서명이 저장되었습니다.');
+  closeSign();
+
+  // IndexedDB에 서명 저장
+  var no = document.getElementById('noInput').value || '0';
+  var signData = { base64: dataUrl.split(',')[1], mime: 'image/png' };
+  photos['sign'] = signData;
+  dbPut('photos', { key:'photo_'+appDate+'_'+no+'_sign', data:signData, label:'서명', no:no, date:appDate });
+
+  // STEP 6 상태 업데이트
+  var ss6 = document.getElementById('ss6');
+  if (ss6) { ss6.textContent='완료 ✅'; ss6.className='step-status saved'; }
+  document.getElementById('sn6').className = 'step-num done';
+
+  showToast('✅ 서명 저장됨');
+  quickSave();
 }
 
-function getSignBase64() {
-  if (!signSaved) return null;
-  var src = document.getElementById('signPreviewImg').src;
-  if (!src || !src.startsWith('data:')) return null;
-  return { base64: src.split(',')[1], mime: 'image/png' };
-}
-
-/* ════════════════════════════════════════════
-   종료 확인창
-════════════════════════════════════════════ */
-var isSaving = false, exitTarget = null;
-
-window.addEventListener('beforeunload', function(e) {
-  if (isSaving) return;
+/* ════════════════════════════════
+   임시저장 (IndexedDB)
+════════════════════════════════ */
+function quickSave() {
+  if (!appDate || !appWorker) return;
   var no = document.getElementById('noInput').value;
-  var aRead = document.getElementById('aRead').value;
-  if (no || aRead || signSaved) {
-    var msg = '입력 중인 내용이 있습니다.';
-    e.preventDefault(); e.returnValue = msg; return msg;
+  if (!no) return;
+  try {
+    var data = {
+      key       : appDate+'_'+no,
+      no        : no,
+      date      : appDate,
+      worker    : appWorker,
+      cur       : cur,
+      bValve    : document.querySelector('input[name="bv"]:checked') ? document.querySelector('input[name="bv"]:checked').value : '개(열림)',
+      bRead     : document.getElementById('bRead').value,
+      bSeal     : document.getElementById('bSeal').value,
+      aRead     : document.getElementById('aRead').value,
+      aMeter    : document.getElementById('aMeter').value,
+      aSeal     : document.getElementById('aSeal').value,
+      aValve    : document.querySelector('input[name="av"]:checked') ? document.querySelector('input[name="av"]:checked').value : '이상없음',
+      cMode     : cMode,
+      signSaved : signSaved,
+      uploaded  : false,
+      savedAt   : Date.now(),
+    };
+    dbPut('works', data);
+  } catch(e) {}
+}
+
+/* ════════════════════════════════
+   작업 임시저장 (완료 처리)
+════════════════════════════════ */
+function saveWork() {
+  var no = document.getElementById('noInput').value;
+  if (!no || !cur) { showToast('⚠️ NO를 먼저 입력해 주세요.'); return; }
+  if (!document.getElementById('aRead').value)  { showToast('⚠️ 교체 후 지침을 입력해 주세요.'); return; }
+  if (!document.getElementById('aMeter').value) { showToast('⚠️ 기물번호를 입력해 주세요.'); return; }
+  if (!document.getElementById('aSeal').value)  { showToast('⚠️ 봉인번호를 입력해 주세요.'); return; }
+  if (!photos.full && !photos.before && !photos.after) { showToast('⚠️ 사진을 촬영해 주세요.'); return; }
+  if (cMode==='sign' && !signSaved) { showToast('⚠️ 서명을 받아주세요.'); return; }
+  if (cMode==='sticker' && !photos.sticker) { showToast('⚠️ 스티커 사진을 촬영해 주세요.'); return; }
+
+  quickSave();
+  showToast('✅ NO '+String(no).padStart(3,'0')+' 임시저장 완료!');
+
+  // 폼 초기화
+  setTimeout(function() { resetForm(); switchTab('list'); }, 800);
+}
+
+/* ════════════════════════════════
+   하단 바
+════════════════════════════════ */
+function updateBar() {
+  var no = document.getElementById('noInput').value;
+  if (cur && no) {
+    document.getElementById('barNo').textContent   = 'NO. '+String(no).padStart(3,'0');
+    document.getElementById('barAddr').textContent = cur.address||'주소 없음';
+  } else {
+    document.getElementById('barNo').textContent   = 'NO. —';
+    document.getElementById('barAddr').textContent = 'NO를 입력해 주세요';
   }
-});
-
-function showExitDialog(target) {
-  var no = document.getElementById('noInput').value;
-  var aRead = document.getElementById('aRead').value;
-  if (!no && !aRead && !signSaved) { if(target) window.location.href=target; return; }
-  exitTarget = target || null;
-  document.getElementById('exitDialog').classList.add('open');
-}
-function closeExitDialog() { document.getElementById('exitDialog').classList.remove('open'); exitTarget=null; }
-function forceExit() {
-  isSaving = true;
-  document.getElementById('exitDialog').classList.remove('open');
-  if (exitTarget) window.location.href = exitTarget;
-  else { window.close(); setTimeout(function(){ window.location.href='about:blank'; }, 300); }
 }
 
-/* ════════════════════════════════════════════
-   Canvas 워터마크 합성
-════════════════════════════════════════════ */
-function compositePhoto(file, label) {
-  return new Promise(function(res, rej) {
-    if (!file) { res(null); return; }
-    var addr = cur ? (cur.address || '—') : '—';
-    var dateVal = document.getElementById('workDate').value;
-    var dateStr = '—';
-    if (dateVal) {
-      var dp = dateVal.split('-');
-      dateStr = dp[0]+'.'+parseInt(dp[1])+'.'+parseInt(dp[2]);
-    }
-    var fontReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-    fontReady.then(function() {
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        var img = new Image();
-        img.onload = function() { drawWatermark(img, addr, dateStr, label, res, rej); };
-        img.onerror = function() { rej(new Error('이미지 로드 실패')); };
-        img.src = ev.target.result;
-      };
-      reader.onerror = function() { rej(new Error('파일 읽기 실패')); };
-      reader.readAsDataURL(file);
-    });
-  });
-}
-
-function drawWatermark(img, addr, dateStr, label, res, rej) {
-  try {
-    var W0 = img.naturalWidth || img.width;
-    var H0 = img.naturalHeight || img.height;
-    var SCALE = 0.577;
-    var W = Math.round(W0*SCALE), H = Math.round(H0*SCALE);
-    var cv = document.createElement('canvas');
-    cv.width = W; cv.height = H;
-    var ctx = cv.getContext('2d');
-    ctx.drawImage(img, 0, 0, W, H);
-    var sc = W/1280;
-    var tW = Math.round(W*0.44);
-    var rowH = Math.round(32*sc);
-    var fSz = Math.max(Math.round(14*sc), 11);
-    var pad = Math.round(6*sc);
-    var lw = Math.max(Math.round(sc), 0.5);
-    var keyW = Math.round(tW*0.20);
-    var rows = [
-      {key:'공사명',val:'2026년 디지털계량기 교체공사(서남광산)'},
-      {key:'공  정',val:'디지털계량기 교체'},
-      {key:'위  치',val:addr},
-      {key:'내  용',val:label},
-      {key:'일  자',val:dateStr,extra:'시공사',extraVal:'(주)양정건설'},
-    ];
-    var tH = rowH*rows.length, tX = 0, tY = H-tH;
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.fillRect(tX, tY, tW, tH);
-    ctx.strokeStyle = '#222222'; ctx.lineWidth = lw*1.5;
-    ctx.strokeRect(tX+lw*0.75, tY+lw*0.75, tW-lw*1.5, tH-lw*1.5);
-    ctx.lineWidth = lw; ctx.strokeStyle = '#444444'; ctx.textBaseline = 'middle';
-    rows.forEach(function(row, i) {
-      var rY = tY+rowH*i, midY = rY+rowH/2;
-      if (i>0) { ctx.beginPath(); ctx.moveTo(tX,rY); ctx.lineTo(tX+tW,rY); ctx.stroke(); }
-      if (!row.extra) {
-        ctx.fillStyle = 'rgba(200,220,245,0.85)'; ctx.fillRect(tX,rY,keyW,rowH);
-        ctx.beginPath(); ctx.moveTo(tX+keyW,rY); ctx.lineTo(tX+keyW,rY+rowH); ctx.stroke();
-        ctx.fillStyle = '#111111'; ctx.font = 'bold '+fSz+'px "Noto Sans KR",sans-serif';
-        ctx.fillText(row.key, tX+pad, midY);
-        ctx.font = fSz+'px "Noto Sans KR",sans-serif';
-        ctx.fillText(ellipsis(ctx,row.val,fSz,tW-keyW-pad*2), tX+keyW+pad, midY);
-      } else {
-        var dateValW = Math.round((tW-keyW*2)*0.38);
-        var col2x = tX+keyW, col3x = col2x+dateValW, col4x = col3x+keyW;
-        ctx.fillStyle = 'rgba(200,220,245,0.85)';
-        ctx.fillRect(tX,rY,keyW,rowH); ctx.fillRect(col3x,rY,keyW,rowH);
-        [col2x,col3x,col4x].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x,rY); ctx.lineTo(x,rY+rowH); ctx.stroke(); });
-        ctx.fillStyle = '#111111'; ctx.font = 'bold '+fSz+'px "Noto Sans KR",sans-serif';
-        ctx.fillText(row.key, tX+pad, midY);
-        ctx.font = fSz+'px "Noto Sans KR",sans-serif';
-        ctx.fillText(ellipsis(ctx,row.val,fSz,dateValW-pad*2), col2x+pad, midY);
-        ctx.font = 'bold '+fSz+'px "Noto Sans KR",sans-serif';
-        ctx.fillText(row.extra, col3x+pad, midY);
-        ctx.font = fSz+'px "Noto Sans KR",sans-serif';
-        ctx.fillText(ellipsis(ctx,row.extraVal,fSz,tW-keyW-dateValW-keyW-pad), col4x+pad, midY);
-      }
-    });
-    res({ base64: cv.toDataURL('image/jpeg',0.75).split(',')[1], mime:'image/jpeg' });
-  } catch(e) { rej(e); }
-}
-
-function ellipsis(ctx, text, fSz, maxW) {
-  if (!text) return '—';
-  if (ctx.measureText(text).width <= maxW) return text;
-  var t = text;
-  while (t.length > 1 && ctx.measureText(t+'…').width > maxW) t = t.slice(0,-1);
-  return t+'…';
-}
-
-/* ════════════════════════════════════════════
-   유효성 검사
-════════════════════════════════════════════ */
-function validate() {
-  var no = document.getElementById('noInput').value;
-  if (!no || !cur)                                          { showToast('⚠️ NO를 먼저 입력해 주세요.');           return false; }
-  if (!document.getElementById('aRead').value)              { showToast('⚠️ 교체 후 지침을 입력해 주세요.');      return false; }
-  if (!document.getElementById('aMeter').value)             { showToast('⚠️ 교체 후 기물번호를 입력해 주세요.');  return false; }
-  if (!document.getElementById('aSeal').value)              { showToast('⚠️ 교체 후 봉인번호를 입력해 주세요.');  return false; }
-  if (!document.getElementById('pFull').files[0])           { showToast('⚠️ 전체사진을 업로드해 주세요.');         return false; }
-  if (!document.getElementById('pBefore').files[0])         { showToast('⚠️ 교체 전 사진을 업로드해 주세요.');     return false; }
-  if (!document.getElementById('pAfter').files[0])          { showToast('⚠️ 교체 후 사진을 업로드해 주세요.');     return false; }
-  if (cMode==='sign' && !signSaved)                          { showToast('⚠️ 수용가 서명을 받아주세요.');           return false; }
-  if (cMode==='sticker' && !document.getElementById('pSticker2').files[0]) { showToast('⚠️ 스티커 사진을 업로드해 주세요.'); return false; }
-  return true;
-}
-
-/* ════════════════════════════════════════════
-   저장 처리
-════════════════════════════════════════════ */
-async function handleSave() {
-  if (!validate()) return;
-  showLoading('워터마크 합성 중…');
-  try {
-    var signData = null;
-    if (cMode === 'sign') {
-      signData = getSignBase64();
-      if (!signData) { hideLoading(); showToast('⚠️ 서명을 받아주세요.'); return; }
-    }
-    var stickerFile = cMode === 'sticker'
-      ? document.getElementById('pSticker2').files[0]
-      : (document.getElementById('pSticker').files[0] || null);
-
-    var no = document.getElementById('noInput').value;
-    var pad = String(no); while (pad.length < 3) pad = '0'+pad;
-
-    var photos = {
-      full   : await compositePhoto(document.getElementById('pFull').files[0],   '전체사진'),
-      before : await compositePhoto(document.getElementById('pBefore').files[0], '교체전'),
-      after  : await compositePhoto(document.getElementById('pAfter').files[0],  '교체후'),
-      sticker: stickerFile ? await compositePhoto(stickerFile, '스티커부착') : null,
-      sign   : signData,
-    };
-
-    var payload = {
-      no           : no,
-      workDate     : document.getElementById('workDate').value,
-      beforeValve  : document.querySelector('input[name="bv"]:checked').value,
-      beforeReading: document.getElementById('bRead').value,
-      beforeSeal   : document.getElementById('bSeal').value,
-      afterReading : document.getElementById('aRead').value,
-      afterMeterNo : document.getElementById('aMeter').value,
-      afterSeal    : document.getElementById('aSeal').value,
-      afterValve   : document.querySelector('input[name="av"]:checked').value,
-      confirmType  : cMode,
-      worker       : wkName,
-    };
-
-    showLoading('텍스트 파일 저장 중…');
-    saveTextToDevice('NO'+pad, payload);
-    if (signData) saveOnePhotoToDevice(signData, '서명');
-
-    showLoading('드라이브에 사진 저장 중…');
-    var photoResult = await gasPost('savePhotos', { no: no, workDate: payload.workDate, photos: photos });
-    if (!photoResult.success) { hideLoading(); showToast('❌ 드라이브 저장 실패: '+(photoResult.msg||'')); return; }
-
-    payload.photoFolderUrl = photoResult.folderUrl;
-    showLoading('시트에 교체 내용 기록 중…');
-    var saveResult = await gasPost('saveRecord', payload);
-    hideLoading();
-    if (saveResult.success) {
-      isSaving = true;
-      showDone('NO'+pad, payload.workDate);
-    } else {
-      showToast('❌ 시트 저장 실패: '+(saveResult.msg||''));
-    }
-  } catch(e) { hideLoading(); showToast('❌ 오류: '+e.message); }
-}
-
-/* ════════════════════════════════════════════
-   텍스트 파일 → 기기 저장
-════════════════════════════════════════════ */
-function saveTextToDevice(prefix, p) {
-  try {
-    var W = 40, HR = '━'.repeat(W), hr = '─'.repeat(W);
-    function row(label, value) {
-      var v = String(value||'—'), pad = 12;
-      var l = (label+' ').padEnd(pad,' ');
-      return '│ '+l+': '+v;
-    }
-    var lines = [
-      HR,'  ■ '+prefix+' 디지털계량기 교체 작업내용',HR,
-      row('NO',p.no),row('작업일자',p.workDate),row('작업자',p.worker),hr,
-      '  ▶ 수용가 정보',hr,
-      row('수용가번호',cur?cur.custNo:'—'),row('수용가명',cur?cur.custName:'—'),
-      row('연락처',cur?cur.phone:'—'),row('주소',cur?cur.address:'—'),
-      row('교체사유',cur?cur.reason:'—'),row('구경',cur?cur.size:'—'),
-      row('기물번호(구)',cur?cur.meterNo:'—'),hr,
-      '  ▶ 교체 전 상태',hr,
-      row('밸브 상태',p.beforeValve),row('지침',p.beforeReading||'미기재'),row('봉인번호',p.beforeSeal||'미기재'),hr,
-      '  ▶ 교체 후 상태',hr,
-      row('지침',p.afterReading),row('기물번호(신)',p.afterMeterNo),row('봉인번호',p.afterSeal),row('밸브 상태',p.afterValve),hr,
-      '  ▶ 수용가 확인',hr,
-      row('확인 방식',p.confirmType==='sign'?'서명 완료':'스티커 부착'),HR,
-    ];
-    var text = lines.join('\r\n');
-    var blob = new Blob(['\uFEFF'+text], { type:'text/plain;charset=utf-8' });
-    var url  = URL.createObjectURL(blob);
-    var dateTag = (p.workDate||'').replace(/-/g,'');
-    var a = document.createElement('a');
-    a.href = url; a.download = prefix+'_작업내용_'+dateTag+'.txt'; a.style.display='none';
-    document.body.appendChild(a); a.click();
-    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
-  } catch(e) { console.warn('텍스트 저장 실패:', e.message); }
-}
-
-/* ════════════════════════════════════════════
-   저장 완료 / 폼 초기화
-════════════════════════════════════════════ */
-function showDone(prefix, workDate) {
-  document.getElementById('doneTitle').textContent = prefix+' 저장 완료!';
-  document.getElementById('doneSub').textContent   = (workDate||'')+' 드라이브·시트·기기에 저장되었습니다.';
-  document.getElementById('doneBanner').classList.add('show');
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
+/* ════════════════════════════════
+   폼 초기화
+════════════════════════════════ */
 function resetForm() {
-  document.getElementById('doneBanner').classList.remove('show');
   document.getElementById('noInput').value = '';
-  var box = document.getElementById('noBox');
-  box.classList.remove('found','notfound','focused');
+  document.getElementById('noBox').classList.remove('found','notfound');
   document.getElementById('noTag').className = 'no-tag';
-  document.getElementById('noHint').textContent = 'ℹ NO 입력 시 시트에서 수용가 정보를 자동으로 불러옵니다';
+  document.getElementById('noHint').textContent = 'NO 입력 시 수용가 정보를 불러옵니다';
   document.getElementById('noHint').className = 'no-hint';
-  cur = null; resetInfo(); updateBar(); refreshAllWM(); updateDrive();
-  document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
-  document.getElementById('bRead').value = ''; document.getElementById('bSeal').value = '';
+  cur = null; resetInfo(); updateBar();
+  ['bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id){
+    document.getElementById(id).value = '';
+    document.getElementById(id).classList.remove('saved');
+    var si = document.getElementById('si_'+id);
+    if (si) si.classList.remove('show');
+  });
   document.querySelectorAll('input[name="bv"]')[0].checked = true;
-  document.getElementById('aRead').value  = ''; document.getElementById('aMeter').value = '';
-  document.getElementById('aSeal').value  = '';
   document.querySelectorAll('input[name="av"]')[0].checked = true;
-  ['sl_full','sl_before','sl_after','sl_sticker','sl_sticker2'].forEach(function(id) {
-    var el = document.getElementById(id); if(!el) return;
+  ['sl_full','sl_before','sl_after','sl_sticker'].forEach(function(id){
+    var el = document.getElementById(id); if(!el)return;
     el.classList.remove('ok');
-    if (id==='sl_sticker') el.classList.add('disabled');
   });
-  ['img_full','img_before','img_after','img_sticker','img_sticker2'].forEach(function(id) {
-    var el = document.getElementById(id); if(el){ el.src=''; el.classList.remove('show'); }
+  ['img_full','img_before','img_after','img_sticker'].forEach(function(id){
+    var el = document.getElementById(id); if(el){el.src='';el.classList.remove('show');}
   });
-  ['sb_full','sb_before','sb_after'].forEach(function(id) {
-    var el = document.getElementById(id); if(el) el.textContent = '필수';
+  ['ss1','ss2','ss3','ss4','ss5','ss6'].forEach(function(id){
+    var el = document.getElementById(id); if(el){el.textContent=id==='ss3'||id==='ss4'?'미입력':'미촬영';el.className='step-status pending';}
   });
-  ['pFull','pBefore','pAfter','pSticker','pSticker2'].forEach(function(id) {
-    var el = document.getElementById(id); if(el) el.value = '';
-  });
+  for(var i=1;i<=6;i++){var el=document.getElementById('sn'+i);if(el)el.className='step-num';}
   signSaved = false; signCtx = null;
   document.getElementById('signPreviewArea').style.display = 'none';
   document.getElementById('signOpenArea').style.display = 'block';
   document.getElementById('signPreviewImg').src = '';
+  photos = { full:null, before:null, after:null, sticker:null, sign:null };
   setC('sign');
-  localStorage.removeItem('meterAutoSave');
-  isSaving = false;
-  window.scrollTo({ top:0, behavior:'smooth' });
+  goStep(1);
 }
 
-/* ════════════════════════════════════════════
-   유틸
-════════════════════════════════════════════ */
-function base64ToUint8Array(b64) {
-  var bin = atob(b64), len = bin.length, bytes = new Uint8Array(len);
-  for (var i=0; i<len; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
+/* ════════════════════════════════
+   작업목록 탭
+════════════════════════════════ */
+function updateListTab() {
+  if (!appDate) return;
+  document.getElementById('listDate').textContent = appDate;
+  document.getElementById('listWorkerName').textContent = appWorker;
+  dbGetAll('works').then(function(all) {
+    var works = all.filter(function(w){ return w.date === appDate && w.worker === appWorker; });
+    works.sort(function(a,b){ return parseInt(a.no)-parseInt(b.no); });
+    document.getElementById('listTotal').textContent = works.length;
+    var html = '';
+    if (works.length === 0) {
+      html = '<div class="empty-list"><div class="empty-icon">📋</div><div class="empty-text">오늘 작업한 내용이 없어요</div></div>';
+    } else {
+      works.forEach(function(w) {
+        var pad = String(w.no).padStart(3,'0');
+        var name = w.cur ? (w.cur.custName||'—') : '—';
+        var addr = w.cur ? (w.cur.address||'—') : '—';
+        var badge = w.uploaded
+          ? '<span class="badge uploaded">☁️ 업로드완료</span>'
+          : '<span class="badge pending">💾 업로드대기</span>';
+        var sign = w.signSaved ? '<span class="badge saved">✍️ 서명</span>' : '';
+        html += '<div class="work-item" onclick="showDetail(\''+w.key+'\')">'+
+          '<div class="wi-no">NO.'+pad+'</div>'+
+          '<div class="wi-info"><div class="wi-name">'+name+'</div><div class="wi-addr">'+addr+'</div></div>'+
+          '<div class="wi-badges">'+badge+sign+'</div>'+
+          '</div>';
+      });
+    }
+    document.getElementById('workList').innerHTML = html;
+  });
 }
-function showLoading(msg) { document.getElementById('ltxt').textContent=msg||'처리 중…'; document.getElementById('lov').classList.add('on'); }
-function hideLoading()    { document.getElementById('lov').classList.remove('on'); }
-function showToast(msg) {
-  var t = document.getElementById('toastEl');
-  t.textContent = msg; t.classList.add('on');
-  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('on'); }, 3200);
+
+/* ════════════════════════════════
+   작업 상세
+════════════════════════════════ */
+function showDetail(key) {
+  dbGet('works', key).then(function(w) {
+    if (!w) return;
+    var pad = String(w.no).padStart(3,'0');
+    var html = '<div class="detail-hdr">'+
+      '<div class="detail-title">NO.'+pad+' 작업상세</div>'+
+      '<button class="detail-close" onclick="closeDetail()">✕</button>'+
+      '</div>';
+
+    html += '<div class="detail-section"><div class="detail-section-title">수용가 정보</div>';
+    if (w.cur) {
+      [['수용가명',w.cur.custName],['연락처',w.cur.phone],['주소',w.cur.address],['구경',w.cur.size]].forEach(function(r){
+        html += '<div class="detail-row"><div class="dr-key">'+r[0]+'</div><div class="dr-val">'+(r[1]||'—')+'</div></div>';
+      });
+    }
+    html += '</div>';
+
+    html += '<div class="detail-section"><div class="detail-section-title">교체 전</div>';
+    [['밸브상태',w.bValve],['지침',w.bRead||'미기재'],['봉인번호',w.bSeal||'미기재']].forEach(function(r){
+      html += '<div class="detail-row"><div class="dr-key">'+r[0]+'</div><div class="dr-val">'+r[1]+'</div></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="detail-section"><div class="detail-section-title">교체 후</div>';
+    [['지침',w.aRead],['기물번호',w.aMeter],['봉인번호',w.aSeal],['밸브상태',w.aValve]].forEach(function(r){
+      html += '<div class="detail-row"><div class="dr-key">'+r[0]+'</div><div class="dr-val">'+(r[1]||'—')+'</div></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="detail-section"><div class="detail-section-title">저장상태</div>';
+    html += '<div class="detail-row"><div class="dr-key">확인방식</div><div class="dr-val">'+(w.cMode==='sign'?'서명':'스티커')+'</div></div>';
+    html += '<div class="detail-row"><div class="dr-key">업로드상태</div><div class="dr-val">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+'</div></div>';
+    html += '</div>';
+
+    html += '<button class="delete-btn" onclick="deleteWork(\''+key+'\')">🗑 이 작업 삭제</button>';
+
+    document.getElementById('detailBox').innerHTML = html;
+    document.getElementById('detailModal').classList.add('open');
+  });
+}
+
+function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
+
+function deleteWork(key) {
+  if (!confirm('이 작업을 삭제하시겠습니까?')) return;
+  // 사진도 삭제
+  var no = key.split('_')[1];
+  ['full','before','after','sticker','sign'].forEach(function(k) {
+    dbDelete('photos', 'photo_'+appDate+'_'+no+'_'+k);
+  });
+  dbDelete('works', key).then(function() {
+    closeDetail();
+    updateListTab();
+    updateUploadTab();
+    showToast('🗑 삭제됐습니다.');
+  });
+}
+
+/* ════════════════════════════════
+   업로드 탭
+════════════════════════════════ */
+function updateUploadTab() {
+  if (!appDate) return;
+  dbGetAll('works').then(function(all) {
+    var works = all.filter(function(w){ return w.date===appDate && w.worker===appWorker; });
+    var total = works.length;
+    var done  = works.filter(function(w){ return w.uploaded; }).length;
+    var wait  = total - done;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statWait').textContent  = wait;
+    document.getElementById('statDone').textContent  = done;
+
+    var btn = document.getElementById('uploadBtn');
+    btn.disabled = wait === 0;
+    btn.textContent = wait > 0 ? '☁️ '+wait+'건 업로드 시작' : '✅ 모두 업로드 완료';
+
+    var html = '';
+    works.forEach(function(w) {
+      var pad = String(w.no).padStart(3,'0');
+      var name = w.cur ? (w.cur.custName||'—') : '—';
+      html += '<div class="upload-item" id="ui_'+w.key+'">'+
+        '<div class="ui-no">NO.'+pad+'</div>'+
+        '<div class="ui-info">'+
+          '<div class="ui-name">'+name+'</div>'+
+          '<div class="ui-progress" id="up_'+w.key+'">'+(w.uploaded?'✅ 업로드 완료':'⏳ 업로드 대기중')+'</div>'+
+          '<div class="progress-bar-wrap"><div class="progress-bar" id="pb_'+w.key+'" style="width:'+(w.uploaded?'100':'0')+'%"></div></div>'+
+        '</div>'+
+        '<div class="ui-status">'+(w.uploaded?'✅':'⏳')+'</div>'+
+        '</div>';
+    });
+    document.getElementById('uploadList').innerHTML = html || '<div class="empty-list"><div class="empty-icon">☁️</div><div class="empty-text">업로드할 작업이 없어요</div></div>';
+  });
+}
+
+/* ════════════════════════════════
+   업로드 실행
+════════════════════════════════ */
+async function startUpload() {
+  var all = await dbGetAll('works');
+  var works = all.filter(function(w){ return w.date===appDate && w.worker===appWorker && !w.uploaded; });
+  if (works.length === 0) { showToast('✅ 업로드할 작업이 없어요.'); return; }
+
+  document.getElementById('uploadBtn').disabled = true;
+  document.getElementById('uploadBtn').textContent = '업로드 중...';
+
+  for (var i = 0; i < works.length; i++) {
+    var w = works[i];
+    var pad = String(w.no).padStart(3,'0');
+    var upEl = document.getElementById('up_'+w.key);
+    var pbEl = document.getElementById('pb_'+w.key);
+
+    try {
+      // 1. 사진 불러오기
+      if (upEl) upEl.textContent = '📷 사진 불러오는 중...';
+      if (pbEl) pbEl.style.width = '20%';
+
+      var photoKeys = ['full','before','after','sticker','sign'];
+      var uploadPhotos = {};
+      for (var j = 0; j < photoKeys.length; j++) {
+        var pk = photoKeys[j];
+        var photoRec = await dbGet('photos', 'photo_'+appDate+'_'+w.no+'_'+pk);
+        if (photoRec) uploadPhotos[pk] = photoRec.data;
+      }
+
+      // 2. 드라이브 사진 업로드
+      if (upEl) upEl.textContent = '☁️ 드라이브 저장 중...';
+      if (pbEl) pbEl.style.width = '50%';
+
+      var photoResult = await gasPost('savePhotos', { no: w.no, workDate: w.date, photos: uploadPhotos });
+      if (!photoResult.success) throw new Error(photoResult.msg);
+
+      // 3. 시트 기록
+      if (upEl) upEl.textContent = '📊 시트 기록 중...';
+      if (pbEl) pbEl.style.width = '80%';
+
+      var payload = {
+        no           : w.no,
+        workDate     : w.date,
+        beforeValve  : w.bValve,
+        beforeReading: w.bRead,
+        beforeSeal   : w.bSeal,
+        afterReading : w.aRead,
+        afterMeterNo : w.aMeter,
+        afterSeal    : w.aSeal,
+        afterValve   : w.aValve,
+        confirmType  : w.cMode,
+        worker       : w.worker,
+        photoFolderUrl: photoResult.folderUrl,
+      };
+      var saveResult = await gasPost('saveRecord', payload);
+      if (!saveResult.success) throw new Error(saveResult.msg);
+
+      // 4. 완료 처리
+      w.uploaded = true;
+      w.uploadedAt = Date.now();
+      await dbPut('works', w);
+      if (pbEl) pbEl.style.width = '100%';
+      if (upEl) upEl.textContent = '✅ 업로드 완료';
+      var statusEl = document.querySelector('#ui_'+w.key+' .ui-status');
+      if (statusEl) statusEl.textContent = '✅';
+      showToast('✅ NO'+pad+' 업로드 완료');
+
+    } catch(e) {
+      if (upEl) upEl.textContent = '❌ 실패: '+e.message;
+      if (pbEl) pbEl.style.backgroundColor = 'var(--red)';
+      showToast('❌ NO'+pad+' 실패: '+e.message);
+    }
+  }
+
+  updateUploadTab();
+}
+
+/* ════════════════════════════════
+   워터마크 합성
+════════════════════════════════ */
+function compositePhoto(file, label) {
+  return new Promise(function(res, rej) {
+    if (!file) { res(null); return; }
+    var addr = cur ? (cur.address||'—') : '—';
+    var dateStr = '—';
+    if (appDate) {
+      var dp = appDate.split('-');
+      dateStr = dp[0]+'.'+parseInt(dp[1])+'.'+parseInt(dp[2]);
+    }
+    var fontReady = (document.fonts&&document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    fontReady.then(function() {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() {
+          try {
+            var W0=img.naturalWidth||img.width, H0=img.naturalHeight||img.height;
+            var SCALE=0.577, W=Math.round(W0*SCALE), H=Math.round(H0*SCALE);
+            var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+            var ctx=cv.getContext('2d');
+            ctx.drawImage(img,0,0,W,H);
+            var sc=W/1280, tW=Math.round(W*0.44), rowH=Math.round(32*sc);
+            var fSz=Math.max(Math.round(14*sc),11), pad=Math.round(6*sc);
+            var lw=Math.max(Math.round(sc),0.5), keyW=Math.round(tW*0.20);
+            var rows=[
+              {key:'공사명',val:'2026년 디지털계량기 교체공사(서남광산)'},
+              {key:'공  정',val:'디지털계량기 교체'},
+              {key:'위  치',val:addr},
+              {key:'내  용',val:label},
+              {key:'일  자',val:dateStr,extra:'시공사',extraVal:'(주)양정건설'},
+            ];
+            var tH=rowH*rows.length, tX=0, tY=H-tH;
+            ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.fillRect(tX,tY,tW,tH);
+            ctx.strokeStyle='#222'; ctx.lineWidth=lw*1.5;
+            ctx.strokeRect(tX+lw*0.75,tY+lw*0.75,tW-lw*1.5,tH-lw*1.5);
+            ctx.lineWidth=lw; ctx.strokeStyle='#444'; ctx.textBaseline='middle';
+            rows.forEach(function(row,i){
+              var rY=tY+rowH*i, midY=rY+rowH/2;
+              if(i>0){ctx.beginPath();ctx.moveTo(tX,rY);ctx.lineTo(tX+tW,rY);ctx.stroke();}
+              if(!row.extra){
+                ctx.fillStyle='rgba(200,220,245,0.85)'; ctx.fillRect(tX,rY,keyW,rowH);
+                ctx.beginPath();ctx.moveTo(tX+keyW,rY);ctx.lineTo(tX+keyW,rY+rowH);ctx.stroke();
+                ctx.fillStyle='#111'; ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';
+                ctx.fillText(row.key,tX+pad,midY);
+                ctx.font=fSz+'px "Noto Sans KR",sans-serif';
+                ctx.fillText(ell(ctx,row.val,tW-keyW-pad*2),tX+keyW+pad,midY);
+              } else {
+                var dVW=Math.round((tW-keyW*2)*0.38),col2=tX+keyW,col3=col2+dVW,col4=col3+keyW;
+                ctx.fillStyle='rgba(200,220,245,0.85)';ctx.fillRect(tX,rY,keyW,rowH);ctx.fillRect(col3,rY,keyW,rowH);
+                [col2,col3,col4].forEach(function(x){ctx.beginPath();ctx.moveTo(x,rY);ctx.lineTo(x,rY+rowH);ctx.stroke();});
+                ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';
+                ctx.fillText(row.key,tX+pad,midY);
+                ctx.font=fSz+'px "Noto Sans KR",sans-serif';
+                ctx.fillText(ell(ctx,row.val,dVW-pad*2),col2+pad,midY);
+                ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.extra,col3+pad,midY);
+                ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.extraVal,tW-keyW-dVW-keyW-pad),col4+pad,midY);
+              }
+            });
+            res({base64:cv.toDataURL('image/jpeg',0.75).split(',')[1],mime:'image/jpeg'});
+          } catch(e){rej(e);}
+        };
+        img.onerror=function(){rej(new Error('이미지 로드 실패'));};
+        img.src=ev.target.result;
+      };
+      reader.onerror=function(){rej(new Error('파일 읽기 실패'));};
+      reader.readAsDataURL(file);
+    });
+  });
+}
+function ell(ctx,text,maxW){if(!text)return'—';if(ctx.measureText(text).width<=maxW)return text;var t=text;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';}
+
+/* ════════════════════════════════
+   종료 다이얼로그
+════════════════════════════════ */
+function closeExitDialog(){document.getElementById('exitDialog').classList.remove('open');exitTarget=null;}
+function forceExit(){
+  document.getElementById('exitDialog').classList.remove('open');
+  if(exitTarget==='back') history.go(-2);
+  else {window.close();setTimeout(function(){window.location.href='about:blank';},300);}
+}
+
+/* ════════════════════════════════
+   유틸
+════════════════════════════════ */
+function showLoading(msg){document.getElementById('ltxt').textContent=msg||'처리 중…';document.getElementById('lov').classList.add('on');}
+function hideLoading(){document.getElementById('lov').classList.remove('on');}
+function showToast(msg){
+  var t=document.getElementById('toastEl');
+  t.textContent=msg; t.classList.add('on');
+  clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('on');},3000);
 }
 </script>
 </body>
