@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">var isSaving = false, exitTarget = null;
+// 뒤로가기 버튼 차단
+history.pushState(null, null, location.href);
+window.addEventListener('popstate', function() {
+  history.pushState(null, null, location.href);
+  autoSave();
+  showExitDialog(null);
+});
 <meta name="apple-mobile-web-app-title" content="계량기교체">
 <meta name="theme-color" content="#07192e">
 <title>디지털계량기 교체 앱</title>
