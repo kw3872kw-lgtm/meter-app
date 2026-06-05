@@ -673,30 +673,29 @@ function autoSave() {
       cMode    : cMode,
       cur      : cur,
       sign     : signSaved ? document.getElementById('signPreviewImg').src : null,
+      ts       : Date.now(),
     };
-    localStorage.setItem('autoSave', JSON.stringify(data));
-  } catch(e) {}
+    localStorage.setItem('meterAutoSave', JSON.stringify(data));
+  } catch(e) { console.warn('autoSave 실패:', e); }
 }
 
 function autoLoad() {
   try {
-    var raw = localStorage.getItem('autoSave');
-    if (!raw) return;
+    var raw = localStorage.getItem('meterAutoSave');
+    if (!raw) return false;
     var data = JSON.parse(raw);
-    if (!data || !data.no) return;
+    if (!data) return false;
 
-    if (!confirm('이전에 작업하던 내용이 있습니다.\n이어서 작업하시겠습니까?')) {
-      localStorage.removeItem('autoSave');
-      return;
-    }
+    var hasData = data.no || data.aRead || data.aMeter || data.sign;
+    if (!hasData) return false;
 
-    document.getElementById('noInput').value  = data.no  || '';
-    document.getElementById('workDate').value = data.workDate || '';
-    document.getElementById('bRead').value    = data.bRead || '';
-    document.getElementById('bSeal').value    = data.bSeal || '';
-    document.getElementById('aRead').value    = data.aRead || '';
-    document.getElementById('aMeter').value   = data.aMeter || '';
-    document.getElementById('aSeal').value    = data.aSeal || '';
+    document.getElementById('noInput').value  = data.no       || '';
+    document.getElementById('workDate').value = data.workDate || new Date().toISOString().split('T')[0];
+    document.getElementById('bRead').value    = data.bRead    || '';
+    document.getElementById('bSeal').value    = data.bSeal    || '';
+    document.getElementById('aRead').value    = data.aRead    || '';
+    document.getElementById('aMeter').value   = data.aMeter   || '';
+    document.getElementById('aSeal').value    = data.aSeal    || '';
 
     var bvEl = document.querySelector('input[name="bv"][value="'+data.bValve+'"]');
     if (bvEl) bvEl.checked = true;
@@ -720,11 +719,12 @@ function autoLoad() {
       var box = document.getElementById('noBox');
       box.classList.add('found');
       var tag = document.getElementById('noTag');
-      tag.textContent = '✓ 확인'; tag.className = 'no-tag show found';
+      tag.textContent = '\u2713 확인'; tag.className = 'no-tag show found';
     }
 
-    showToast('✅ 이전 작업 내용을 불러왔습니다.');
-  } catch(e) {}
+    showToast('\u2705 이전 작업 내용을 복원했습니다.');
+    return true;
+  } catch(e) { console.warn('autoLoad 실패:', e); return false; }
 }
 
 /* ════════════════════════════════════════════
@@ -740,8 +740,8 @@ window.addEventListener('DOMContentLoaded', function() {
   // 자동저장 불러오기
   autoLoad();
 
-  // 1초마다 자동저장
-  setInterval(autoSave, 1000);
+  // 2초마다 자동저장
+  setInterval(autoSave, 2000);
 
   // 입력할 때마다 즉시 자동저장
   ['noInput','bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
@@ -749,12 +749,21 @@ window.addEventListener('DOMContentLoaded', function() {
   });
   document.getElementById('workDate').addEventListener('change', autoSave);
 
-  // 뒤로가기 버튼 차단 + 자동저장
+  // 앱이 백그라운드로 가거나 화면이 꺼질 때 즉시 저장
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') autoSave();
+  });
+  window.addEventListener('pagehide', function() { autoSave(); });
+  window.addEventListener('blur', function() { autoSave(); });
+
+  // 뒤로가기 버튼 차단
+  history.pushState(null, null, location.href);
   history.pushState(null, null, location.href);
   window.addEventListener('popstate', function() {
     autoSave();
     history.pushState(null, null, location.href);
-    showExitDialogForBack();
+    document.getElementById('exitDialog').classList.add('open');
+    exitTarget = 'back';
   });
 
   // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
@@ -1070,7 +1079,7 @@ function showExitDialogForBack() {
 function closeExitDialog() { document.getElementById('exitDialog').classList.remove('open'); exitTarget=null; }
 function forceExit() {
   isSaving = true;
-  localStorage.removeItem('autoSave');
+  localStorage.removeItem('meterAutoSave');
   document.getElementById('exitDialog').classList.remove('open');
   if (exitTarget === 'back') {
     // 뒤로가기로 나가기 — history를 2개 뒤로
@@ -1339,7 +1348,7 @@ function resetForm() {
   document.getElementById('signOpenArea').style.display = 'block';
   document.getElementById('signPreviewImg').src = '';
   setC('sign');
-  localStorage.removeItem('autoSave');
+  localStorage.removeItem('meterAutoSave');
   isSaving = false;
   window.scrollTo({ top:0, behavior:'smooth' });
 }
