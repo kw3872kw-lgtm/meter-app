@@ -177,18 +177,18 @@ input.pi{display:none}
 .sign-redo{position:absolute;top:6px;right:8px;padding:5px 12px;border:none;border-radius:8px;background:rgba(0,197,222,.2);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer}
 
 /* ── 서명 모달 ── */
-.sign-modal{display:none;position:fixed;inset:0;z-index:400;background:#0a1f38;flex-direction:column}
+.sign-modal{display:none;position:fixed;inset:0;z-index:400;background:#f0f8fb;flex-direction:column}
 .sign-modal.open{display:flex}
-.sign-mhdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,197,222,.1);border-bottom:1px solid rgba(0,197,222,.2);flex-shrink:0}
+.sign-mhdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#0f2942;border-bottom:1px solid rgba(0,197,222,.2);flex-shrink:0}
 .sign-mtitle{font-size:16px;font-weight:700;color:var(--accent2)}
 .sign-mbtns{display:flex;gap:8px}
 .sm-btn{padding:9px 18px;border:none;border-radius:10px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
 .sm-btn.clr{background:rgba(255,69,102,.15);color:var(--red)}
 .sm-btn.cnl{background:rgba(255,255,255,.08);color:var(--muted)}
 .sm-btn.cfm{background:linear-gradient(135deg,var(--accent),#007fa3);color:#fff}
-.sign-guide{text-align:center;padding:10px;font-size:14px;color:rgba(0,229,255,.6);flex-shrink:0}
+.sign-guide{text-align:center;padding:10px;font-size:14px;color:#4a6882;flex-shrink:0;font-weight:600}
 .sign-canvas-wrap{flex:1;padding:0 14px 20px;display:flex}
-canvas#sc{display:block;width:100%;flex:1;background:#0d2540;border:2px solid rgba(0,197,222,.2);border-radius:var(--r2);touch-action:none}
+canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rgba(0,197,222,.2);border-radius:var(--r2);touch-action:none}
 
 /* ── 이동 버튼 ── */
 .move-btns{display:flex;gap:10px;margin-top:18px}
@@ -602,14 +602,17 @@ canvas#sc{display:block;width:100%;flex:1;background:#0d2540;border:2px solid rg
 <div class="tab-pane" id="pane-upload">
   <div class="upload-hdr">
     <div class="upload-title">📤 구글 업로드</div>
-    <div class="upload-sub">저녁 8시 이후 와이파이 환경에서 업로드하세요</div>
+    <div class="upload-sub">업로드 버튼을 눌러 구글 시트와 드라이브에 저장하세요</div>
   </div>
   <div class="stat-row">
     <div class="stat"><div class="stat-n all" id="stAll">0</div><div class="stat-l">전체</div></div>
     <div class="stat"><div class="stat-n wait" id="stWait">0</div><div class="stat-l">대기중</div></div>
     <div class="stat"><div class="stat-n done" id="stDone">0</div><div class="stat-l">완료</div></div>
   </div>
-  <button class="upload-btn" id="upBtn" onclick="startUpload()">☁️ 업로드 시작</button>
+  <div style="display:flex;gap:8px;padding:0 0 0 0">
+    <button class="upload-btn" id="upBtn" onclick="startUpload()" style="flex:1">☁️ 선택 업로드</button>
+    <button class="upload-btn" id="upAllBtn" onclick="startUploadAll()" style="flex:1;background:linear-gradient(135deg,var(--green),#009960);box-shadow:0 6px 20px rgba(0,200,122,.3)">📤 전체 업로드</button>
+  </div>
   <div class="upload-items" id="upItems"></div>
 </div>
 
@@ -732,7 +735,14 @@ function goStep(n){
   document.getElementById('snbTitle').textContent='STEP '+n+' — '+SNAMES[n];
   document.getElementById('snbCount').textContent=n+' / 6';
   document.querySelectorAll('.snb-dot').forEach(d=>{var s=parseInt(d.dataset.step);d.className='snb-dot'+(s<n?' done':s===n?' active':'');});
-  window.scrollTo({top:0,behavior:'smooth'});
+  // 해당 STEP 카드가 보이도록 스크롤
+  setTimeout(()=>{
+    var card=document.getElementById('s'+n);
+    if(card){
+      var top=card.getBoundingClientRect().top+window.scrollY-10;
+      window.scrollTo({top:top,behavior:'smooth'});
+    }
+  },50);
 }
 
 /* NO 입력 */
@@ -864,7 +874,7 @@ function setupSign(){
   if(!cv.offsetWidth||!cv.offsetHeight)return;
   cv.width=cv.offsetWidth*dpr;cv.height=cv.offsetHeight*dpr;
   var ctx=cv.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
-  ctx.strokeStyle='#ffffff';ctx.fillStyle='#ffffff';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';signCtx=ctx;
+  ctx.strokeStyle='#111111';ctx.fillStyle='#111111';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';signCtx=ctx;
 }
 function openSign(){document.getElementById('signModal').classList.add('open');document.body.style.overflow='hidden';setTimeout(setupSign,150);}
 function closeSign(){document.getElementById('signModal').classList.remove('open');document.body.style.overflow='';}
@@ -874,7 +884,21 @@ function confirmSign(){
   var d=signCtx.getImageData(0,0,cv.width,cv.height).data,ok=false;
   for(var i=3;i<d.length;i+=4)if(d[i]>10){ok=true;break;}
   if(!ok){showToast('⚠️ 서명을 해주세요.');return;}
-  var dataUrl=cv.toDataURL('image/png');
+  // 4:1 비율 캔버스에 흰 배경 + 검은 서명으로 저장
+  var exportCv=document.createElement('canvas');
+  var dpr=window.devicePixelRatio||1;
+  var exportW=cv.offsetWidth*dpr, exportH=Math.round(exportW/4);
+  exportCv.width=exportW; exportCv.height=exportH;
+  var ectx=exportCv.getContext('2d');
+  // 흰색 배경
+  ectx.fillStyle='#ffffff';
+  ectx.fillRect(0,0,exportW,exportH);
+  // 서명을 4:1 비율 안에 중앙 배치
+  var scale=Math.min(exportW/cv.width, exportH/cv.height);
+  var dx=(exportW-cv.width*scale)/2;
+  var dy=(exportH-cv.height*scale)/2;
+  ectx.drawImage(cv, 0, 0, cv.width, cv.height, dx, dy, cv.width*scale, cv.height*scale);
+  var dataUrl=exportCv.toDataURL('image/png');
   document.getElementById('signImg').src=dataUrl;
   signSaved=true;
   document.getElementById('signDoneArea').style.display='block';
@@ -928,7 +952,14 @@ function saveWork(){
   if(cMode==='sticker'&&!photos.sticker){showToast('⚠️ 스티커 사진을 촬영해 주세요.');return;}
   autoSave();
   showToast('✅ NO '+String(no).padStart(3,'0')+' 임시저장 완료!');
-  setTimeout(()=>{resetForm();goTab('list');},700);
+  setTimeout(()=>{
+    resetForm();
+    goTab('work');
+    setTimeout(()=>{
+      var inp=document.getElementById('noInp');
+      if(inp){ inp.focus(); window.scrollTo({top:0,behavior:'smooth'}); }
+    },200);
+  },700);
 }
 
 /* 폼 초기화 */
@@ -1039,12 +1070,28 @@ async function updateUploadTab(){
 }
 
 /* 업로드 실행 */
+async function startUploadAll(){
+  // 날짜/작업자 관계없이 미업로드 전체 업로드
+  var all=await dbAll('works');
+  var works=all.filter(w=>!w.uploaded);
+  if(!works.length){showToast('✅ 업로드할 작업이 없어요.');return;}
+  if(!confirm(works.length+'건을 전체 업로드하시겠습니까?'))return;
+  document.getElementById('upAllBtn').disabled=true;
+  document.getElementById('upBtn').disabled=true;
+  await uploadWorks(works);
+  updateUploadTab();
+}
+
 async function startUpload(){
   var all=await dbAll('works');
   var works=all.filter(w=>w.date===appDate&&w.worker===appWorker&&!w.uploaded);
   if(!works.length){showToast('✅ 업로드할 작업이 없어요.');return;}
   document.getElementById('upBtn').disabled=true;
-  document.getElementById('upBtn').textContent='업로드 중…';
+  await uploadWorks(works);
+  updateUploadTab();
+}
+
+async function uploadWorks(works){
   for(var w of works){
     var pad=String(w.no).padStart(3,'0');
     var upEl=document.getElementById('up_'+w.key),pbEl=document.getElementById('pb_'+w.key);
@@ -1071,7 +1118,6 @@ async function startUpload(){
       showToast('❌ NO'+pad+' 실패');
     }
   }
-  updateUploadTab();
 }
 
 /* 워터마크 */
@@ -1091,7 +1137,7 @@ function compositePhoto(file,label){
             var S=0.577,W=Math.round(W0*S),H=Math.round(H0*S);
             var cv=document.createElement('canvas');cv.width=W;cv.height=H;
             var ctx=cv.getContext('2d');ctx.drawImage(img,0,0,W,H);
-            var sc=W/1280,tW=Math.round(W*.44),rH=Math.round(32*sc),fSz=Math.max(Math.round(14*sc),11),pd=Math.round(6*sc),lw=Math.max(Math.round(sc),.5),kW=Math.round(tW*.20);
+            var sc=W/1280,tW=Math.round(W*.44),rH=Math.round(32*sc*1.3),fSz=Math.max(Math.round(14*sc*1.3),14),pd=Math.round(6*sc),lw=Math.max(Math.round(sc),.5),kW=Math.round(tW*.20);
             var rows=[{k:'공사명',v:'2026년 디지털계량기 교체공사(서남광산)'},{k:'공  정',v:'디지털계량기 교체'},{k:'위  치',v:addr},{k:'내  용',v:label},{k:'일  자',v:ds,ex:'시공사',exv:'(주)양정건설'}];
             var tH=rH*rows.length,tY=H-tH;
             ctx.fillStyle='rgba(255,255,255,.95)';ctx.fillRect(0,tY,tW,tH);
