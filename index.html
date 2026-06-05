@@ -754,7 +754,7 @@ window.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('popstate', function() {
     autoSave();
     history.pushState(null, null, location.href);
-    showExitDialog(null);
+    showExitDialogForBack();
   });
 
   // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
@@ -1062,12 +1062,25 @@ function showExitDialog(target) {
   exitTarget = target || null;
   document.getElementById('exitDialog').classList.add('open');
 }
+// 뒤로가기 전용 — 입력 내용 없어도 항상 다이얼로그 표시
+function showExitDialogForBack() {
+  exitTarget = 'back';
+  document.getElementById('exitDialog').classList.add('open');
+}
 function closeExitDialog() { document.getElementById('exitDialog').classList.remove('open'); exitTarget=null; }
 function forceExit() {
   isSaving = true;
+  localStorage.removeItem('autoSave');
   document.getElementById('exitDialog').classList.remove('open');
-  if (exitTarget) window.location.href = exitTarget;
-  else { window.close(); setTimeout(function(){ window.location.href='about:blank'; }, 300); }
+  if (exitTarget === 'back') {
+    // 뒤로가기로 나가기 — history를 2개 뒤로
+    history.go(-2);
+  } else if (exitTarget) {
+    window.location.href = exitTarget;
+  } else {
+    window.close();
+    setTimeout(function(){ window.location.href='about:blank'; }, 300);
+  }
 }
 
 /* ════════════════════════════════════════════
