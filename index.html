@@ -5,14 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">var isSaving = false, exitTarget = null;
-// 뒤로가기 버튼 차단
-history.pushState(null, null, location.href);
-window.addEventListener('popstate', function() {
-  history.pushState(null, null, location.href);
-  autoSave();
-  showExitDialog(null);
-});
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="계량기교체">
 <meta name="theme-color" content="#07192e">
 <title>디지털계량기 교체 앱</title>
@@ -662,7 +655,9 @@ var cMode  = 'sign';
 var wkName = '작업자';
 var WM_KEYS = ['full','before','after','sticker','sticker2'];
 
-// ── 자동저장 (30초마다 + 입력할 때마다) ──
+/* ════════════════════════════════════════════
+   자동저장 / 자동불러오기
+════════════════════════════════════════════ */
 function autoSave() {
   try {
     var data = {
@@ -688,32 +683,28 @@ function autoLoad() {
     var raw = localStorage.getItem('autoSave');
     if (!raw) return;
     var data = JSON.parse(raw);
-    if (!data.no) return;
+    if (!data || !data.no) return;
 
-    // 복원 확인
     if (!confirm('이전에 작업하던 내용이 있습니다.\n이어서 작업하시겠습니까?')) {
       localStorage.removeItem('autoSave');
       return;
     }
 
-    document.getElementById('noInput').value  = data.no;
-    document.getElementById('workDate').value = data.workDate;
-    document.getElementById('bRead').value    = data.bRead;
-    document.getElementById('bSeal').value    = data.bSeal;
-    document.getElementById('aRead').value    = data.aRead;
-    document.getElementById('aMeter').value   = data.aMeter;
-    document.getElementById('aSeal').value    = data.aSeal;
+    document.getElementById('noInput').value  = data.no  || '';
+    document.getElementById('workDate').value = data.workDate || '';
+    document.getElementById('bRead').value    = data.bRead || '';
+    document.getElementById('bSeal').value    = data.bSeal || '';
+    document.getElementById('aRead').value    = data.aRead || '';
+    document.getElementById('aMeter').value   = data.aMeter || '';
+    document.getElementById('aSeal').value    = data.aSeal || '';
 
-    // 라디오 버튼 복원
     var bvEl = document.querySelector('input[name="bv"][value="'+data.bValve+'"]');
     if (bvEl) bvEl.checked = true;
     var avEl = document.querySelector('input[name="av"][value="'+data.aValve+'"]');
     if (avEl) avEl.checked = true;
 
-    // 수용가 확인 모드 복원
     if (data.cMode) setC(data.cMode);
 
-    // 서명 복원
     if (data.sign) {
       document.getElementById('signPreviewImg').src = data.sign;
       signSaved = true;
@@ -721,7 +712,6 @@ function autoLoad() {
       document.getElementById('signOpenArea').style.display    = 'none';
     }
 
-    // 수용가 정보 복원
     if (data.cur) {
       cur = data.cur;
       renderInfo(data.no, data.cur);
@@ -746,18 +736,28 @@ window.addEventListener('DOMContentLoaded', function() {
   refreshAllWM();
   initSign();
   document.getElementById('workDate').addEventListener('change', refreshAllWM);
-   // 자동저장 불러오기
+
+  // 자동저장 불러오기
   autoLoad();
 
-  // 1초마다 자동저장 (뒤로가기 대비)
+  // 1초마다 자동저장
   setInterval(autoSave, 1000);
 
-  // 입력할 때마다 자동저장
+  // 입력할 때마다 즉시 자동저장
   ['noInput','bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
     document.getElementById(id).addEventListener('input', autoSave);
   });
   document.getElementById('workDate').addEventListener('change', autoSave);
-    // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
+
+  // 뒤로가기 버튼 차단 + 자동저장
+  history.pushState(null, null, location.href);
+  window.addEventListener('popstate', function() {
+    autoSave();
+    history.pushState(null, null, location.href);
+    showExitDialog(null);
+  });
+
+  // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
   gasCall('getWorkerName').then(function(n) {
     wkName = n || '작업자';
     document.getElementById('workerName').textContent = wkName;
@@ -1326,13 +1326,11 @@ function resetForm() {
   document.getElementById('signOpenArea').style.display = 'block';
   document.getElementById('signPreviewImg').src = '';
   setC('sign');
-  isSaving = false;
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
   localStorage.removeItem('autoSave');
   isSaving = false;
   window.scrollTo({ top:0, behavior:'smooth' });
 }
+
 /* ════════════════════════════════════════════
    유틸
 ════════════════════════════════════════════ */
