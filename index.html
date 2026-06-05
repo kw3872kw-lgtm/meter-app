@@ -887,7 +887,7 @@ function confirmSign(){
   // 4:1 비율 캔버스에 흰 배경 + 서명 꽉 채워서 저장
   var exportCv=document.createElement('canvas');
   var dpr=window.devicePixelRatio||1;
-  var exportW=cv.offsetWidth*dpr, exportH=Math.round(exportW/4);
+  var exportW=cv.offsetWidth*dpr, exportH=Math.round(exportW/2);
   exportCv.width=exportW; exportCv.height=exportH;
   var ectx=exportCv.getContext('2d');
   // 흰색 배경
