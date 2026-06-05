@@ -655,6 +655,81 @@ var cMode  = 'sign';
 var wkName = '작업자';
 var WM_KEYS = ['full','before','after','sticker','sticker2'];
 
+// ── 자동저장 (30초마다 + 입력할 때마다) ──
+function autoSave() {
+  try {
+    var data = {
+      no       : document.getElementById('noInput').value,
+      workDate : document.getElementById('workDate').value,
+      bRead    : document.getElementById('bRead').value,
+      bSeal    : document.getElementById('bSeal').value,
+      aRead    : document.getElementById('aRead').value,
+      aMeter   : document.getElementById('aMeter').value,
+      aSeal    : document.getElementById('aSeal').value,
+      bValve   : document.querySelector('input[name="bv"]:checked').value,
+      aValve   : document.querySelector('input[name="av"]:checked').value,
+      cMode    : cMode,
+      cur      : cur,
+      sign     : signSaved ? document.getElementById('signPreviewImg').src : null,
+    };
+    localStorage.setItem('autoSave', JSON.stringify(data));
+  } catch(e) {}
+}
+
+function autoLoad() {
+  try {
+    var raw = localStorage.getItem('autoSave');
+    if (!raw) return;
+    var data = JSON.parse(raw);
+    if (!data.no) return;
+
+    // 복원 확인
+    if (!confirm('이전에 작업하던 내용이 있습니다.\n이어서 작업하시겠습니까?')) {
+      localStorage.removeItem('autoSave');
+      return;
+    }
+
+    document.getElementById('noInput').value  = data.no;
+    document.getElementById('workDate').value = data.workDate;
+    document.getElementById('bRead').value    = data.bRead;
+    document.getElementById('bSeal').value    = data.bSeal;
+    document.getElementById('aRead').value    = data.aRead;
+    document.getElementById('aMeter').value   = data.aMeter;
+    document.getElementById('aSeal').value    = data.aSeal;
+
+    // 라디오 버튼 복원
+    var bvEl = document.querySelector('input[name="bv"][value="'+data.bValve+'"]');
+    if (bvEl) bvEl.checked = true;
+    var avEl = document.querySelector('input[name="av"][value="'+data.aValve+'"]');
+    if (avEl) avEl.checked = true;
+
+    // 수용가 확인 모드 복원
+    if (data.cMode) setC(data.cMode);
+
+    // 서명 복원
+    if (data.sign) {
+      document.getElementById('signPreviewImg').src = data.sign;
+      signSaved = true;
+      document.getElementById('signPreviewArea').style.display = 'block';
+      document.getElementById('signOpenArea').style.display    = 'none';
+    }
+
+    // 수용가 정보 복원
+    if (data.cur) {
+      cur = data.cur;
+      renderInfo(data.no, data.cur);
+      updateBar();
+      refreshAllWM();
+      var box = document.getElementById('noBox');
+      box.classList.add('found');
+      var tag = document.getElementById('noTag');
+      tag.textContent = '✓ 확인'; tag.className = 'no-tag show found';
+    }
+
+    showToast('✅ 이전 작업 내용을 불러왔습니다.');
+  } catch(e) {}
+}
+
 /* ════════════════════════════════════════════
    초기화
 ════════════════════════════════════════════ */
@@ -664,8 +739,18 @@ window.addEventListener('DOMContentLoaded', function() {
   refreshAllWM();
   initSign();
   document.getElementById('workDate').addEventListener('change', refreshAllWM);
+   // 자동저장 불러오기
+  autoLoad();
 
-  // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
+  // 30초마다 자동저장
+  setInterval(autoSave, 30000);
+
+  // 입력할 때마다 자동저장
+  ['noInput','bRead','bSeal','aRead','aMeter','aSeal'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', autoSave);
+  });
+  document.getElementById('workDate').addEventListener('change', autoSave);
+    // 작업자명 로드 (로그인 이메일 앞부분 — GAS에서 가져옴)
   gasCall('getWorkerName').then(function(n) {
     wkName = n || '작업자';
     document.getElementById('workerName').textContent = wkName;
@@ -1237,7 +1322,10 @@ function resetForm() {
   isSaving = false;
   window.scrollTo({ top:0, behavior:'smooth' });
 }
-
+  localStorage.removeItem('autoSave');
+  isSaving = false;
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
 /* ════════════════════════════════════════════
    유틸
 ════════════════════════════════════════════ */
