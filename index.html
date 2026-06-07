@@ -288,12 +288,37 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
 .det-v{font-size:14px;font-weight:700;color:var(--text)}
 .del-btn{width:100%;padding:14px;background:var(--red2);border:2px solid var(--red);border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:var(--red);cursor:pointer;margin-top:8px}
 .sec-gap{height:10px}
+
+/* 가로방향 안내 오버레이 */
+.rotate-overlay{
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(15,41,66,.95);backdrop-filter:blur(8px);
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:30px;text-align:center;
+}
+.rotate-overlay.show{display:flex}
+.rotate-ic{font-size:72px;animation:rotAnim 1.5s ease-in-out infinite}
+@keyframes rotAnim{
+  0%,100%{transform:rotate(0deg)}
+  50%{transform:rotate(90deg)}
+}
+.rotate-title{font-size:22px;font-weight:900;color:#fff}
+.rotate-sub{font-size:15px;color:rgba(0,229,255,.7);line-height:1.6}
+.rotate-cancel{margin-top:10px;padding:12px 28px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:var(--r2);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer}
 </style>
 </head>
 <body>
 
 <div class="lov" id="lov"><div class="lsp"></div><div class="ltxt" id="ltxt">처리 중…</div></div>
 <div class="toast" id="toast"></div>
+
+<!-- 가로방향 안내 오버레이 -->
+<div class="rotate-overlay" id="rotateOverlay">
+  <div class="rotate-ic">📱</div>
+  <div class="rotate-title">핸드폰을 가로로 돌려주세요</div>
+  <div class="rotate-sub">사진은 가로 방향으로<br>촬영해야 합니다</div>
+  <button class="rotate-cancel" onclick="cancelPhotoCapture()">✕ 취소</button>
+</div>
 
 <div class="exit-bg" id="exitBg">
   <div class="exit-box">
@@ -802,7 +827,41 @@ function renderCust(no,d){
 function resetCust(){document.getElementById('custCard').innerHTML='<div class="cust-empty">NO를 입력하면 정보가 표시됩니다</div>';}
 
 /* 사진 */
-function tp(id){document.getElementById(id).click();}
+var pendingPhotoId = null;
+
+function tp(id){
+  // 가로 방향 확인
+  var isLandscape = window.innerWidth > window.innerHeight;
+  if(!isLandscape){
+    // 세로 상태 → 안내 오버레이 표시
+    pendingPhotoId = id;
+    document.getElementById('rotateOverlay').classList.add('show');
+    // 가로로 돌리면 자동 촬영
+    window.addEventListener('resize', checkOrientationAndCapture);
+    return;
+  }
+  document.getElementById(id).click();
+}
+
+function checkOrientationAndCapture(){
+  var isLandscape = window.innerWidth > window.innerHeight;
+  if(isLandscape && pendingPhotoId){
+    window.removeEventListener('resize', checkOrientationAndCapture);
+    document.getElementById('rotateOverlay').classList.remove('show');
+    setTimeout(()=>{
+      if(pendingPhotoId){
+        document.getElementById(pendingPhotoId).click();
+        pendingPhotoId = null;
+      }
+    }, 400);
+  }
+}
+
+function cancelPhotoCapture(){
+  window.removeEventListener('resize', checkOrientationAndCapture);
+  document.getElementById('rotateOverlay').classList.remove('show');
+  pendingPhotoId = null;
+}
 function onPhoto(input,fileId,thumbId,label,badgeId,numId){
   if(!input.files||!input.files[0])return;
   var file=input.files[0],sub=document.getElementById('psub_'+fileId.replace('p','').toLowerCase());
@@ -1247,6 +1306,68 @@ async function startUpload(){
   updateUploadTab();
 }
 
+function makeDocHtml(w){
+  var pad=String(w.no);while(pad.length<3)pad='0'+pad;
+  var dp=(w.date||'').split('-');
+  var dateStr=dp[0]+'년 '+parseInt(dp[1])+'월 '+parseInt(dp[2])+'일';
+  var c=w.cur||{};
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,'Malgun Gothic',sans-serif;font-size:13px;color:#111;padding:20px;max-width:580px}
+h1{font-size:17px;font-weight:900;color:#0f2942;text-align:center;margin-bottom:3px}
+.sub{font-size:11px;color:#888;text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #00c5de}
+.sec{margin-bottom:12px}
+.sec-t{font-size:12px;font-weight:700;color:#007fa3;background:#eaf8fb;padding:4px 10px;border-left:3px solid #00c5de;margin-bottom:6px}
+table{width:100%;border-collapse:collapse}
+td{padding:5px 9px;border:1px solid #ddd;font-size:12px}
+td:first-child{font-weight:700;background:#f4f9fc;width:36%;white-space:nowrap}
+.ft{margin-top:14px;text-align:center;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:6px}
+</style>
+</head>
+<body>
+<h1>💧 디지털계량기 교체 작업서</h1>
+<div class="sub">2026년 고장디지털계량기 교체공사(서남광산) — (주)양정건설</div>
+<div class="sec"><div class="sec-t">기본 정보</div>
+<table>
+<tr><td>작업 NO</td><td><b>NO. ${pad}</b></td></tr>
+<tr><td>작업일자</td><td>${dateStr}</td></tr>
+<tr><td>작업자</td><td>${w.worker||'—'}</td></tr>
+</table></div>
+<div class="sec"><div class="sec-t">수용가 정보</div>
+<table>
+<tr><td>수용가번호</td><td>${c.custNo||'—'}</td></tr>
+<tr><td>수용가명</td><td>${c.custName||'—'}</td></tr>
+<tr><td>연락처</td><td>${c.phone||'—'}</td></tr>
+<tr><td>주소</td><td>${c.address||'—'}</td></tr>
+<tr><td>구경</td><td>${c.size||'—'}</td></tr>
+<tr><td>교체사유</td><td>${c.reason||'—'}</td></tr>
+<tr><td>기물번호(구)</td><td>${c.meterNo||'—'}</td></tr>
+</table></div>
+<div class="sec"><div class="sec-t">교체 전 상태</div>
+<table>
+<tr><td>밸브 상태</td><td>${w.bValve||'—'}</td></tr>
+<tr><td>지침</td><td>${w.bRead||'미기재'}</td></tr>
+<tr><td>봉인번호</td><td>${w.bSeal||'미기재'}</td></tr>
+</table></div>
+<div class="sec"><div class="sec-t">교체 후 상태</div>
+<table>
+<tr><td>지침</td><td><b>${w.aRead||'—'}</b></td></tr>
+<tr><td>기물번호(신)</td><td><b>${w.aMeter||'—'}</b></td></tr>
+<tr><td>봉인번호</td><td><b>${w.aSeal||'—'}</b></td></tr>
+<tr><td>밸브 상태</td><td>${w.aValve||'—'}</td></tr>
+</table></div>
+<div class="sec"><div class="sec-t">수용가 확인</div>
+<table>
+<tr><td>확인 방식</td><td>${w.cMode==='sign'?'✍️ 서명 완료':'🏷️ 스티커 부착'}</td></tr>
+</table></div>
+<div class="ft">${dateStr} ${w.worker||''} 작업자 현장 작성 — 서남광산 고장디지털계량기 교체공사</div>
+</body></html>`;
+}
+
 async function uploadWorks(works){
   for(var w of works){
     var pad=String(w.no).padStart(3,'0');
@@ -1258,6 +1379,8 @@ async function uploadWorks(works){
         var pr=await dbGet('photos','photo_'+appDate+'_'+w.no+'_'+pk);
         if(pr)ups[pk]=pr.data;
       }
+      // 텍스트 문서 HTML 생성
+      ups.textDoc = makeDocHtml(w);
       if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
       var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups});
       if(!pr2.success)throw new Error(pr2.msg);
@@ -1291,29 +1414,9 @@ function compositePhoto(file,label){
           try{
             var W0=img.naturalWidth||img.width,H0=img.naturalHeight||img.height;
             var S=0.577;
-            // 무조건 가로(landscape)로 저장 — 세로 사진은 90도 회전
-            var isPortrait = H0 > W0;
-            var W, H;
-            if(isPortrait){
-              // 세로 → 가로로 회전 (너비↔높이 교환)
-              W = Math.round(H0 * S);
-              H = Math.round(W0 * S);
-            } else {
-              W = Math.round(W0 * S);
-              H = Math.round(H0 * S);
-            }
+            var W=Math.round(W0*S), H=Math.round(H0*S);
             var cv=document.createElement('canvas');cv.width=W;cv.height=H;
-            var ctx=cv.getContext('2d');
-            if(isPortrait){
-              // 시계방향 90도 회전하여 그리기
-              ctx.save();
-              ctx.translate(W, 0);
-              ctx.rotate(Math.PI / 2);
-              ctx.drawImage(img, 0, 0, H, W);
-              ctx.restore();
-            } else {
-              ctx.drawImage(img,0,0,W,H);
-            }
+            var ctx=cv.getContext('2d');ctx.drawImage(img,0,0,W,H);
             var sc=W/1280,rH=Math.round(32*sc*1.3*1.2),fSz=Math.max(Math.round(14*sc*1.3*1.2),14),pd=Math.round(6*sc),lw=Math.max(Math.round(sc),.5);
             // 표 너비를 글자 기준으로 동적 계산
             ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';
