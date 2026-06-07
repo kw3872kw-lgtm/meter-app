@@ -828,37 +828,55 @@ function resetCust(){document.getElementById('custCard').innerHTML='<div class="
 
 /* 사진 */
 var pendingPhotoId = null;
+var orientationTimer = null;
+
+function isLandscape(){
+  // screen.orientation 우선, 없으면 innerWidth/Height 비교
+  if(screen.orientation && screen.orientation.type){
+    return screen.orientation.type.includes('landscape');
+  }
+  if(typeof window.orientation !== 'undefined'){
+    return Math.abs(window.orientation) === 90;
+  }
+  return window.innerWidth > window.innerHeight;
+}
 
 function tp(id){
-  // 가로 방향 확인
-  var isLandscape = window.innerWidth > window.innerHeight;
-  if(!isLandscape){
-    // 세로 상태 → 안내 오버레이 표시
+  if(!isLandscape()){
     pendingPhotoId = id;
     document.getElementById('rotateOverlay').classList.add('show');
-    // 가로로 돌리면 자동 촬영
-    window.addEventListener('resize', checkOrientationAndCapture);
+    // orientationchange + resize + 폴링 3중 감지
+    window.addEventListener('orientationchange', onOrientationChange);
+    window.addEventListener('resize', onOrientationChange);
+    // 폴링 (0.3초마다 방향 체크)
+    orientationTimer = setInterval(function(){
+      if(isLandscape()) onOrientationChange();
+    }, 300);
     return;
   }
   document.getElementById(id).click();
 }
 
-function checkOrientationAndCapture(){
-  var isLandscape = window.innerWidth > window.innerHeight;
-  if(isLandscape && pendingPhotoId){
-    window.removeEventListener('resize', checkOrientationAndCapture);
-    document.getElementById('rotateOverlay').classList.remove('show');
-    setTimeout(()=>{
-      if(pendingPhotoId){
-        document.getElementById(pendingPhotoId).click();
-        pendingPhotoId = null;
-      }
-    }, 400);
-  }
+function onOrientationChange(){
+  setTimeout(function(){
+    if(isLandscape() && pendingPhotoId){
+      clearListeners();
+      document.getElementById('rotateOverlay').classList.remove('show');
+      var pid = pendingPhotoId;
+      pendingPhotoId = null;
+      setTimeout(function(){ document.getElementById(pid).click(); }, 300);
+    }
+  }, 200);
+}
+
+function clearListeners(){
+  window.removeEventListener('orientationchange', onOrientationChange);
+  window.removeEventListener('resize', onOrientationChange);
+  if(orientationTimer){ clearInterval(orientationTimer); orientationTimer = null; }
 }
 
 function cancelPhotoCapture(){
-  window.removeEventListener('resize', checkOrientationAndCapture);
+  clearListeners();
   document.getElementById('rotateOverlay').classList.remove('show');
   pendingPhotoId = null;
 }
