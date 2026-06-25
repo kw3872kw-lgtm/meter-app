@@ -396,13 +396,22 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
         <span class="no-tag" id="noTag"></span>
       </div>
     </div>
-    <!-- 작업일자 선택 -->
+    <!-- 작업일자 + 현장선택 -->
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
       <span style="font-size:16px">📅</span>
       <span style="font-size:13px;font-weight:700;color:var(--accent2);white-space:nowrap">작업일자</span>
       <input type="date" id="workDateInp"
         style="flex:1;background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:#fff;text-align:right;-webkit-appearance:none;color-scheme:dark"
         onchange="onDateChange(this.value)">
+    </div>
+    <!-- 작업 현장 선택 (작업중 변경 가능) -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
+      <span style="font-size:16px">📍</span>
+      <span style="font-size:13px;font-weight:700;color:var(--accent2);white-space:nowrap">작업현장</span>
+      <select id="workSiteInp" onchange="onSiteChange(this.value,this.options[this.selectedIndex].text)"
+        style="flex:1;background:transparent;border:none;outline:none;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;text-align:right;-webkit-appearance:none;cursor:pointer">
+      </select>
+      <span style="font-size:12px;color:rgba(0,197,222,.5)">▼</span>
     </div>
     <div class="no-hint" id="noHint">NO 입력 시 수용가 정보를 자동으로 불러옵니다</div>
   </div>
@@ -686,14 +695,39 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
 <div class="tab-pane" id="pane-upload">
   <div class="upload-hdr">
     <div class="upload-title">📤 구글 업로드</div>
-    <div class="upload-sub">업로드 버튼을 눌러 구글 시트와 드라이브에 저장하세요</div>
+    <div class="upload-sub">현장과 날짜를 선택 후 업로드하세요</div>
   </div>
+
+  <!-- 업로드 필터 -->
+  <div style="margin:10px 12px 0;display:flex;flex-direction:column;gap:8px">
+    <!-- 현장 선택 -->
+    <div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:var(--r);padding:12px 14px;border:1px solid rgba(0,197,222,.2)">
+      <span style="font-size:16px">📍</span>
+      <span style="font-size:13px;font-weight:700;color:var(--accent2);white-space:nowrap">현장</span>
+      <select id="upSiteInp" onchange="onUpFilterChange()"
+        style="flex:1;background:transparent;border:none;outline:none;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;text-align:right;-webkit-appearance:none;cursor:pointer">
+        <option value="all" style="background:#0d2540">전체 현장</option>
+      </select>
+      <span style="font-size:12px;color:rgba(0,197,222,.5)">▼</span>
+    </div>
+    <!-- 날짜 선택 -->
+    <div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:var(--r);padding:12px 14px;border:1px solid rgba(0,197,222,.2)">
+      <span style="font-size:16px">📅</span>
+      <span style="font-size:13px;font-weight:700;color:var(--accent2);white-space:nowrap">날짜</span>
+      <select id="upDateInp" onchange="onUpFilterChange()"
+        style="flex:1;background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#fff;text-align:right;-webkit-appearance:none;cursor:pointer">
+        <option value="all" style="background:#0d2540">전체 날짜</option>
+      </select>
+      <span style="font-size:12px;color:rgba(0,197,222,.5)">▼</span>
+    </div>
+  </div>
+
   <div class="stat-row">
     <div class="stat"><div class="stat-n all" id="stAll">0</div><div class="stat-l">전체</div></div>
     <div class="stat"><div class="stat-n wait" id="stWait">0</div><div class="stat-l">대기중</div></div>
     <div class="stat"><div class="stat-n done" id="stDone">0</div><div class="stat-l">완료</div></div>
   </div>
-  <div style="display:flex;gap:8px;padding:0 0 0 0">
+  <div style="display:flex;gap:8px;padding:0 12px">
     <button class="upload-btn" id="upBtn" onclick="startUpload()" style="flex:1">☁️ 선택 업로드</button>
     <button class="upload-btn" id="upAllBtn" onclick="startUploadAll()" style="flex:1;background:linear-gradient(135deg,var(--green),#009960);box-shadow:0 6px 20px rgba(0,200,122,.3)">📤 전체 업로드</button>
   </div>
@@ -803,6 +837,8 @@ function launchApp(){
   // 작업일자 입력란 초기화
   var wdi=document.getElementById('workDateInp');
   if(wdi) wdi.value=appDate;
+  // 작업현장 선택란 초기화
+  loadWorkSiteList();
   document.getElementById('workerChip').textContent=appWorker;
   initDots();
   updateListTab();
@@ -816,7 +852,7 @@ function goTab(name){
     document.getElementById('pane-'+t).classList.toggle('on',t===name);
   });
   if(name==='list')updateListTab();
-  if(name==='upload')updateUploadTab();
+  if(name==='upload'){updateUploadTab();}
 }
 
 /* STEP */
@@ -841,6 +877,29 @@ function goStep(n){
   },50);
 }
 
+/* 작업입력 탭 현장 선택란 초기화 */
+function loadWorkSiteList(){
+  var sel=document.getElementById('workSiteInp');
+  if(!sel) return;
+  gasCall('getSites').then(function(sites){
+    sel.innerHTML='';
+    if(!sites||!sites.length){
+      sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option>';
+      return;
+    }
+    sites.forEach(function(s){
+      var opt=document.createElement('option');
+      opt.value=s.id;
+      opt.textContent=s.name;
+      opt.style.background='#0d2540';
+      if(s.id===appSite) opt.selected=true;
+      sel.appendChild(opt);
+    });
+  }).catch(function(){
+    sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option><option value="site2" style="background:#0d2540">동북</option>';
+  });
+}
+
 /* 현장 목록 불러오기 */
 function loadSiteList(){
   var sel=document.getElementById('startSite');
@@ -859,6 +918,28 @@ function loadSiteList(){
   }).catch(function(){
     sel.innerHTML='<option value="site1">서남광산</option><option value="site2">동북</option>';
   });
+}
+
+/* 작업 현장 변경 (작업중) */
+function onSiteChange(siteId, siteName){
+  if(!siteId) return;
+  appSite = siteId;
+  appSiteName = siteName;
+  localStorage.setItem('meterSession', JSON.stringify({date:appDate, worker:appWorker, company:appCompany, site:appSite, siteName:appSiteName}));
+  // 헤더 업데이트
+  var dp=appDate.split('-');
+  document.getElementById('hdrSub').textContent=dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker+' · '+appSiteName;
+  // NO 초기화 (현장 바뀌면 새로 조회해야 함)
+  var noInp=document.getElementById('noInp');
+  if(noInp && noInp.value){
+    noInp.value='';
+    cur=null;resetCust();updateBot();
+    document.getElementById('noBox').classList.remove('found','notfound');
+    document.getElementById('noTag').className='no-tag';
+    document.getElementById('noHint').textContent='NO 입력 시 수용가 정보를 자동으로 불러옵니다';
+    document.getElementById('noHint').className='no-hint';
+  }
+  showToast('📍 현장: '+appSiteName);
 }
 
 /* 작업일자 변경 */
@@ -1304,28 +1385,85 @@ async function delWork(key){
 
 /* 업로드 탭 */
 async function updateUploadTab(){
-  if(!appDate)return;
   var all=await dbAll('works');
-  var works=all.filter(w=>w.date===appDate&&w.worker===appWorker);
+
+  // 현장 선택 드롭다운 채우기
+  var upSite=document.getElementById('upSiteInp');
+  var upDate=document.getElementById('upDateInp');
+  if(upSite && upSite.options.length<=1){
+    gasCall('getSites').then(function(sites){
+      if(!sites) return;
+      sites.forEach(function(s){
+        var opt=document.createElement('option');
+        opt.value=s.id; opt.textContent=s.name; opt.style.background='#0d2540';
+        upSite.appendChild(opt);
+      });
+    }).catch(function(){
+      ['site1:서남광산','site2:동북'].forEach(function(s){
+        var p=s.split(':');
+        var opt=document.createElement('option');
+        opt.value=p[0]; opt.textContent=p[1]; opt.style.background='#0d2540';
+        upSite.appendChild(opt);
+      });
+    });
+  }
+
+  // 날짜 선택 드롭다운 채우기 (저장된 날짜 목록)
+  if(upDate){
+    var curDateVal = upDate.value;
+    var dates=[...new Set(all.map(w=>w.date).filter(Boolean))].sort().reverse();
+    upDate.innerHTML='<option value="all" style="background:#0d2540">전체 날짜</option>';
+    dates.forEach(function(d){
+      var opt=document.createElement('option');
+      opt.value=d; opt.textContent=d; opt.style.background='#0d2540';
+      if(d===curDateVal) opt.selected=true;
+      upDate.appendChild(opt);
+    });
+    // 기본값: 오늘 날짜
+    if(!curDateVal || curDateVal==='all'){
+      for(var i=0;i<upDate.options.length;i++){
+        if(upDate.options[i].value===appDate){ upDate.options[i].selected=true; break; }
+      }
+    }
+  }
+
+  // 필터 적용
+  var filterSite = upSite ? upSite.value : 'all';
+  var filterDate = upDate ? upDate.value : 'all';
+  var works = all.filter(function(w){
+    var siteOk = filterSite==='all' || w.siteId===filterSite;
+    var dateOk = filterDate==='all' || w.date===filterDate;
+    return siteOk && dateOk;
+  });
+
   var total=works.length,done=works.filter(w=>w.uploaded).length,wait=total-done;
   document.getElementById('stAll').textContent=total;
   document.getElementById('stWait').textContent=wait;
   document.getElementById('stDone').textContent=done;
   var btn=document.getElementById('upBtn');
   btn.disabled=wait===0;
-  btn.textContent=wait>0?'☁️ '+wait+'건 업로드 시작':'✅ 모두 완료';
+  btn.textContent=wait>0?'☁️ '+wait+'건 업로드':'✅ 모두 완료';
+
   document.getElementById('upItems').innerHTML=works.map(w=>{
     var pad=String(w.no).padStart(3,'0');
     var name=w.cur?(w.cur.custName||'—'):'—';
+    var site=w.siteName||'—';
     return '<div class="ui-item" id="ui_'+w.key+'">'+
       '<div class="ui-row">'+
         '<div class="ui-no">'+pad+'</div>'+
-        '<div class="ui-info"><div class="ui-name">'+name+'</div><div class="ui-prog" id="up_'+w.key+'">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+'</div></div>'+
+        '<div class="ui-info">'+
+          '<div class="ui-name">'+name+' <span style="font-size:11px;color:var(--accent);font-weight:600">['+site+']</span></div>'+
+          '<div class="ui-prog" id="up_'+w.key+'">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+' · '+w.date+'</div>'+
+        '</div>'+
         '<div class="ui-ic">'+(w.uploaded?'✅':'⏳')+'</div>'+
       '</div>'+
       '<div class="prog-wrap"><div class="prog-bar" id="pb_'+w.key+'" style="width:'+(w.uploaded?100:0)+'%"></div></div>'+
     '</div>';
-  }).join('')||'<div class="empty-state"><div class="empty-ic">☁️</div><div class="empty-tx">업로드할 작업이 없어요</div></div>';
+  }).join('')||'<div class="empty-state"><div class="empty-ic">☁️</div><div class="empty-tx">해당 조건의 작업이 없어요</div></div>';
+}
+
+function onUpFilterChange(){
+  updateUploadTab();
 }
 
 /* 업로드 실행 */
@@ -1343,7 +1481,13 @@ async function startUploadAll(){
 
 async function startUpload(){
   var all=await dbAll('works');
-  var works=all.filter(w=>w.date===appDate&&w.worker===appWorker&&!w.uploaded);
+  var filterSite=document.getElementById('upSiteInp')?document.getElementById('upSiteInp').value:'all';
+  var filterDate=document.getElementById('upDateInp')?document.getElementById('upDateInp').value:'all';
+  var works=all.filter(function(w){
+    var siteOk=filterSite==='all'||w.siteId===filterSite;
+    var dateOk=filterDate==='all'||w.date===filterDate;
+    return siteOk&&dateOk&&!w.uploaded;
+  });
   if(!works.length){showToast('✅ 업로드할 작업이 없어요.');return;}
   document.getElementById('upBtn').disabled=true;
   await uploadWorks(works);
