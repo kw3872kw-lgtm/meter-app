@@ -742,8 +742,8 @@ function gasCall(action,params){
     document.head.appendChild(s);setTimeout(()=>{if(s.parentNode)s.parentNode.removeChild(s);},35000);
   });
 }
-function gasPost(action,payload){
-  return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,payload})}).then(r=>r.json());
+function gasPost(action,payload,siteId){
+  return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,payload,siteId:siteId||appSite||'site1'})}).then(r=>r.json());
 }
 
 /* 상태 */
@@ -1426,10 +1426,10 @@ async function uploadWorks(works){
       // 텍스트 문서 HTML 생성
       ups.textDoc = makeDocHtml(w);
       if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
-      var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups,siteId:w.siteId||'site1'});
+      var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups},w.siteId||'site1');
       if(!pr2.success)throw new Error(pr2.msg);
       if(upEl)upEl.textContent='📊 시트 기록 중…';if(pbEl)pbEl.style.width='80%';
-      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,photoFolderUrl:pr2.folderUrl,siteId:w.siteId||'site1'});
+      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,photoFolderUrl:pr2.folderUrl},w.siteId||'site1');
       if(!sr.success)throw new Error(sr.msg);
       w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
       if(pbEl)pbEl.style.width='100%';if(upEl)upEl.textContent='✅ 완료';
