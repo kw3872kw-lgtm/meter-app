@@ -367,6 +367,16 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
       <div class="field-label"><span class="field-label-ic">👷</span>작업자 이름</div>
       <input type="text" class="inp" id="startWorker" placeholder="이름 입력">
     </div>
+    <div class="field">
+      <div class="field-label"><span class="field-label-ic">🏢</span>시공사명</div>
+      <input type="text" class="inp" id="startCompany" placeholder="예: (주)양정건설">
+    </div>
+    <div class="field">
+      <div class="field-label"><span class="field-label-ic">📍</span>작업 현장</div>
+      <select class="inp" id="startSite" style="cursor:pointer">
+        <option value="">불러오는 중…</option>
+      </select>
+    </div>
     <button class="start-btn" onclick="startApp()">🚀 작업 시작하기</button>
   </div>
 </div>
@@ -737,7 +747,7 @@ function gasPost(action,payload){
 }
 
 /* 상태 */
-var appDate='',appWorker='',cur=null,noTmr=null,cMode='sign';
+var appDate='',appWorker='',appCompany='(주)양정건설',appSite='site1',appSiteName='서남광산',cur=null,noTmr=null,cMode='sign';
 var signCtx=null,signDrw=false,signLast=null,signSaved=false;
 var curStep=1,exitTarget=null;
 var photos={full:null,before:null,after:null,sticker:null,sign:null};
@@ -746,10 +756,14 @@ var photos={full:null,before:null,after:null,sticker:null,sign:null};
 window.addEventListener('DOMContentLoaded',()=>{
   initDB().then(()=>{
     var s=localStorage.getItem('meterSession');
-    if(s){try{var d=JSON.parse(s);if(d.date&&d.worker){appDate=d.date;appWorker=d.worker;launchApp();return;}}catch(e){}}
+    if(s){try{var d=JSON.parse(s);if(d.date&&d.worker){appDate=d.date;appWorker=d.worker;appCompany=d.company||'(주)양정건설';appSite=d.site||'site1';appSiteName=d.siteName||'서남광산';launchApp();return;}}catch(e){}}
     document.getElementById('startDate').value=new Date().toISOString().split('T')[0];
     var w=localStorage.getItem('workerName');
     if(w)document.getElementById('startWorker').value=w;
+    var c=localStorage.getItem('companyName');
+    if(c)document.getElementById('startCompany').value=c;
+    // 현장 목록 불러오기
+    loadSiteList();
   });
   history.pushState(null,null,location.href);
   history.pushState(null,null,location.href);
@@ -767,11 +781,16 @@ window.addEventListener('DOMContentLoaded',()=>{
 function startApp(){
   var d=document.getElementById('startDate').value;
   var w=document.getElementById('startWorker').value.trim();
+  var c=document.getElementById('startCompany').value.trim()||'(주)양정건설';
+  var siteEl=document.getElementById('startSite');
+  var sId=siteEl.value||'site1';
+  var sName=siteEl.options[siteEl.selectedIndex]?siteEl.options[siteEl.selectedIndex].text:'서남광산';
   if(!d){showToast('⚠️ 작업일자를 입력해 주세요.');return;}
   if(!w){showToast('⚠️ 작업자 이름을 입력해 주세요.');return;}
-  appDate=d;appWorker=w;
-  localStorage.setItem('meterSession',JSON.stringify({date:d,worker:w}));
+  appDate=d;appWorker=w;appCompany=c;appSite=sId;appSiteName=sName;
+  localStorage.setItem('meterSession',JSON.stringify({date:d,worker:w,company:c,site:sId,siteName:sName}));
   localStorage.setItem('workerName',w);
+  localStorage.setItem('companyName',c);
   launchApp();
 }
 
@@ -780,7 +799,7 @@ function launchApp(){
   document.getElementById('tabs').classList.add('show');
   document.getElementById('botBar').style.display='flex';
   var dp=appDate.split('-');
-  document.getElementById('hdrSub').textContent=dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker;
+  document.getElementById('hdrSub').textContent=dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker+' · '+appSiteName;
   // 작업일자 입력란 초기화
   var wdi=document.getElementById('workDateInp');
   if(wdi) wdi.value=appDate;
@@ -822,11 +841,31 @@ function goStep(n){
   },50);
 }
 
+/* 현장 목록 불러오기 */
+function loadSiteList(){
+  var sel=document.getElementById('startSite');
+  gasCall('getSites').then(function(sites){
+    sel.innerHTML='';
+    if(!sites||!sites.length){
+      sel.innerHTML='<option value="site1">서남광산</option>';
+      return;
+    }
+    sites.forEach(function(s){
+      var opt=document.createElement('option');
+      opt.value=s.id; opt.textContent=s.name;
+      if(s.id===appSite) opt.selected=true;
+      sel.appendChild(opt);
+    });
+  }).catch(function(){
+    sel.innerHTML='<option value="site1">서남광산</option><option value="site2">동북</option>';
+  });
+}
+
 /* 작업일자 변경 */
 function onDateChange(val){
   if(!val) return;
   appDate = val;
-  localStorage.setItem('meterSession', JSON.stringify({date:appDate, worker:appWorker}));
+  localStorage.setItem('meterSession', JSON.stringify({date:appDate, worker:appWorker, company:appCompany, site:appSite, siteName:appSiteName}));
   // 헤더 날짜 업데이트
   var dp=appDate.split('-');
   document.getElementById('hdrSub').textContent=dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker;
@@ -842,7 +881,7 @@ function onNo(v){
   if(!v){cur=null;resetCust();updateBot();return;}
   tag.textContent='조회 중…';tag.className='no-tag show searching';
   noTmr=setTimeout(()=>{
-    gasCall('getRowByNo',{no:parseInt(v)}).then(d=>{
+    gasCall('getRowByNo',{no:parseInt(v),siteId:appSite}).then(d=>{
       if(d&&!d.error&&d.no!==undefined){
         box.classList.add('found');tag.textContent='✓ 확인';tag.className='no-tag show found';
         hint.textContent='';hint.className='no-hint';
@@ -1033,7 +1072,7 @@ function autoSave(){
   var no=document.getElementById('noInp').value;if(!no)return;
   try{
     dbPut('works',{
-      key:appDate+'_'+no,no,date:appDate,worker:appWorker,cur,
+      key:appDate+'_'+no,no,date:appDate,worker:appWorker,siteId:appSite,siteName:appSiteName,cur,
       bValve:document.querySelector('input[name="bv"]:checked')?.value||'개(열림)',
       bRead:document.getElementById('bRead').value,
       bSeal:document.getElementById('bSeal').value,
@@ -1117,7 +1156,7 @@ function saveTextDoc(no){
 </head>
 <body>
 <div class="title">💧 디지털계량기 교체 작업서</div>
-<div class="subtitle">2026년 고장디지털계량기 교체공사(서남광산) — (주)양정건설</div>
+<div class="subtitle">2026년 고장디지털계량기 교체공사(서남광산) — ${appCompany}</div>
 
 <div class="section">
   <div class="sec-title">📋 기본 정보</div>
@@ -1335,7 +1374,7 @@ td:first-child{font-weight:700;background:#f4f9fc;width:36%;white-space:nowrap}
 </head>
 <body>
 <h1>💧 디지털계량기 교체 작업서</h1>
-<div class="sub">2026년 고장디지털계량기 교체공사(서남광산) — (주)양정건설</div>
+<div class="sub">2026년 고장디지털계량기 교체공사(서남광산) — ${appCompany}</div>
 <div class="sec"><div class="sec-t">기본 정보</div>
 <table>
 <tr><td>작업 NO</td><td><b>NO. ${pad}</b></td></tr>
@@ -1387,10 +1426,10 @@ async function uploadWorks(works){
       // 텍스트 문서 HTML 생성
       ups.textDoc = makeDocHtml(w);
       if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
-      var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups});
+      var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups,siteId:w.siteId||'site1'});
       if(!pr2.success)throw new Error(pr2.msg);
       if(upEl)upEl.textContent='📊 시트 기록 중…';if(pbEl)pbEl.style.width='80%';
-      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,photoFolderUrl:pr2.folderUrl});
+      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,photoFolderUrl:pr2.folderUrl,siteId:w.siteId||'site1'});
       if(!sr.success)throw new Error(sr.msg);
       w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
       if(pbEl)pbEl.style.width='100%';if(upEl)upEl.textContent='✅ 완료';
@@ -1425,7 +1464,7 @@ function compositePhoto(file,label){
             var sc=W/1280,rH=Math.round(32*sc*1.3*1.2),fSz=Math.max(Math.round(14*sc*1.3*1.2),14),pd=Math.round(6*sc),lw=Math.max(Math.round(sc),.5);
             // 표 너비를 글자 기준으로 동적 계산
             ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';
-            var rows0=[{k:'공사명',v:'2026년 디지털계량기 교체공사(서남광산)'},{k:'공  정',v:'디지털계량기 교체'},{k:'위  치',v:addr},{k:'내  용',v:label},{k:'일  자',v:ds,ex:'시공사',exv:'(주)양정건설'}];
+            var rows0=[{k:'공사명',v:'2026년 디지털계량기 교체공사(서남광산)'},{k:'공  정',v:'디지털계량기 교체'},{k:'위  치',v:addr},{k:'내  용',v:label},{k:'일  자',v:ds,ex:'시공사',exv:appCompany}];
             // 키 열 너비: 가장 긴 키 텍스트 기준
             var kW=Math.round(Math.max(...rows0.map(r=>ctx.measureText(r.k).width))+pd*2.5);
             // 값 열 너비: 가장 긴 값 텍스트 기준
