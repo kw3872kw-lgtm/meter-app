@@ -237,6 +237,13 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
 .upload-btn:disabled{opacity:.45;cursor:not-allowed}
 .upload-btn:active:not(:disabled){transform:scale(.98)}
 .upload-items{padding:4px 12px 0}
+.ui-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:var(--card2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ui-check.checked{background:var(--accent);border-color:var(--accent);color:#fff;font-size:13px}
+.ui-check.uploaded{background:var(--green);border-color:var(--green);color:#fff;font-size:13px;cursor:default}
+.select-all-row{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:8px 12px 0;background:var(--bg2);border-radius:var(--r);border:1px solid rgba(0,197,222,.2)}
+.select-all-label{font-size:13px;font-weight:700;color:var(--accent2);flex:1}
+.sel-upload-btn{padding:8px 18px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:all .2s}
+.sel-upload-btn:disabled{opacity:.4;cursor:not-allowed}
 .ui-item{background:var(--card);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow2)}
 .ui-row{display:flex;align-items:center;gap:12px}
 .ui-no{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:var(--accent);min-width:60px}
@@ -349,6 +356,7 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
 <!-- 탭 -->
 <div class="tabs" id="tabs">
   <button class="tab on" id="tab-work" onclick="goTab('work')"><span class="tab-ic">✏️</span>작업입력</button>
+  <button class="tab" id="tab-absent" onclick="goTab('absent')"><span class="tab-ic">🚫</span>부재중</button>
   <button class="tab" id="tab-list" onclick="goTab('list')"><span class="tab-ic">📋</span>작업목록</button>
   <button class="tab" id="tab-upload" onclick="goTab('upload')"><span class="tab-ic">📤</span>업로드</button>
 </div>
@@ -692,6 +700,119 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
 </div>
 
 <!-- 업로드 탭 -->
+<!-- 부재중 탭 -->
+<div class="tab-pane" id="pane-absent">
+<div class="page">
+
+  <!-- NO 입력 -->
+  <div class="no-area">
+    <div class="no-row">
+      <div class="no-badge">작업 NO</div>
+      <div class="no-inp-wrap" id="abNoBox">
+        <span class="no-pre">NO.</span>
+        <input type="number" class="no-inp" id="abNoInp" placeholder="001" min="1" max="9999"
+          oninput="onAbNo(this.value)">
+        <span class="no-tag" id="abNoTag"></span>
+      </div>
+    </div>
+    <!-- 작업일자 -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
+      <span style="font-size:16px">📅</span>
+      <span style="font-size:13px;font-weight:700;color:var(--accent2);white-space:nowrap">작업일자</span>
+      <input type="date" id="abDateInp"
+        style="flex:1;background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:#fff;text-align:right;-webkit-appearance:none;color-scheme:dark">
+    </div>
+    <!-- 현장 선택 -->
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
+      <span style="font-size:16px">📍</span>
+      <span style="font-size:13px;font-weight:700;color:var(--accent2);white-space:nowrap">작업현장</span>
+      <select id="abSiteInp"
+        style="flex:1;background:transparent;border:none;outline:none;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;text-align:right;-webkit-appearance:none;cursor:pointer">
+      </select>
+      <span style="font-size:12px;color:rgba(0,197,222,.5)">▼</span>
+    </div>
+    <div class="no-hint" id="abNoHint">NO 입력 시 수용가 정보를 자동으로 불러옵니다</div>
+  </div>
+
+  <!-- 수용가 정보 -->
+  <div class="cust-card" id="abCustCard">
+    <div class="cust-empty">NO를 입력하면 정보가 표시됩니다</div>
+  </div>
+
+  <!-- 부재중 사진 1~2장 -->
+  <div class="step-card on" style="margin-top:10px">
+    <div class="step-hd">
+      <div class="step-num">📷</div>
+      <div class="step-name">부재중 사진 촬영 (1~2장)</div>
+      <span class="step-badge ng" id="abPhotoBadge">미촬영</span>
+    </div>
+    <div class="photo-guide">
+      <div class="pg-preview">
+        <svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="56" fill="#0d2540"/>
+          <rect x="20" y="10" width="40" height="30" rx="3" fill="none" stroke="#ff4566" stroke-width="1.5"/>
+          <line x1="20" y1="10" x2="60" y2="40" stroke="#ff4566" stroke-width="1.5"/>
+          <line x1="60" y1="10" x2="20" y2="40" stroke="#ff4566" stroke-width="1.5"/>
+          <text x="40" y="52" fill="rgba(255,69,102,.6)" font-size="5" text-anchor="middle" font-family="Arial">부재중</text>
+        </svg>
+      </div>
+      <div class="pg-text">
+        <div class="pg-title">🚫 부재중 사진</div>
+        <div class="pg-sub">부재중 안내문이나 현장<br>상황이 보이게 촬영하세요</div>
+      </div>
+    </div>
+    <!-- 사진 1 -->
+    <input type="file" id="abPhoto1" class="pi" accept="image/*" capture="environment"
+      onchange="onAbPhoto(this,1)">
+    <button class="photo-btn" id="abPhotoBtn1" onclick="tp('abPhoto1')" style="margin-bottom:8px">
+      <div class="photo-thumb" id="abThumb1">
+        <span class="photo-thumb-ic">🚫</span>
+        <img id="abImg1" alt="">
+      </div>
+      <div class="photo-info">
+        <div class="photo-name">📷 사진 1 <span style="color:var(--red);font-size:11px">●필수</span></div>
+        <div class="photo-sub" id="abPhotoSub1">탭하여 카메라 열기</div>
+      </div>
+      <div class="photo-check">✓</div>
+    </button>
+    <!-- 사진 2 -->
+    <input type="file" id="abPhoto2" class="pi" accept="image/*" capture="environment"
+      onchange="onAbPhoto(this,2)">
+    <button class="photo-btn" id="abPhotoBtn2" onclick="tp('abPhoto2')">
+      <div class="photo-thumb" id="abThumb2">
+        <span class="photo-thumb-ic">📷</span>
+        <img id="abImg2" alt="">
+      </div>
+      <div class="photo-info">
+        <div class="photo-name">📷 사진 2 <span style="color:var(--muted);font-size:11px">●선택</span></div>
+        <div class="photo-sub" id="abPhotoSub2">탭하여 카메라 열기 (선택)</div>
+      </div>
+      <div class="photo-check">✓</div>
+    </button>
+  </div>
+
+  <!-- 메모 -->
+  <div class="step-card on" style="margin-top:0">
+    <div class="step-hd">
+      <div class="step-num">📝</div>
+      <div class="step-name">메모 (선택)</div>
+    </div>
+    <div class="fld">
+      <textarea class="fi" id="abMemo" placeholder="부재 사유, 특이사항 등 메모" rows="3"
+        style="resize:none;line-height:1.5"></textarea>
+    </div>
+  </div>
+
+  <!-- 저장 버튼 -->
+  <div style="padding:0 0 20px">
+    <button class="mv-btn save" style="width:100%;margin-top:10px" onclick="saveAbsent()">
+      💾 부재중 임시저장
+    </button>
+  </div>
+
+</div>
+</div><!-- /pane-absent -->
+
 <div class="tab-pane" id="pane-upload">
   <div class="upload-hdr">
     <div class="upload-title">📤 구글 업로드</div>
@@ -728,8 +849,14 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
     <div class="stat"><div class="stat-n done" id="stDone">0</div><div class="stat-l">완료</div></div>
   </div>
   <div style="display:flex;gap:8px;padding:0 12px">
-    <button class="upload-btn" id="upBtn" onclick="startUpload()" style="flex:1">☁️ 선택 업로드</button>
+    <button class="upload-btn" id="upBtn" onclick="startUpload()" style="flex:1">☁️ 필터 업로드</button>
     <button class="upload-btn" id="upAllBtn" onclick="startUploadAll()" style="flex:1;background:linear-gradient(135deg,var(--green),#009960);box-shadow:0 6px 20px rgba(0,200,122,.3)">📤 전체 업로드</button>
+  </div>
+  <!-- 선택 업로드 바 -->
+  <div class="select-all-row" id="selectAllRow" style="display:none">
+    <div class="ui-check checked" id="selectAllChk" onclick="toggleSelectAll()">✓</div>
+    <div class="select-all-label" id="selectAllLabel">0건 선택됨</div>
+    <button class="sel-upload-btn" id="selUploadBtn" onclick="startSelectedUpload()" disabled>☁️ 선택 업로드</button>
   </div>
   <div class="upload-items" id="upItems"></div>
 </div>
@@ -841,18 +968,167 @@ function launchApp(){
   loadWorkSiteList();
   document.getElementById('workerChip').textContent=appWorker;
   initDots();
+  initAbsentTab();
   updateListTab();
   updateUploadTab();
 }
 
 /* 탭 */
 function goTab(name){
-  ['work','list','upload'].forEach(t=>{
+  ['work','absent','list','upload'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('on',t===name);
     document.getElementById('pane-'+t).classList.toggle('on',t===name);
   });
   if(name==='list')updateListTab();
   if(name==='upload'){updateUploadTab();}
+}
+
+/* 부재중 */
+var abCur = null, abNoTmr = null, abPhoto = null;
+
+function initAbsentTab(){
+  document.getElementById('abDateInp').value = appDate;
+  // 현장 목록 로드
+  var sel = document.getElementById('abSiteInp');
+  if(sel && sel.options.length === 0){
+    gasCall('getSites').then(function(sites){
+      sel.innerHTML = '';
+      if(!sites) return;
+      sites.forEach(function(s){
+        var opt = document.createElement('option');
+        opt.value = s.id; opt.textContent = s.name; opt.style.background='#0d2540';
+        if(s.id === appSite) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }).catch(function(){
+      sel.innerHTML = '<option value="site1" style="background:#0d2540">서남광산</option><option value="site2" style="background:#0d2540">동북</option>';
+    });
+  }
+}
+
+function onAbNo(v){
+  clearTimeout(abNoTmr);
+  var box  = document.getElementById('abNoBox');
+  var tag  = document.getElementById('abNoTag');
+  var hint = document.getElementById('abNoHint');
+  box.classList.remove('found','notfound');
+  tag.className = 'no-tag';
+  if(!v){ abCur=null; document.getElementById('abCustCard').innerHTML='<div class="cust-empty">NO를 입력하면 정보가 표시됩니다</div>'; return; }
+  tag.textContent='조회 중…'; tag.className='no-tag show searching';
+  var siteEl = document.getElementById('abSiteInp');
+  var siteId = siteEl ? siteEl.value : appSite;
+  abNoTmr = setTimeout(function(){
+    gasCall('getRowByNo',{no:parseInt(v),siteId:siteId}).then(function(d){
+      if(d&&!d.error&&d.no!==undefined){
+        box.classList.add('found');
+        tag.textContent='✓ 확인'; tag.className='no-tag show found';
+        hint.textContent=''; hint.className='no-hint';
+        abCur=d;
+        document.getElementById('abCustCard').innerHTML='<div class="cust-grid">'+
+          [{k:'수용가명',v:d.custName},{k:'연락처',v:d.phone},{k:'주소',v:d.address,w:true}].map(function(f){
+            return '<div class="cust-item'+(f.w?' wide':'')+'"><div class="cust-key">'+f.k+'</div><div class="cust-val">'+(f.v||'—')+'</div></div>';
+          }).join('')+'</div>';
+      } else {
+        box.classList.add('notfound');
+        tag.textContent='✗ 없음'; tag.className='no-tag show notfound';
+        abCur=null;
+      }
+    }).catch(function(){
+      box.classList.add('notfound');
+      tag.textContent='✗ 오류'; tag.className='no-tag show notfound';
+    });
+  },500);
+}
+
+var abPhotos = {1:null, 2:null};
+
+function onAbPhoto(input, num){
+  if(!input.files||!input.files[0]) return;
+  var file  = input.files[0];
+  var btn   = document.getElementById('abPhotoBtn'+num);
+  var thumb = document.getElementById('abThumb'+num);
+  var sub   = document.getElementById('abPhotoSub'+num);
+  var badge = document.getElementById('abPhotoBadge');
+  var label = '부재중'+num;
+  sub.textContent = '합성 중…';
+  compositePhoto(file, label).then(function(result){
+    if(!result) throw new Error('합성 실패');
+    var dataUrl='data:'+result.mime+';base64,'+result.base64;
+    var imgEl=document.getElementById('abImg'+num);
+    if(imgEl){imgEl.src=dataUrl;imgEl.classList.add('show');}
+    thumb.classList.add('taken'); btn.classList.add('taken');
+    sub.textContent='✓ 갤러리+앱 저장됨'; sub.classList.add('saved');
+    abPhotos[num]=result;
+    saveToGallery(result, label);
+    // 배지 업데이트
+    var cnt=Object.values(abPhotos).filter(function(p){return p!==null;}).length;
+    badge.textContent=cnt+'장 촬영됨 ✅'; badge.className='step-badge ok';
+    showToast('📷 사진'+num+' 저장됨 ✅');
+  }).catch(function(){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var imgEl=document.getElementById('abImg'+num);
+      if(imgEl){imgEl.src=e.target.result;imgEl.classList.add('show');}
+      thumb.classList.add('taken'); btn.classList.add('taken');
+      sub.textContent='✓ 저장됨'; sub.classList.add('saved');
+      abPhotos[num]={base64:e.target.result.split(',')[1],mime:file.type};
+      saveToGallery(abPhotos[num], label);
+      var cnt=Object.values(abPhotos).filter(function(p){return p!==null;}).length;
+      badge.textContent=cnt+'장 촬영됨 ✅'; badge.className='step-badge ok';
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function saveAbsent(){
+  var no = document.getElementById('abNoInp').value;
+  var date = document.getElementById('abDateInp').value;
+  var siteEl = document.getElementById('abSiteInp');
+  var siteId = siteEl ? siteEl.value : appSite;
+  var siteName = siteEl && siteEl.options[siteEl.selectedIndex] ? siteEl.options[siteEl.selectedIndex].text : appSiteName;
+  var memo = document.getElementById('abMemo').value;
+
+  if(!no || !abCur){ showToast('⚠️ NO를 먼저 입력해 주세요.'); return; }
+  if(!abPhotos[1]){ showToast('⚠️ 사진 1장 이상 촬영해 주세요.'); return; }
+
+  var key = date+'_AB_'+no;
+  var data = {
+    key      : key,
+    no       : no,
+    date     : date,
+    worker   : appWorker,
+    siteId   : siteId,
+    siteName : siteName,
+    cur      : abCur,
+    memo     : memo,
+    isAbsent : true,
+    uploaded : false,
+    savedAt  : Date.now()
+  };
+
+  dbPut('works', data).then(function(){
+    // 사진 저장
+    if(abPhotos[1]) dbPut('photos',{key:'photo_'+date+'_'+no+'_absent1',data:abPhotos[1],label:'부재중1',no:no,date:date});
+    if(abPhotos[2]) dbPut('photos',{key:'photo_'+date+'_'+no+'_absent2',data:abPhotos[2],label:'부재중2',no:no,date:date});
+    showToast('✅ NO '+String(no).padStart(3,'0')+' 부재중 임시저장 완료!');
+    // 초기화
+    setTimeout(function(){
+      document.getElementById('abNoInp').value='';
+      document.getElementById('abNoBox').classList.remove('found','notfound');
+      document.getElementById('abNoTag').className='no-tag';
+      document.getElementById('abCustCard').innerHTML='<div class="cust-empty">NO를 입력하면 정보가 표시됩니다</div>';
+      document.getElementById('abMemo').value='';
+      [1,2].forEach(function(n){
+        var img=document.getElementById('abImg'+n); if(img){img.src='';img.classList.remove('show');}
+        var th=document.getElementById('abThumb'+n); if(th)th.classList.remove('taken');
+        var btn=document.getElementById('abPhotoBtn'+n); if(btn)btn.classList.remove('taken');
+        var sub=document.getElementById('abPhotoSub'+n); if(sub){sub.textContent=n===1?'탭하여 카메라 열기':'탭하여 카메라 열기 (선택)';sub.classList.remove('saved');}
+      });
+      document.getElementById('abPhotoBadge').textContent='미촬영'; document.getElementById('abPhotoBadge').className='step-badge ng';
+      abCur=null; abPhotos={1:null,2:null};
+      document.getElementById('abNoInp').focus();
+    }, 700);
+  });
 }
 
 /* STEP */
@@ -1340,14 +1616,17 @@ async function updateListTab(){
   document.getElementById('listDate').textContent=appDate;
   document.getElementById('listWorker').textContent=appWorker;
   var all=await dbAll('works');
-  var works=all.filter(w=>w.date===appDate&&w.worker===appWorker).sort((a,b)=>parseInt(a.no)-parseInt(b.no));
+  var allWorks=all.filter(w=>w.date===appDate&&w.worker===appWorker).sort((a,b)=>parseInt(a.no)-parseInt(b.no));
+  var works=allWorks.filter(w=>!w.isAbsent);
+  var abWorks=allWorks.filter(w=>w.isAbsent);
   document.getElementById('listCnt').textContent=works.length;
-  if(!works.length){document.getElementById('workList').innerHTML='<div class="empty-state"><div class="empty-ic">📋</div><div class="empty-tx">오늘 작업한 내용이 없어요</div></div>';return;}
-  document.getElementById('workList').innerHTML=works.map(w=>{
+  if(!allWorks.length){document.getElementById('workList').innerHTML='<div class="empty-state"><div class="empty-ic">📋</div><div class="empty-tx">오늘 작업한 내용이 없어요</div></div>';return;}
+  var html='';
+  html+=works.map(w=>{
     var pad=String(w.no).padStart(3,'0');
     var name=w.cur?(w.cur.custName||'—'):'—';
     var addr=w.cur?(w.cur.address||'—'):'—';
-    return '<div class="work-item" onclick="showDetail(\''+w.key+'\')">'+
+    return '<div class="work-item" onclick="showDetail(\''+w.key+'\')">'+ 
       '<div class="wi-no">'+pad+'</div>'+
       '<div class="wi-info"><div class="wi-name">'+name+'</div><div class="wi-addr">'+addr+'</div></div>'+
       '<div class="wi-status">'+
@@ -1355,6 +1634,21 @@ async function updateListTab(){
         (w.signSaved?'<span class="wi-badge sign">✍️</span>':'')+
       '</div></div>';
   }).join('');
+  if(abWorks.length){
+    html+='<div style="font-size:12px;font-weight:700;color:var(--red);padding:10px 4px 4px;border-top:1px solid var(--border);margin-top:6px">🚫 부재중 '+abWorks.length+'건</div>';
+    html+=abWorks.map(w=>{
+      var pad=String(w.no).padStart(3,'0');
+      var name=w.cur?(w.cur.custName||'—'):'—';
+      var addr=w.cur?(w.cur.address||'—'):'—';
+      return '<div class="work-item" onclick="showDetail(\''+w.key+'\')" style="border-left:3px solid var(--red)">'+
+        '<div class="wi-no" style="color:var(--red)">'+pad+'</div>'+
+        '<div class="wi-info"><div class="wi-name">'+name+' <span style="font-size:11px;color:var(--red)">부재중</span></div><div class="wi-addr">'+addr+'</div></div>'+
+        '<div class="wi-status">'+
+          (w.uploaded?'<span class="wi-badge done">☁️ 완료</span>':'<span class="wi-badge wait">⏳ 대기</span>')+
+        '</div></div>';
+    }).join('');
+  }
+  document.getElementById('workList').innerHTML=html;
 }
 
 /* 상세 */
@@ -1436,7 +1730,9 @@ async function updateUploadTab(){
     return siteOk && dateOk;
   });
 
-  var total=works.length,done=works.filter(w=>w.uploaded).length,wait=total-done;
+  // 부재중 제외한 통계
+  var normalWorks=works.filter(function(w){return !w.isAbsent;});
+  var total=normalWorks.length,done=normalWorks.filter(w=>w.uploaded).length,wait=total-done;
   document.getElementById('stAll').textContent=total;
   document.getElementById('stWait').textContent=wait;
   document.getElementById('stDone').textContent=done;
@@ -1444,18 +1740,33 @@ async function updateUploadTab(){
   btn.disabled=wait===0;
   btn.textContent=wait>0?'☁️ '+wait+'건 업로드':'✅ 모두 완료';
 
+  var selRow=document.getElementById('selectAllRow');
+  var waitWorks=works.filter(function(w){return !w.uploaded;});
+  if(waitWorks.length>0){
+    selRow.style.display='flex';
+    document.getElementById('selectAllLabel').textContent=waitWorks.length+'건 선택됨';
+    document.getElementById('selUploadBtn').disabled=false;
+  } else {
+    selRow.style.display='none';
+  }
+
   document.getElementById('upItems').innerHTML=works.map(w=>{
     var pad=String(w.no).padStart(3,'0');
     var name=w.cur?(w.cur.custName||'—'):'—';
     var site=w.siteName||'—';
+    var chkClass=w.uploaded?'ui-check uploaded':'ui-check checked';
+    var chkContent=w.uploaded?'✓':'✓';
+    var chkClick=w.uploaded?'':'onclick="toggleItem(\'' + w.key + '\')"';
     return '<div class="ui-item" id="ui_'+w.key+'">'+
       '<div class="ui-row">'+
+        '<div class="'+chkClass+'" id="chk_'+w.key+'" '+chkClick+'>'+chkContent+'</div>'+
         '<div class="ui-no">'+pad+'</div>'+
         '<div class="ui-info">'+
-          '<div class="ui-name">'+name+' <span style="font-size:11px;color:var(--accent);font-weight:600">['+site+']</span></div>'+
+          '<div class="ui-name">'+name+' <span style="font-size:11px;color:var(--accent);font-weight:600">['+site+']</span>'+(w.isAbsent?' <span style="font-size:11px;color:var(--red);font-weight:700">[부재중]</span>':'')+'</div>'+
           '<div class="ui-prog" id="up_'+w.key+'">'+(w.uploaded?'✅ 완료':'⏳ 대기중')+' · '+w.date+'</div>'+
         '</div>'+
         '<div class="ui-ic">'+(w.uploaded?'✅':'⏳')+'</div>'+
+        '<button onclick="deleteUploadItem(\'' + w.key + '\')" style="padding:6px 10px;background:var(--red2);border:1px solid var(--red);border-radius:8px;font-size:12px;font-weight:700;color:var(--red);cursor:pointer;flex-shrink:0">🗑</button>'+
       '</div>'+
       '<div class="prog-wrap"><div class="prog-bar" id="pb_'+w.key+'" style="width:'+(w.uploaded?100:0)+'%"></div></div>'+
     '</div>';
@@ -1556,18 +1867,119 @@ td:first-child{font-weight:700;background:#f4f9fc;width:36%;white-space:nowrap}
 </body></html>`;
 }
 
+/* 체크박스 토글 */
+function deleteUploadItem(key){
+  if(!confirm('이 작업을 삭제하시겠습니까?')) return;
+  // 사진도 삭제
+  var parts = key.split('_');
+  var date  = parts[0];
+  var no    = parts[1];
+  ['full','before','after','sticker','sign'].forEach(function(k){
+    dbDel('photos','photo_'+date+'_'+no+'_'+k);
+  });
+  dbDel('works', key).then(function(){
+    updateUploadTab();
+    updateListTab();
+    showToast('🗑 삭제됐습니다.');
+  });
+}
+
+function toggleItem(key){
+  var chk=document.getElementById('chk_'+key);
+  if(!chk) return;
+  if(chk.classList.contains('checked')){
+    chk.classList.remove('checked');
+    chk.textContent='';
+  } else {
+    chk.classList.add('checked');
+    chk.textContent='✓';
+  }
+  updateSelectCount();
+}
+
+function toggleSelectAll(){
+  var allChk=document.getElementById('selectAllChk');
+  var isAll=allChk.classList.contains('checked');
+  // 대기중인 항목만 토글
+  document.querySelectorAll('.ui-check:not(.uploaded)').forEach(function(chk){
+    if(isAll){
+      chk.classList.remove('checked');
+      chk.textContent='';
+    } else {
+      chk.classList.add('checked');
+      chk.textContent='✓';
+    }
+  });
+  if(isAll){
+    allChk.classList.remove('checked');
+    allChk.textContent='';
+  } else {
+    allChk.classList.add('checked');
+    allChk.textContent='✓';
+  }
+  updateSelectCount();
+}
+
+function updateSelectCount(){
+  var checked=document.querySelectorAll('.ui-check.checked:not(.uploaded)').length;
+  document.getElementById('selectAllLabel').textContent=checked+'건 선택됨';
+  document.getElementById('selUploadBtn').disabled=checked===0;
+}
+
+async function startSelectedUpload(){
+  var checkedKeys=[];
+  document.querySelectorAll('.ui-check.checked:not(.uploaded)').forEach(function(chk){
+    var key=chk.id.replace('chk_','');
+    checkedKeys.push(key);
+  });
+  if(!checkedKeys.length){showToast('⚠️ 선택된 항목이 없어요.');return;}
+  var all=await dbAll('works');
+  var works=all.filter(function(w){ return checkedKeys.indexOf(w.key)!==-1 && !w.uploaded; });
+  if(!works.length){showToast('⚠️ 업로드할 항목이 없어요.');return;}
+  document.getElementById('selUploadBtn').disabled=true;
+  await uploadWorks(works);
+  updateUploadTab();
+}
+
 async function uploadWorks(works){
   for(var w of works){
     var pad=String(w.no).padStart(3,'0');
     var upEl=document.getElementById('up_'+w.key),pbEl=document.getElementById('pb_'+w.key);
     try{
       if(upEl)upEl.textContent='📷 사진 불러오는 중…';if(pbEl)pbEl.style.width='20%';
+
+      // 부재중 처리
+      if(w.isAbsent){
+        var abUps={};
+        var abPr1=await dbGet('photos','photo_'+w.date+'_'+w.no+'_absent1');
+        var abPr2=await dbGet('photos','photo_'+w.date+'_'+w.no+'_absent2');
+        if(abPr1) abUps['absent1']=abPr1.data;
+        if(abPr2) abUps['absent2']=abPr2.data;
+        abUps.textDoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;max-width:500px}</style></head><body>'+
+          '<h2>부재중 방문 기록</h2><hr>'+
+          '<p><b>NO:</b> '+String(w.no).padStart(3,'0')+'</p>'+
+          '<p><b>날짜:</b> '+w.date+'</p>'+
+          '<p><b>작업자:</b> '+(w.worker||'')+'</p>'+
+          '<p><b>수용가명:</b> '+(w.cur?w.cur.custName:'—')+'</p>'+
+          '<p><b>주소:</b> '+(w.cur?w.cur.address:'—')+'</p>'+
+          '<p><b>연락처:</b> '+(w.cur?w.cur.phone:'—')+'</p>'+
+          '<p><b>메모:</b> '+(w.memo||'없음')+'</p>'+
+          '</body></html>';
+        if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
+        var abResult=await gasPost('saveAbsentPhotos',{no:w.no,workDate:w.date,photos:abUps},w.siteId||'site1');
+        if(!abResult.success) throw new Error(abResult.msg);
+        w.uploaded=true; w.uploadedAt=Date.now(); await dbPut('works',w);
+        if(pbEl)pbEl.style.width='100%'; if(upEl)upEl.textContent='✅ 완료';
+        var ic=document.querySelector('#ui_'+w.key+' .ui-ic'); if(ic)ic.textContent='✅';
+        showToast('✅ NO'+String(w.no).padStart(3,'0')+' 부재중 완료');
+        continue;
+      }
+
       var ups={};
       for(var pk of['full','before','after','sticker','sign']){
-        var pr=await dbGet('photos','photo_'+appDate+'_'+w.no+'_'+pk);
+        var pr=await dbGet('photos','photo_'+w.date+'_'+w.no+'_'+pk);
         if(pr)ups[pk]=pr.data;
       }
-      // 텍스트 문서 HTML 생성
       ups.textDoc = makeDocHtml(w);
       if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
       var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups},w.siteId||'site1');
