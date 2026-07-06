@@ -692,7 +692,7 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
   <div class="list-hdr">
     <div class="list-date" id="listDate">—</div>
     <div class="list-worker" id="listWorker">—</div>
-    <div class="list-cnt">오늘 작업 <b id="listCnt">0</b>건</div>
+    <div class="list-cnt">오늘 작업 <b id="listCnt">0</b>건 <span id="listAbCnt" style="font-size:12px;color:var(--red);margin-left:8px;display:none">🚫 부재중 <b id="listAbNum">0</b>건</span></div>
   </div>
   <div class="work-list" id="workList">
     <div class="empty-state"><div class="empty-ic">📋</div><div class="empty-tx">오늘 작업한 내용이 없어요</div></div>
@@ -1053,10 +1053,10 @@ function onAbPhoto(input, num){
   sub.textContent = '합성 중…';
   // 워터마크 주소를 abCur 기준으로 설정
   var _origCur = cur;
-  cur = abCur;
   var _origDate = appDate;
+  cur = abCur;
   appDate = document.getElementById('abDateInp').value || appDate;
-  compositePhoto(file, label).then(function(result){
+  compositeAbPhoto(file, label, abCur, document.getElementById('abDateInp').value || appDate).then(function(result){
     cur = _origCur;
     appDate = _origDate;
     if(!result) throw new Error('합성 실패');
@@ -1072,8 +1072,7 @@ function onAbPhoto(input, num){
     badge.textContent=cnt+'장 촬영됨 ✅'; badge.className='step-badge ok';
     showToast('📷 사진'+num+' 저장됨 ✅');
   }).catch(function(){
-    cur = _origCur;
-    appDate = _origDate;
+    cur = _origCur; appDate = _origDate;
     var reader=new FileReader();
     reader.onload=function(e){
       var imgEl=document.getElementById('abImg'+num);
@@ -1629,6 +1628,14 @@ async function updateListTab(){
   var works=allWorks.filter(w=>!w.isAbsent);
   var abWorks=allWorks.filter(w=>w.isAbsent);
   document.getElementById('listCnt').textContent=works.length;
+  var abCntEl=document.getElementById('listAbCnt');
+  var abNumEl=document.getElementById('listAbNum');
+  if(abWorks.length>0){
+    if(abCntEl)abCntEl.style.display='inline';
+    if(abNumEl)abNumEl.textContent=abWorks.length;
+  } else {
+    if(abCntEl)abCntEl.style.display='none';
+  }
   if(!allWorks.length){document.getElementById('workList').innerHTML='<div class="empty-state"><div class="empty-ic">📋</div><div class="empty-tx">오늘 작업한 내용이 없어요</div></div>';return;}
   var html='';
   html+=works.map(w=>{
@@ -1913,7 +1920,7 @@ function toggleSelectAll(){
   var allChk=document.getElementById('selectAllChk');
   var isAll=allChk.classList.contains('checked');
   // 대기중인 항목만 토글
-  document.querySelectorAll('.ui-check:not(.uploaded)').forEach(function(chk){
+  document.querySelectorAll('#upItems .ui-check:not(.uploaded)').forEach(function(chk){
     if(isAll){
       chk.classList.remove('checked');
       chk.textContent='';
@@ -1933,14 +1940,15 @@ function toggleSelectAll(){
 }
 
 function updateSelectCount(){
-  var checked=document.querySelectorAll('.ui-check.checked:not(.uploaded)').length;
+  // selectAllChk는 제외하고 개별 항목만 카운트
+  var checked=document.querySelectorAll('#upItems .ui-check.checked:not(.uploaded)').length;
   document.getElementById('selectAllLabel').textContent=checked+'건 선택됨';
   document.getElementById('selUploadBtn').disabled=checked===0;
 }
 
 async function startSelectedUpload(){
   var checkedKeys=[];
-  document.querySelectorAll('.ui-check.checked:not(.uploaded)').forEach(function(chk){
+  document.querySelectorAll('#upItems .ui-check.checked:not(.uploaded)').forEach(function(chk){
     var key=chk.id.replace('chk_','');
     checkedKeys.push(key);
   });
@@ -2012,6 +2020,23 @@ async function uploadWorks(works){
 }
 
 /* 워터마크 */
+function compositeAbPhoto(file, label, absCur, absDate){
+  // abCur와 absDate를 직접 받아서 워터마크 생성
+  var _origCur = cur;
+  var _origDate = appDate;
+  cur = absCur;
+  appDate = absDate;
+  return compositePhoto(file, label).then(function(result){
+    cur = _origCur;
+    appDate = _origDate;
+    return result;
+  }).catch(function(e){
+    cur = _origCur;
+    appDate = _origDate;
+    throw e;
+  });
+}
+
 function compositePhoto(file,label){
   return new Promise((res,rej)=>{
     if(!file){res(null);return;}
