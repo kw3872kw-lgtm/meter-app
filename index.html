@@ -1051,7 +1051,14 @@ function onAbPhoto(input, num){
   var badge = document.getElementById('abPhotoBadge');
   var label = '부재중'+num;
   sub.textContent = '합성 중…';
+  // 워터마크 주소를 abCur 기준으로 설정
+  var _origCur = cur;
+  cur = abCur;
+  var _origDate = appDate;
+  appDate = document.getElementById('abDateInp').value || appDate;
   compositePhoto(file, label).then(function(result){
+    cur = _origCur;
+    appDate = _origDate;
     if(!result) throw new Error('합성 실패');
     var dataUrl='data:'+result.mime+';base64,'+result.base64;
     var imgEl=document.getElementById('abImg'+num);
@@ -1065,6 +1072,8 @@ function onAbPhoto(input, num){
     badge.textContent=cnt+'장 촬영됨 ✅'; badge.className='step-badge ok';
     showToast('📷 사진'+num+' 저장됨 ✅');
   }).catch(function(){
+    cur = _origCur;
+    appDate = _origDate;
     var reader=new FileReader();
     reader.onload=function(e){
       var imgEl=document.getElementById('abImg'+num);
@@ -1744,6 +1753,9 @@ async function updateUploadTab(){
   var waitWorks=works.filter(function(w){return !w.uploaded;});
   if(waitWorks.length>0){
     selRow.style.display='flex';
+    // 전체선택 체크박스 초기화
+    var allChk=document.getElementById('selectAllChk');
+    if(allChk){allChk.classList.add('checked');allChk.textContent='✓';}
     document.getElementById('selectAllLabel').textContent=waitWorks.length+'건 선택됨';
     document.getElementById('selUploadBtn').disabled=false;
   } else {
