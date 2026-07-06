@@ -1054,6 +1054,7 @@ function onAbPhoto(input, num){
   // 워터마크 주소를 abCur 기준으로 설정 (주소/날짜 직접 전달)
   var abAddr = abCur ? (abCur.address || '—') : '—';
   var abDate = document.getElementById('abDateInp').value || appDate;
+  console.log('부재중 워터마크 주소:', abAddr, '날짜:', abDate, 'abCur:', JSON.stringify(abCur));
   compositePhotoWithAddr(file, label, abAddr, abDate).then(function(result){
     if(!result) throw new Error('합성 실패');
     var dataUrl='data:'+result.mime+';base64,'+result.base64;
@@ -2025,6 +2026,8 @@ async function uploadWorks(works){
 /* 워터마크 */
 // 주소와 날짜를 직접 받아서 워터마크 생성
 function compositePhotoWithAddr(file, label, addr, dateStr){
+  // addr이 비어있으면 cur에서 다시 시도
+  if(!addr || addr==='—') addr = abCur ? (abCur.address||'—') : (cur ? (cur.address||'—') : '—');
   return new Promise(function(res, rej){
     if(!file){res(null);return;}
     var ds = dateStr ? dateStr.split('-').map(function(v,i){return i===0?v:parseInt(v);}).join('.') : '—';
