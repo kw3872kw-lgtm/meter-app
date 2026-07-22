@@ -376,8 +376,9 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
       <input type="text" class="inp" id="startWorker" placeholder="이름 입력">
     </div>
     <div class="field">
-      <div class="field-label"><span class="field-label-ic">🏢</span>시공사명</div>
-      <input type="text" class="inp" id="startCompany" placeholder="예: (주)양정건설">
+      <div class="field-label"><span class="field-label-ic">🏢</span>시공사명 (현장 선택 시 자동 적용)</div>
+      <input type="text" class="inp" id="startCompany" placeholder="현장 선택 시 자동 입력" readonly
+        style="background:rgba(0,197,222,.05);color:var(--muted);cursor:default">
     </div>
     <div class="field">
       <div class="field-label"><span class="field-label-ic">📍</span>작업 현장</div>
@@ -909,6 +910,12 @@ function gasPost(action,payload,siteId){
 
 /* 상태 */
 var appDate='',appWorker='',appCompany='(주)양정건설',appSite='site1',appSiteName='서남광산',cur=null,noTmr=null,cMode='sign';
+
+// 현장별 시공사명 매핑
+var SITE_COMPANIES = {
+  'site1': '(주)양정건설',
+  'site2': '효림건설(주)'
+};
 var signCtx=null,signDrw=false,signLast=null,signSaved=false;
 var curStep=1,exitTarget=null;
 var photos={full:null,before:null,after:null,sticker:null,sign:null};
@@ -917,7 +924,7 @@ var photos={full:null,before:null,after:null,sticker:null,sign:null};
 window.addEventListener('DOMContentLoaded',()=>{
   initDB().then(()=>{
     var s=localStorage.getItem('meterSession');
-    if(s){try{var d=JSON.parse(s);if(d.date&&d.worker){appDate=d.date;appWorker=d.worker;appCompany=d.company||'(주)양정건설';appSite=d.site||'site1';appSiteName=d.siteName||'서남광산';launchApp();return;}}catch(e){}}
+    if(s){try{var d=JSON.parse(s);if(d.date&&d.worker){appDate=d.date;appWorker=d.worker;appSite=d.site||'site1';appSiteName=d.siteName||'서남광산';appCompany=SITE_COMPANIES[appSite]||d.company||'(주)양정건설';launchApp();return;}}catch(e){}}
     document.getElementById('startDate').value=new Date().toISOString().split('T')[0];
     var w=localStorage.getItem('workerName');
     if(w)document.getElementById('startWorker').value=w;
@@ -948,6 +955,8 @@ function startApp(){
   var sName=siteEl.options[siteEl.selectedIndex]?siteEl.options[siteEl.selectedIndex].text:'서남광산';
   if(!d){showToast('⚠️ 작업일자를 입력해 주세요.');return;}
   if(!w){showToast('⚠️ 작업자 이름을 입력해 주세요.');return;}
+  // 현장별 시공사명 자동 적용
+  c = SITE_COMPANIES[sId] || c;
   appDate=d;appWorker=w;appCompany=c;appSite=sId;appSiteName=sName;
   localStorage.setItem('meterSession',JSON.stringify({date:d,worker:w,company:c,site:sId,siteName:sName}));
   localStorage.setItem('workerName',w);
@@ -1183,21 +1192,30 @@ function loadWorkSiteList(){
 /* 현장 목록 불러오기 */
 function loadSiteList(){
   var sel=document.getElementById('startSite');
+  if(!sel) return;
   gasCall('getSites').then(function(sites){
     sel.innerHTML='';
     if(!sites||!sites.length){
-      sel.innerHTML='<option value="site1">서남광산</option>';
-      return;
+      sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option>';
+      updateStartCompany('site1'); return;
     }
     sites.forEach(function(s){
       var opt=document.createElement('option');
-      opt.value=s.id; opt.textContent=s.name;
+      opt.value=s.id; opt.textContent=s.name; opt.style.background='#0d2540';
       if(s.id===appSite) opt.selected=true;
       sel.appendChild(opt);
     });
+    updateStartCompany(sel.value);
   }).catch(function(){
-    sel.innerHTML='<option value="site1">서남광산</option><option value="site2">동북</option>';
+    sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option><option value="site2" style="background:#0d2540">동북</option>';
+    updateStartCompany('site1');
   });
+  sel.onchange=function(){ updateStartCompany(this.value); };
+}
+
+function updateStartCompany(siteId){
+  var compEl=document.getElementById('startCompany');
+  if(compEl) compEl.value=SITE_COMPANIES[siteId]||'(주)양정건설';
 }
 
 /* 작업 현장 변경 (작업중) */
@@ -1205,6 +1223,8 @@ function onSiteChange(siteId, siteName){
   if(!siteId) return;
   appSite = siteId;
   appSiteName = siteName;
+  // 현장별 시공사명 자동 적용
+  appCompany = SITE_COMPANIES[siteId] || appCompany;
   localStorage.setItem('meterSession', JSON.stringify({date:appDate, worker:appWorker, company:appCompany, site:appSite, siteName:appSiteName}));
   // 헤더 업데이트
   var dp=appDate.split('-');
