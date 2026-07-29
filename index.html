@@ -398,12 +398,13 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
       <div class="no-badge">작업 NO</div>
       <div class="no-inp-wrap" id="noBox">
         <span class="no-pre">NO.</span>
-        <input type="number" class="no-inp" id="noInp" placeholder="001" min="1" max="999"
-          oninput="onNo(this.value)"
+        <input type="number" class="no-inp" id="noInp" placeholder="001" min="1" max="9999"
+          onkeydown="if(event.key==='Enter')doSearch()"
           onfocus="noBox.classList.add('focus')"
           onblur="noBox.classList.remove('focus')">
         <span class="no-tag" id="noTag"></span>
       </div>
+      <button onclick="doSearch()" style="padding:10px 16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,197,222,.3)">🔍 조회</button>
     </div>
     <!-- 작업일자 + 현장선택 -->
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
@@ -712,9 +713,10 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
       <div class="no-inp-wrap" id="abNoBox">
         <span class="no-pre">NO.</span>
         <input type="number" class="no-inp" id="abNoInp" placeholder="001" min="1" max="9999"
-          oninput="onAbNo(this.value)">
+          onkeydown="if(event.key==='Enter')doAbSearch()">
         <span class="no-tag" id="abNoTag"></span>
       </div>
+      <button onclick="doAbSearch()" style="padding:10px 16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,197,222,.3)">🔍 조회</button>
     </div>
     <!-- 작업일자 -->
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
@@ -1252,6 +1254,18 @@ function onDateChange(val){
   document.getElementById('hdrSub').textContent=dp[1]+'월 '+parseInt(dp[2])+'일 · '+appWorker;
   showToast('📅 작업일자: '+dp[1]+'월 '+parseInt(dp[2])+'일');
   autoSave();
+}
+
+/* 조회 버튼 */
+function doSearch(){
+  var v = document.getElementById('noInp').value;
+  if(!v){ showToast('⚠️ NO를 입력해 주세요.'); return; }
+  onNo(v);
+}
+function doAbSearch(){
+  var v = document.getElementById('abNoInp').value;
+  if(!v){ showToast('⚠️ NO를 입력해 주세요.'); return; }
+  onAbNo(v);
 }
 
 /* NO 입력 */
