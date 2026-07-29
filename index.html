@@ -78,13 +78,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);min-height:100vh
 
 /* ── NO 입력 영역 ── */
 .no-area{background:linear-gradient(135deg,#0a2240,#0d2d4a);margin:12px 12px 0;border-radius:var(--r2);padding:18px 16px;border:2px solid var(--accent);box-shadow:0 0 18px rgba(0,197,222,.25),inset 0 1px 0 rgba(0,229,255,.1)}
-.no-row{display:flex;align-items:center;gap:10px}
+.no-row{display:flex;flex-direction:column;gap:8px}
 .no-badge{font-size:15px;font-weight:900;color:#fff;background:var(--accent);padding:6px 14px;border-radius:10px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,197,222,.4);letter-spacing:.5px}
 .no-inp-wrap{flex:1;display:flex;align-items:center;background:rgba(255,255,255,.1);border:2.5px solid var(--accent);border-radius:var(--r);overflow:hidden;transition:all .2s;box-shadow:0 0 10px rgba(0,197,222,.2)}
 .no-inp-wrap.found{border-color:var(--green)}
 .no-inp-wrap.notfound{border-color:var(--red)}
 .no-pre{font-size:16px;font-weight:700;color:var(--accent2);padding:0 6px 0 14px;font-family:'DM Mono',monospace}
-.no-inp{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:#fff;width:110px;padding:10px 8px 10px 0;letter-spacing:3px}
+.no-inp{background:transparent;border:none;outline:none;font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:#fff;width:100%;padding:10px 8px 10px 0;letter-spacing:3px}
 .no-inp::placeholder{color:rgba(255,255,255,.2);font-size:20px}
 .no-tag{font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;opacity:0;transition:opacity .2s;white-space:nowrap;margin-right:6px}
 .no-tag.show{opacity:1}
@@ -396,15 +396,17 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
   <div class="no-area">
     <div class="no-row">
       <div class="no-badge">작업 NO</div>
-      <div class="no-inp-wrap" id="noBox">
-        <span class="no-pre">NO.</span>
-        <input type="number" class="no-inp" id="noInp" placeholder="001" min="1" max="9999"
-          onkeydown="if(event.key==='Enter')doSearch()"
-          onfocus="noBox.classList.add('focus')"
-          onblur="noBox.classList.remove('focus')">
-        <span class="no-tag" id="noTag"></span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="no-inp-wrap" id="noBox" style="flex:1">
+          <span class="no-pre">NO.</span>
+          <input type="number" class="no-inp" id="noInp" placeholder="001" min="1" max="9999"
+            onkeydown="if(event.key==='Enter')doSearch()"
+            onfocus="document.getElementById('noBox').classList.add('focus')"
+            onblur="document.getElementById('noBox').classList.remove('focus')">
+          <span class="no-tag" id="noTag"></span>
+        </div>
+        <button onclick="doSearch()" style="padding:12px 20px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,197,222,.3)">🔍 조회</button>
       </div>
-      <button onclick="doSearch()" style="padding:10px 16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,197,222,.3)">🔍 조회</button>
     </div>
     <!-- 작업일자 + 현장선택 -->
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
@@ -710,13 +712,15 @@ canvas#sc{display:block;width:100%;flex:1;background:#ffffff;border:2px solid rg
   <div class="no-area">
     <div class="no-row">
       <div class="no-badge">작업 NO</div>
-      <div class="no-inp-wrap" id="abNoBox">
-        <span class="no-pre">NO.</span>
-        <input type="number" class="no-inp" id="abNoInp" placeholder="001" min="1" max="9999"
-          onkeydown="if(event.key==='Enter')doAbSearch()">
-        <span class="no-tag" id="abNoTag"></span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="no-inp-wrap" id="abNoBox" style="flex:1">
+          <span class="no-pre">NO.</span>
+          <input type="number" class="no-inp" id="abNoInp" placeholder="001" min="1" max="9999"
+            onkeydown="if(event.key==='Enter')doAbSearch()">
+          <span class="no-tag" id="abNoTag"></span>
+        </div>
+        <button onclick="doAbSearch()" style="padding:12px 20px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,197,222,.3)">🔍 조회</button>
       </div>
-      <button onclick="doAbSearch()" style="padding:10px 16px;background:linear-gradient(135deg,var(--accent),#007fa3);border:none;border-radius:var(--r);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s;box-shadow:0 2px 8px rgba(0,197,222,.3)">🔍 조회</button>
     </div>
     <!-- 작업일자 -->
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:rgba(255,255,255,.07);border-radius:var(--r);padding:10px 14px;border:1px solid rgba(0,197,222,.2)">
