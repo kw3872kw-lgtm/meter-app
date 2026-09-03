@@ -2003,20 +2003,41 @@ async function startSelectedUpload(){
   updateUploadTab();
 }
 
+/* ── Wake Lock ── */
+var _wl=null;
+async function _acqWL(){
+  if(!('wakeLock' in navigator))return;
+  try{_wl=await navigator.wakeLock.request('screen');}catch(e){}
+}
+function _relWL(){if(_wl){_wl.release().catch(()=>{});_wl=null;}}
+
+/* 화면이 다시 켜지면 WakeLock 재획득 */
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible' && _wl===null){
+    var lov=document.getElementById('lov');
+    if(lov && lov.classList.contains('on')) _acqWL();
+  }
+});
+
 async function uploadWorks(works){
+  await _acqWL(); /* 화면 꺼짐 방지 시작 */
+  var total=works.length, done=0;
   for(var w of works){
     var pad=String(w.no).padStart(3,'0');
-    var upEl=document.getElementById('up_'+w.key),pbEl=document.getElementById('pb_'+w.key);
+    var upEl=document.getElementById('up_'+w.key);
+    var pbEl=document.getElementById('pb_'+w.key);
     try{
-      if(upEl)upEl.textContent='📷 사진 불러오는 중…';if(pbEl)pbEl.style.width='20%';
+      if(upEl)upEl.textContent='📷 사진 불러오는 중…';
+      if(pbEl)pbEl.style.width='10%';
+      showLoading('업로드 중… ('+( done+1)+'/'+total+')\n📵 화면을 끄지 마세요');
 
-      // 부재중 처리
+      /* 부재중 처리 */
       if(w.isAbsent){
         var abUps={};
         var abPr1=await dbGet('photos','photo_'+w.date+'_'+w.no+'_absent1');
         var abPr2=await dbGet('photos','photo_'+w.date+'_'+w.no+'_absent2');
-        if(abPr1) abUps['absent1']=abPr1.data;
-        if(abPr2) abUps['absent2']=abPr2.data;
+        if(abPr1)abUps['absent1']=abPr1.data;
+        if(abPr2)abUps['absent2']=abPr2.data;
         abUps.textDoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;max-width:500px}</style></head><body>'+
           '<h2>부재중 방문 기록</h2><hr>'+
           '<p><b>NO:</b> '+String(w.no).padStart(3,'0')+'</p>'+
@@ -2027,37 +2048,62 @@ async function uploadWorks(works){
           '<p><b>연락처:</b> '+(w.cur?w.cur.phone:'—')+'</p>'+
           '<p><b>메모:</b> '+(w.memo||'없음')+'</p>'+
           '</body></html>';
-        if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
+        if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';
+        if(pbEl)pbEl.style.width='60%';
         var abResult=await gasPost('saveAbsentPhotos',{no:w.no,workDate:w.date,photos:abUps},w.siteId||'site1');
-        if(!abResult.success) throw new Error(abResult.msg);
-        w.uploaded=true; w.uploadedAt=Date.now(); await dbPut('works',w);
-        if(pbEl)pbEl.style.width='100%'; if(upEl)upEl.textContent='✅ 완료';
-        var ic=document.querySelector('#ui_'+w.key+' .ui-ic'); if(ic)ic.textContent='✅';
-        showToast('✅ NO'+String(w.no).padStart(3,'0')+' 부재중 완료');
+        if(!abResult.success)throw new Error(abResult.msg);
+        w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
+        if(pbEl)pbEl.style.width='100%';
+        if(upEl)upEl.textContent='✅ 완료';
+        var ic=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic)ic.textContent='✅';
+        done++;showToast('✅ NO'+String(w.no).padStart(3,'0')+' 부재중 완료');
         continue;
       }
 
+      /* 사진 병렬 로드 (속도 향상) */
+      var keys=['full','before','after','sticker','sign'];
+      var photoArr=await Promise.all(keys.map(function(pk){
+        return dbGet('photos','photo_'+w.date+'_'+w.no+'_'+pk);
+      }));
       var ups={};
-      for(var pk of['full','before','after','sticker','sign']){
-        var pr=await dbGet('photos','photo_'+w.date+'_'+w.no+'_'+pk);
-        if(pr)ups[pk]=pr.data;
-      }
-      ups.textDoc = makeDocHtml(w);
-      if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';if(pbEl)pbEl.style.width='50%';
+      keys.forEach(function(pk,i){if(photoArr[i])ups[pk]=photoArr[i].data;});
+      ups.textDoc=makeDocHtml(w);
+
+      if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';
+      if(pbEl)pbEl.style.width='60%';
+
       var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups},w.siteId||'site1');
       if(!pr2.success)throw new Error(pr2.msg);
-      if(upEl)upEl.textContent='📊 시트 기록 중…';if(pbEl)pbEl.style.width='80%';
-      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,photoFolderUrl:pr2.folderUrl},w.siteId||'site1');
+
+      if(upEl)upEl.textContent='📊 시트 기록 중…';
+      if(pbEl)pbEl.style.width='85%';
+
+      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,
+        beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,
+        afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,
+        afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,
+        photoFolderUrl:pr2.folderUrl},w.siteId||'site1');
       if(!sr.success)throw new Error(sr.msg);
+
       w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
-      if(pbEl)pbEl.style.width='100%';if(upEl)upEl.textContent='✅ 완료';
-      var ic=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic)ic.textContent='✅';
-      showToast('✅ NO'+pad+' 완료');
+      if(pbEl)pbEl.style.width='100%';
+      if(upEl)upEl.textContent='✅ 완료';
+      var ic2=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic2)ic2.textContent='✅';
+      done++;
+      showToast('✅ NO'+pad+' 완료 ('+done+'/'+total+')');
+
     }catch(e){
       if(upEl)upEl.textContent='❌ 실패: '+e.message;
       if(pbEl)pbEl.style.background='var(--red)';
-      showToast('❌ NO'+pad+' 실패');
+      showToast('❌ NO'+pad+' 실패: '+e.message);
     }
+  }
+  _relWL(); /* Wake Lock 해제 */
+  hideLoading();
+  if(done===total){
+    showToast('🎉 전체 '+total+'건 업로드 완료!');
+  } else {
+    showToast('⚠️ '+done+'/'+total+'건 완료 (일부 실패)');
   }
 }
 
@@ -2080,7 +2126,7 @@ function compositePhotoWithAddr(file, label, addr, dateStr){
         img.onload=function(){
           try{
             var W0=img.naturalWidth||img.width,H0=img.naturalHeight||img.height;
-            var S=0.577,W=Math.round(W0*S),H=Math.round(H0*S);
+            var S=0.40,W=Math.round(W0*S),H=Math.round(H0*S);
             var cv=document.createElement('canvas');cv.width=W;cv.height=H;
             var ctx=cv.getContext('2d');ctx.drawImage(img,0,0,W,H);
             var sc=W/1280,rH=Math.round(32*sc*1.3*1.2),fSz=Math.max(Math.round(14*sc*1.3*1.2),14),pd=Math.round(6*sc),lw=Math.max(Math.round(sc),.5);
@@ -2113,7 +2159,7 @@ function compositePhotoWithAddr(file, label, addr, dateStr){
                 ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.exv,tW-kW-dVW-kW-pd),c4+pd,mY);
               }
             });
-            res({base64:cv.toDataURL('image/jpeg',.75).split(',')[1],mime:'image/jpeg'});
+            res({base64:cv.toDataURL('image/jpeg',.60).split(',')[1],mime:'image/jpeg'});
           }catch(e){rej(e);}
         };
         img.onerror=function(){rej(new Error('이미지 로드 실패'));};
@@ -2138,7 +2184,7 @@ function compositePhoto(file,label){
         img.onload=()=>{
           try{
             var W0=img.naturalWidth||img.width,H0=img.naturalHeight||img.height;
-            var S=0.577;
+            var S=0.40;
             var W=Math.round(W0*S), H=Math.round(H0*S);
             var cv=document.createElement('canvas');cv.width=W;cv.height=H;
             var ctx=cv.getContext('2d');ctx.drawImage(img,0,0,W,H);
@@ -2175,7 +2221,7 @@ function compositePhoto(file,label){
                 ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.exv,tW-kW-dVW-kW-pd),c4+pd,mY);
               }
             });
-            res({base64:cv.toDataURL('image/jpeg',.75).split(',')[1],mime:'image/jpeg'});
+            res({base64:cv.toDataURL('image/jpeg',.60).split(',')[1],mime:'image/jpeg'});
           }catch(e){rej(e);}
         };
         img.onerror=()=>rej(new Error('이미지 로드 실패'));
@@ -2194,7 +2240,14 @@ function doExit(){document.getElementById('exitBg').classList.remove('open');if(
 
 /* 유틸 */
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),3000);}
-function showLoading(msg){document.getElementById('ltxt').textContent=msg||'처리 중…';document.getElementById('lov').classList.add('on');}
+function showLoading(msg){
+  var el=document.getElementById('ltxt');
+  el.textContent=msg||'처리 중…';
+  el.style.whiteSpace='pre-line';
+  el.style.textAlign='center';
+  el.style.lineHeight='1.7';
+  document.getElementById('lov').classList.add('on');
+}
 function hideLoading(){document.getElementById('lov').classList.remove('on');}
 </script>
 </body>
