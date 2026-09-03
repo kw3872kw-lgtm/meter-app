@@ -2,10 +2,22 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<!-- Apps Script addMetaTag로도 주입하지만 혹시 몰라 여기서도 선언 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="계량기교체">
+<meta name="application-name" content="계량기교체">
+<meta name="theme-color" content="#07192e">
+<meta name="description" content="서남광산 고장디지털계량기 교체 작업 앱">
+
+<!-- PWA manifest (인라인 방식 — Apps Script 외부파일 불가 우회) -->
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%EB%94%94%EC%A7%80%ED%84%B8%EA%B3%84%EB%9F%89%EA%B8%B0%20%EA%B5%90%EC%B2%B4%20%EC%95%B1%22%2C%22short_name%22%3A%22%EA%B3%84%EB%9F%89%EA%B8%B0%EA%B5%90%EC%B2%B4%22%2C%22description%22%3A%22%EC%84%9C%EB%82%A8%EA%B4%91%EC%82%B0%20%EA%B3%A0%EC%9E%A5%EB%94%94%EC%A7%80%ED%84%B8%EA%B3%84%EB%9F%89%EA%B8%B0%20%EA%B5%90%EC%B2%B4%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2307192e%22%2C%22theme_color%22%3A%22%2307192e%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAF0WlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNy4yLWMwMDAgNzkuMWI2NWE3OWI0LCAyMDIyLzA2LzEzLTIyOjAxOjAxICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjMuNSAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjMtMDEtMDFUMDA6MDA6MDArMDk6MDAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjMtMDEtMDFUMDA6MDA6MDArMDk6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDIzLTAxLTAxVDAwOjAwOjAwKzA5OjAwIj4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE%2BIDw%2FeHBhY2tldCBlbmQ9InIiPz4B%2F%2F4AACFkb2N1bWVudCBzdHJ1Y3R1cmUgbm90IHBhcnNlZAAA%2F9sAhAAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQyAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL%2FwAARCACAAIADASIAAhEBAxEB%2F8QAGwABAAMBAQEBAAAAAAAAAAAAAAQFBgMCAQf%2FxAAzEAABBAEDAgQEBAcBAAAAAAABAAIDBAUREiExBhNBUWEiMnGBFCNSkaHBBxUWQlP%2F2gAIAQEAAT8A%2F9k%3D%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+
+<!-- 아이콘 (SVG 인라인) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2307192e'/><text y='68' x='50' text-anchor='middle' font-size='60'>💧</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2307192e'/><text y='68' x='50' text-anchor='middle' font-size='60'>💧</text></svg>">
+
 <title>디지털계량기 교체 앱</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -362,9 +374,43 @@ canvas#scFull{
 }
 .mock-banner.show{display:flex}
 .mock-icon{font-size:20px;flex-shrink:0}
+
+/* ── PWA 설치 배너 ── */
+.install-banner{
+  display:none;
+  position:fixed;top:0;left:0;right:0;z-index:250;
+  background:linear-gradient(135deg,#0d3b6e,#07192e);
+  border-bottom:1px solid rgba(0,184,204,0.3);
+  padding:10px 16px;
+  align-items:center;gap:12px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);
+}
+.install-banner-txt{flex:1;color:var(--white);font-size:13px;font-weight:500}
+.install-banner-txt span{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.install-btn{
+  padding:9px 18px;border:none;border-radius:var(--r-md);
+  background:linear-gradient(135deg,var(--sea),var(--ink-soft));
+  color:var(--white);font-size:13px;font-weight:700;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,184,204,0.3);
+}
+.install-close{
+  background:none;border:none;color:var(--muted);
+  font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;
+}
 </style>
 </head>
 <body>
+
+<!-- PWA 설치 배너 -->
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-txt">
+    💧 계량기 교체 앱
+    <span>홈 화면에 설치하면 더 편리하게 사용할 수 있습니다</span>
+  </div>
+  <button class="install-btn" onclick="installPWA()">설치</button>
+  <button class="install-close" onclick="hideInstallBanner()">✕</button>
+</div>
 
 <div class="lov" id="lov">
   <div class="lsp"></div>
@@ -1742,6 +1788,87 @@ function showToast(msg) {
   var t = document.getElementById('toastEl');
   t.textContent = msg; t.classList.add('on');
   clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('on'); }, 3200);
+}
+
+/* ═══════════════════════════════════
+   PWA — Service Worker 등록
+   Apps Script는 외부 sw.js 불가 →
+   Blob URL 방식으로 인라인 등록
+═══════════════════════════════════ */
+(function() {
+  if (!('serviceWorker' in navigator)) return;
+
+  var swCode = [
+    'var CACHE = "meter-app-v1";',
+    'var ASSETS = ["/"];',
+    'self.addEventListener("install", function(e) {',
+    '  e.waitUntil(',
+    '    caches.open(CACHE).then(function(c) {',
+    '      return c.addAll(ASSETS);',
+    '    }).catch(function(){}) ',
+    '  );',
+    '  self.skipWaiting();',
+    '});',
+    'self.addEventListener("activate", function(e) {',
+    '  e.waitUntil(',
+    '    caches.keys().then(function(keys) {',
+    '      return Promise.all(',
+    '        keys.filter(function(k){ return k !== CACHE; })',
+    '           .map(function(k){ return caches.delete(k); })',
+    '      );',
+    '    })',
+    '  );',
+    '  self.clients.claim();',
+    '});',
+    'self.addEventListener("fetch", function(e) {',
+    '  e.respondWith(',
+    '    fetch(e.request).catch(function() {',
+    '      return caches.match(e.request);',
+    '    })',
+    '  );',
+    '});',
+  ].join('\n');
+
+  var blob   = new Blob([swCode], { type: 'application/javascript' });
+  var swUrl  = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(swUrl, { scope: '/' })
+    .then(function(reg) { console.log('SW 등록 완료:', reg.scope); })
+    .catch(function(e)  { console.warn('SW 등록 실패:', e.message); });
+})();
+
+/* PWA 설치 프롬프트 자동 표시 */
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  /* 설치 안내 배너 표시 */
+  showInstallBanner();
+});
+window.addEventListener('appinstalled', function() {
+  hideInstallBanner();
+  showToast('✅ 앱 설치 완료!');
+});
+
+function showInstallBanner() {
+  var b = document.getElementById('installBanner');
+  if (b) b.style.display = 'flex';
+}
+function hideInstallBanner() {
+  var b = document.getElementById('installBanner');
+  if (b) b.style.display = 'none';
+}
+function installPWA() {
+  if (!deferredPrompt) {
+    showToast('설치 버튼이 준비되지 않았습니다. 브라우저 메뉴에서 "홈 화면에 추가"를 이용하세요.');
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(r) {
+    if (r.outcome === 'accepted') showToast('앱 설치 중…');
+    deferredPrompt = null;
+    hideInstallBanner();
+  });
 }
 </script>
 </body>
