@@ -904,7 +904,7 @@ function gasCall(action,params){
     var cb='_cb_'+Date.now()+'_'+Math.floor(Math.random()*9999);
     var url=GAS_URL+'?action='+encodeURIComponent(action)+'&cb='+cb;
     if(params)Object.keys(params).forEach(k=>url+='&'+encodeURIComponent(k)+'='+encodeURIComponent(typeof params[k]==='object'?JSON.stringify(params[k]):params[k]));
-    var t=setTimeout(()=>{delete window[cb];rej(new Error('시간 초과'));},30000);
+    var t=setTimeout(()=>{delete window[cb];rej(new Error('시간 초과'));},90000);
     window[cb]=d=>{clearTimeout(t);delete window[cb];res(d);};
     var s=document.createElement('script');s.src=url;s.onerror=()=>{clearTimeout(t);delete window[cb];rej(new Error('네트워크 오류'));};
     document.head.appendChild(s);setTimeout(()=>{if(s.parentNode)s.parentNode.removeChild(s);},35000);
@@ -2010,26 +2010,45 @@ async function _acqWL(){
   try{_wl=await navigator.wakeLock.request('screen');}catch(e){}
 }
 function _relWL(){if(_wl){_wl.release().catch(()=>{});_wl=null;}}
-
-/* 화면이 다시 켜지면 WakeLock 재획득 */
 document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='visible' && _wl===null){
+  if(document.visibilityState==='visible'&&_wl===null){
     var lov=document.getElementById('lov');
-    if(lov && lov.classList.contains('on')) _acqWL();
+    if(lov&&lov.classList.contains('on'))_acqWL();
   }
 });
 
+/* ── gasPost with retry (재시도 2회) ── */
+async function gasPostRetry(action, payload, siteId, maxTry){
+  maxTry = maxTry || 3;
+  var lastErr;
+  for(var t=0; t<maxTry; t++){
+    try{
+      var r = await gasPost(action, payload, siteId);
+      if(r && r.success !== false) return r;
+      lastErr = new Error(r.msg || r.error || '서버 오류');
+    }catch(e){
+      lastErr = e;
+      if(t < maxTry-1){
+        await new Promise(function(res){ setTimeout(res, 2000*(t+1)); }); // 2s, 4s 대기
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function uploadWorks(works){
-  await _acqWL(); /* 화면 꺼짐 방지 시작 */
+  await _acqWL();
   var total=works.length, done=0;
-  for(var w of works){
+
+  for(var wi=0; wi<works.length; wi++){
+    var w=works[wi];
     var pad=String(w.no).padStart(3,'0');
     var upEl=document.getElementById('up_'+w.key);
     var pbEl=document.getElementById('pb_'+w.key);
     try{
-      if(upEl)upEl.textContent='📷 사진 불러오는 중…';
-      if(pbEl)pbEl.style.width='10%';
-      showLoading('업로드 중… ('+( done+1)+'/'+total+')\n📵 화면을 끄지 마세요');
+      showLoading('NO'+pad+' 준비 중… ('+(wi+1)+'/'+total+')\n📵 화면을 끄지 마세요');
+      if(upEl)upEl.textContent='📁 폴더 생성 중…';
+      if(pbEl)pbEl.style.width='5%';
 
       /* 부재중 처리 */
       if(w.isAbsent){
@@ -2038,72 +2057,112 @@ async function uploadWorks(works){
         var abPr2=await dbGet('photos','photo_'+w.date+'_'+w.no+'_absent2');
         if(abPr1)abUps['absent1']=abPr1.data;
         if(abPr2)abUps['absent2']=abPr2.data;
-        abUps.textDoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;padding:20px;max-width:500px}</style></head><body>'+
-          '<h2>부재중 방문 기록</h2><hr>'+
-          '<p><b>NO:</b> '+String(w.no).padStart(3,'0')+'</p>'+
-          '<p><b>날짜:</b> '+w.date+'</p>'+
-          '<p><b>작업자:</b> '+(w.worker||'')+'</p>'+
-          '<p><b>수용가명:</b> '+(w.cur?w.cur.custName:'—')+'</p>'+
-          '<p><b>주소:</b> '+(w.cur?w.cur.address:'—')+'</p>'+
-          '<p><b>연락처:</b> '+(w.cur?w.cur.phone:'—')+'</p>'+
-          '<p><b>메모:</b> '+(w.memo||'없음')+'</p>'+
-          '</body></html>';
+        abUps.textDoc='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>'+
+          '<h2>부재중 방문 기록</h2><p>NO: '+String(w.no).padStart(3,'0')+'</p>'+
+          '<p>날짜: '+w.date+'</p><p>작업자: '+(w.worker||'')+'</p>'+
+          '<p>수용가명: '+(w.cur?w.cur.custName:'—')+'</p>'+
+          '<p>주소: '+(w.cur?w.cur.address:'—')+'</p>'+
+          '<p>연락처: '+(w.cur?w.cur.phone:'—')+'</p>'+
+          '<p>메모: '+(w.memo||'없음')+'</p></body></html>';
         if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';
         if(pbEl)pbEl.style.width='60%';
-        var abResult=await gasPost('saveAbsentPhotos',{no:w.no,workDate:w.date,photos:abUps},w.siteId||'site1');
+        var abResult=await gasPostRetry('saveAbsentPhotos',{no:w.no,workDate:w.date,photos:abUps},w.siteId||'site1');
         if(!abResult.success)throw new Error(abResult.msg);
         w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
         if(pbEl)pbEl.style.width='100%';
         if(upEl)upEl.textContent='✅ 완료';
         var ic=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic)ic.textContent='✅';
-        done++;showToast('✅ NO'+String(w.no).padStart(3,'0')+' 부재중 완료');
+        done++;showToast('✅ NO'+String(w.no).padStart(3,'0')+' 완료');
         continue;
       }
 
-      /* 사진 병렬 로드 (속도 향상) */
-      var keys=['full','before','after','sticker','sign'];
-      var photoArr=await Promise.all(keys.map(function(pk){
+      /* ── 사진 병렬 로드 ── */
+      var photoKeys=['full','before','after','sticker','sign'];
+      var photoArr=await Promise.all(photoKeys.map(function(pk){
         return dbGet('photos','photo_'+w.date+'_'+w.no+'_'+pk);
       }));
-      var ups={};
-      keys.forEach(function(pk,i){if(photoArr[i])ups[pk]=photoArr[i].data;});
-      ups.textDoc=makeDocHtml(w);
 
-      if(upEl)upEl.textContent='☁️ 드라이브 저장 중…';
-      if(pbEl)pbEl.style.width='60%';
+      var photoMap={};
+      photoKeys.forEach(function(pk,i){if(photoArr[i])photoMap[pk]=photoArr[i].data;});
 
-      var pr2=await gasPost('savePhotos',{no:w.no,workDate:w.date,photos:ups},w.siteId||'site1');
-      if(!pr2.success)throw new Error(pr2.msg);
+      /* ── 1장씩 분할 업로드 ── */
+      var pad3=String(w.no).padStart(3,'0');
+      var nameMap={
+        full:   'NO'+pad3+'_전체사진',
+        before: 'NO'+pad3+'_교체전',
+        after:  'NO'+pad3+'_교체후',
+        sticker:'NO'+pad3+'_스티커',
+        sign:   'NO'+pad3+'_서명'
+      };
 
-      if(upEl)upEl.textContent='📊 시트 기록 중…';
+      var validKeys=photoKeys.filter(function(pk){ return photoMap[pk] && photoMap[pk].base64; });
+      var folderUrl='';
+
+      for(var pi=0; pi<validKeys.length; pi++){
+        var pk=validKeys[pi];
+        var pct=Math.round(10 + (pi/validKeys.length)*70);
+        if(pbEl)pbEl.style.width=pct+'%';
+        if(upEl)upEl.textContent='📷 '+(pi+1)+'/'+validKeys.length+'장 업로드 중…';
+        showLoading('NO'+pad+' 사진 '+(pi+1)+'/'+validKeys.length+'장\n('+(wi+1)+'/'+total+') 📵 끄지 마세요');
+
+        var pd=photoMap[pk];
+        var oneResult=await gasPostRetry('saveOnePhoto',{
+          no       : w.no,
+          workDate : w.date,
+          key      : pk,
+          name     : nameMap[pk],
+          base64   : pd.base64,
+          mime     : pd.mime||'image/jpeg'
+        }, w.siteId||'site1');
+
+        if(!oneResult.success)throw new Error(pk+' 저장 실패: '+oneResult.msg);
+        if(oneResult.folderUrl)folderUrl=oneResult.folderUrl;
+      }
+
+      /* textDoc 별도 전송 */
       if(pbEl)pbEl.style.width='85%';
+      if(upEl)upEl.textContent='📊 시트 기록 중…';
+      showLoading('NO'+pad+' 시트 기록 중… ('+(wi+1)+'/'+total+')');
 
-      var sr=await gasPost('saveRecord',{no:w.no,workDate:w.date,
-        beforeValve:w.bValve,beforeReading:w.bRead,beforeSeal:w.bSeal,
-        afterReading:w.aRead,afterMeterNo:w.aMeter,afterSeal:w.aSeal,
-        afterValve:w.aValve,confirmType:w.cMode,worker:w.worker,
-        photoFolderUrl:pr2.folderUrl},w.siteId||'site1');
+      var sr=await gasPostRetry('saveRecord',{
+        no           : w.no,
+        workDate     : w.date,
+        beforeValve  : w.bValve,
+        beforeReading: w.bRead,
+        beforeSeal   : w.bSeal,
+        afterReading : w.aRead,
+        afterMeterNo : w.aMeter,
+        afterSeal    : w.aSeal,
+        afterValve   : w.aValve,
+        confirmType  : w.cMode,
+        worker       : w.worker,
+        photoFolderUrl: folderUrl
+      }, w.siteId||'site1');
+
       if(!sr.success)throw new Error(sr.msg);
 
-      w.uploaded=true;w.uploadedAt=Date.now();await dbPut('works',w);
+      w.uploaded=true;w.uploadedAt=Date.now();w.folderUrl=folderUrl;
+      await dbPut('works',w);
       if(pbEl)pbEl.style.width='100%';
       if(upEl)upEl.textContent='✅ 완료';
       var ic2=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic2)ic2.textContent='✅';
       done++;
-      showToast('✅ NO'+pad+' 완료 ('+done+'/'+total+')');
+      showToast('✅ NO'+pad+' 완료 ('+(wi+1)+'/'+total+')');
 
     }catch(e){
-      if(upEl)upEl.textContent='❌ 실패: '+e.message;
-      if(pbEl)pbEl.style.background='var(--red)';
+      if(upEl)upEl.textContent='❌ '+e.message;
+      if(pbEl){pbEl.style.background='var(--red)';pbEl.style.width='100%';}
       showToast('❌ NO'+pad+' 실패: '+e.message);
     }
   }
-  _relWL(); /* Wake Lock 해제 */
+
+  _relWL();
   hideLoading();
   if(done===total){
     showToast('🎉 전체 '+total+'건 업로드 완료!');
-  } else {
+  }else{
     showToast('⚠️ '+done+'/'+total+'건 완료 (일부 실패)');
+    document.getElementById('selUploadBtn').disabled=false;
   }
 }
 
