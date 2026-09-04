@@ -2146,22 +2146,26 @@ async function uploadWorks(works){
       }
 
       /* ── 작업서(textDoc) 전송 ── */
-      if(pbEl)pbEl.style.width='80%';
-      if(upEl)upEl.textContent='📄 작업서 전송 중…';
+      if(pbEl)pbEl.style.width='82%';
+      if(upEl)upEl.textContent='📄 작업서 저장 중…';
       showLoading('NO'+pad+' 작업서 저장 중… ('+(wi+1)+'/'+total+')');
-
-      var docHtml = typeof makeDocHtml === 'function' ? makeDocHtml(w) : '';
-      if(docHtml){
-        try{
-          await gasPostRetry('savePhotos',{
+      try{
+        var docHtml = typeof makeDocHtml==='function' ? makeDocHtml(w) : '';
+        if(docHtml){
+          // base64로 변환해서 saveOnePhoto 방식으로 전송
+          var docB64 = btoa(unescape(encodeURIComponent(docHtml)));
+          await gasPostRetry('saveOnePhoto',{
             no      : w.no,
             workDate: w.date,
             siteId  : w.siteId||'site1',
-            photos  : { textDoc: docHtml }
+            key     : 'textDoc',
+            name    : 'NO'+pad+'_\uc791\uc5c5\ub0b4\uc6a9',
+            base64  : docB64,
+            mime    : 'text/html'
           }, w.siteId||'site1');
-        }catch(docErr){
-          console.warn('작업서 저장 실패(무시):', docErr.message);
         }
+      }catch(docErr){
+        console.warn('작업서 저장 실패(계속진행):', docErr.message);
       }
 
       /* ── 시트 기록 ── */
