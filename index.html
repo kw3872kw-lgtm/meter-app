@@ -2132,26 +2132,47 @@ async function uploadWorks(works){
 
         var pd=photoMap[pk];
         var oneResult=await gasPostRetry('saveOnePhoto',{
-          no       : w.no,
-          workDate : w.date,
-          key      : pk,
-          name     : nameMap[pk],
-          base64   : pd.base64,
-          mime     : pd.mime||'image/jpeg'
+          no      : w.no,
+          workDate: w.date,
+          siteId  : w.siteId||'site1',
+          key     : pk,
+          name    : nameMap[pk],
+          base64  : pd.base64,
+          mime    : pd.mime||'image/jpeg'
         }, w.siteId||'site1');
 
-        if(!oneResult.success)throw new Error(pk+' 저장 실패: '+oneResult.msg);
+        if(!oneResult.success)throw new Error(pk+' 저장 실패: '+(oneResult.msg||''));
         if(oneResult.folderUrl)folderUrl=oneResult.folderUrl;
       }
 
-      /* textDoc 별도 전송 */
-      if(pbEl)pbEl.style.width='85%';
+      /* ── 작업서(textDoc) 전송 ── */
+      if(pbEl)pbEl.style.width='80%';
+      if(upEl)upEl.textContent='📄 작업서 전송 중…';
+      showLoading('NO'+pad+' 작업서 저장 중… ('+(wi+1)+'/'+total+')');
+
+      var docHtml = typeof makeDocHtml === 'function' ? makeDocHtml(w) : '';
+      if(docHtml){
+        try{
+          await gasPostRetry('savePhotos',{
+            no      : w.no,
+            workDate: w.date,
+            siteId  : w.siteId||'site1',
+            photos  : { textDoc: docHtml }
+          }, w.siteId||'site1');
+        }catch(docErr){
+          console.warn('작업서 저장 실패(무시):', docErr.message);
+        }
+      }
+
+      /* ── 시트 기록 ── */
+      if(pbEl)pbEl.style.width='90%';
       if(upEl)upEl.textContent='📊 시트 기록 중…';
       showLoading('NO'+pad+' 시트 기록 중… ('+(wi+1)+'/'+total+')');
 
       var sr=await gasPostRetry('saveRecord',{
         no           : w.no,
         workDate     : w.date,
+        siteId       : w.siteId||'site1',
         beforeValve  : w.bValve,
         beforeReading: w.bRead,
         beforeSeal   : w.bSeal,
