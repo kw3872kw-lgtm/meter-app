@@ -1821,6 +1821,15 @@ function makeDocHtml(w){
   var dp=(w.date||'').split('-');
   var dateStr=dp[0]+'년 '+parseInt(dp[1])+'월 '+parseInt(dp[2])+'일';
   var c=w.cur||{};
+
+  // 현장별 공사명·시공사명
+  var siteId   = w.siteId || appSite || 'site1';
+  var company  = SITE_COMPANIES[siteId] || appCompany || '(주)양정건설';
+  var projName = siteId === 'site2'
+    ? '2026년 고장디지털계량기 교체공사(동북)'
+    : '2026년 고장디지털계량기 교체공사(서남광산)';
+  var siteName = siteId === 'site2' ? '동북' : '서남광산';
+
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1840,12 +1849,14 @@ td:first-child{font-weight:700;background:#f4f9fc;width:36%;white-space:nowrap}
 </head>
 <body>
 <h1>💧 디지털계량기 교체 작업서</h1>
-<div class="sub">2026년 고장디지털계량기 교체공사(서남광산) — ${appCompany}</div>
+<div class="sub">${projName} — ${company}</div>
 <div class="sec"><div class="sec-t">기본 정보</div>
 <table>
 <tr><td>작업 NO</td><td><b>NO. ${pad}</b></td></tr>
 <tr><td>작업일자</td><td>${dateStr}</td></tr>
 <tr><td>작업자</td><td>${w.worker||'—'}</td></tr>
+<tr><td>작업현장</td><td>${siteName}</td></tr>
+<tr><td>시공사</td><td>${company}</td></tr>
 </table></div>
 <div class="sec"><div class="sec-t">수용가 정보</div>
 <table>
@@ -1874,7 +1885,7 @@ td:first-child{font-weight:700;background:#f4f9fc;width:36%;white-space:nowrap}
 <table>
 <tr><td>확인 방식</td><td>${w.cMode==='sign'?'✍️ 서명 완료':'🏷️ 스티커 부착'}</td></tr>
 </table></div>
-<div class="ft">${dateStr} ${w.worker||''} 작업자 현장 작성 — 서남광산 고장디지털계량기 교체공사</div>
+<div class="ft">${dateStr} ${w.worker||''} 작업자 현장 작성 — ${projName}</div>
 </body></html>`;
 }
 
@@ -2151,8 +2162,9 @@ async function uploadWorks(works){
       // 시트 기록 실패해도 사진은 올라갔으므로 완료 처리
       // (실패 원인은 토스트로 표시)
       if(!sr || !sr.success){
-        console.warn('시트 기록 실패:', sr && sr.msg);
-        showToast('⚠️ NO'+pad+' 사진저장 완료, 시트기록 실패: '+(sr&&sr.msg||'오류'));
+        var errMsg = sr && sr.msg ? sr.msg : '오류';
+        console.warn('시트 기록 실패:', errMsg);
+        showToast('⚠️ NO'+pad+' 사진완료, 시트실패: '+errMsg);
       } else {
         showToast('✅ NO'+pad+' 완료 ('+(wi+1)+'/'+total+')');
       }
