@@ -1003,21 +1003,12 @@ var abCur = null, abNoTmr = null, abPhoto = null;
 
 function initAbsentTab(){
   document.getElementById('abDateInp').value = appDate;
-  // 현장 목록 로드
   var sel = document.getElementById('abSiteInp');
   if(sel && sel.options.length === 0){
-    gasCall('getSites').then(function(sites){
-      sel.innerHTML = '';
-      if(!sites) return;
-      sites.forEach(function(s){
-        var opt = document.createElement('option');
-        opt.value = s.id; opt.textContent = s.name; opt.style.background='#0d2540';
-        if(s.id === appSite) opt.selected = true;
-        sel.appendChild(opt);
-      });
-    }).catch(function(){
-      sel.innerHTML = '<option value="site1" style="background:#0d2540">서남광산</option><option value="site2" style="background:#0d2540">동북</option>';
-    });
+    sel.innerHTML=
+      '<option value="site1" style="background:#0d2540">서남광산</option>'+
+      '<option value="site2" style="background:#0d2540">동북</option>';
+    if(appSite) sel.value = appSite;
   }
 }
 
@@ -1176,46 +1167,22 @@ function goStep(n){
 function loadWorkSiteList(){
   var sel=document.getElementById('workSiteInp');
   if(!sel) return;
-  gasCall('getSites').then(function(sites){
-    sel.innerHTML='';
-    if(!sites||!sites.length){
-      sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option>';
-      return;
-    }
-    sites.forEach(function(s){
-      var opt=document.createElement('option');
-      opt.value=s.id;
-      opt.textContent=s.name;
-      opt.style.background='#0d2540';
-      if(s.id===appSite) opt.selected=true;
-      sel.appendChild(opt);
-    });
-  }).catch(function(){
-    sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option><option value="site2" style="background:#0d2540">동북</option>';
-  });
+  sel.innerHTML=
+    '<option value="site1" style="background:#0d2540">서남광산</option>'+
+    '<option value="site2" style="background:#0d2540">동북</option>';
+  if(appSite) sel.value = appSite;
 }
 
-/* 현장 목록 불러오기 */
+/* 현장 목록 불러오기 — 고정값 */
 function loadSiteList(){
   var sel=document.getElementById('startSite');
   if(!sel) return;
-  gasCall('getSites').then(function(sites){
-    sel.innerHTML='';
-    if(!sites||!sites.length){
-      sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option>';
-      updateStartCompany('site1'); return;
-    }
-    sites.forEach(function(s){
-      var opt=document.createElement('option');
-      opt.value=s.id; opt.textContent=s.name; opt.style.background='#0d2540';
-      if(s.id===appSite) opt.selected=true;
-      sel.appendChild(opt);
-    });
-    updateStartCompany(sel.value);
-  }).catch(function(){
-    sel.innerHTML='<option value="site1" style="background:#0d2540">서남광산</option><option value="site2" style="background:#0d2540">동북</option>';
-    updateStartCompany('site1');
-  });
+  sel.innerHTML=
+    '<option value="site1" style="background:#0d2540">서남광산</option>'+
+    '<option value="site2" style="background:#0d2540">동북</option>';
+  // 이전에 선택한 현장 유지
+  if(appSite) sel.value = appSite;
+  updateStartCompany(sel.value);
   sel.onchange=function(){ updateStartCompany(this.value); };
 }
 
@@ -1735,20 +1702,11 @@ async function updateUploadTab(){
   var upSite=document.getElementById('upSiteInp');
   var upDate=document.getElementById('upDateInp');
   if(upSite && upSite.options.length<=1){
-    gasCall('getSites').then(function(sites){
-      if(!sites) return;
-      sites.forEach(function(s){
-        var opt=document.createElement('option');
-        opt.value=s.id; opt.textContent=s.name; opt.style.background='#0d2540';
-        upSite.appendChild(opt);
-      });
-    }).catch(function(){
-      ['site1:서남광산','site2:동북'].forEach(function(s){
-        var p=s.split(':');
-        var opt=document.createElement('option');
-        opt.value=p[0]; opt.textContent=p[1]; opt.style.background='#0d2540';
-        upSite.appendChild(opt);
-      });
+    ['site1:서남광산','site2:동북'].forEach(function(s){
+      var p=s.split(':');
+      var opt=document.createElement('option');
+      opt.value=p[0]; opt.textContent=p[1]; opt.style.background='#0d2540';
+      upSite.appendChild(opt);
     });
   }
 
