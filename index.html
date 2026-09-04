@@ -1982,8 +1982,9 @@ async function gasPostRetry(action, payload, siteId, maxTry){
   for(var attempt=0; attempt<maxTry; attempt++){
     try{
       var r;
-      if(action === 'saveOnePhoto'){
-        // 사진: POST 방식 (base64가 크므로)
+      if(action === 'saveOnePhoto' || action === 'saveRecord' ||
+         action === 'saveAbsentPhotos' || action === 'savePhotos'){
+        // POST 방식 (데이터가 크거나 기록이 필요한 경우)
         var resp = await fetch(GAS_URL, {
           method : 'POST',
           headers: {'Content-Type':'text/plain;charset=utf-8'},
@@ -1996,7 +1997,7 @@ async function gasPostRetry(action, payload, siteId, maxTry){
         if(!resp.ok) throw new Error('HTTP '+resp.status);
         r = await resp.json();
       } else {
-        // 나머지: 기존 JSONP(gasCall) 방식
+        // 조회성 요청: 기존 JSONP(gasCall) 방식
         var p2 = Object.assign({}, payload, {siteId: siteId||appSite||'site1'});
         r = await gasCall(action, p2);
       }
@@ -2147,15 +2148,22 @@ async function uploadWorks(works){
         photoFolderUrl: folderUrl
       }, w.siteId||'site1');
 
-      if(!sr.success)throw new Error(sr.msg);
+      // 시트 기록 실패해도 사진은 올라갔으므로 완료 처리
+      // (실패 원인은 토스트로 표시)
+      if(!sr || !sr.success){
+        console.warn('시트 기록 실패:', sr && sr.msg);
+        showToast('⚠️ NO'+pad+' 사진저장 완료, 시트기록 실패: '+(sr&&sr.msg||'오류'));
+      } else {
+        showToast('✅ NO'+pad+' 완료 ('+(wi+1)+'/'+total+')');
+      }
 
-      w.uploaded=true;w.uploadedAt=Date.now();w.folderUrl=folderUrl;
+      w.uploaded=true; w.uploadedAt=Date.now(); w.folderUrl=folderUrl;
       await dbPut('works',w);
       if(pbEl)pbEl.style.width='100%';
-      if(upEl)upEl.textContent='✅ 완료';
-      var ic2=document.querySelector('#ui_'+w.key+' .ui-ic');if(ic2)ic2.textContent='✅';
-      done++;
-      showToast('✅ NO'+pad+' 완료 ('+(wi+1)+'/'+total+')');
+      if(upEl)upEl.textContent= sr&&sr.success ? '✅ 완료' : '⚠️ 사진완료/시트실패';
+      var ic2=document.querySelector('#ui_'+w.key+' .ui-ic');
+      if(ic2)ic2.textContent= sr&&sr.success ? '✅' : '⚠️';
+      done++; // 사진 업로드 성공 기준으로 카운트
 
     }catch(e){
       if(upEl)upEl.textContent='❌ '+e.message;
