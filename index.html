@@ -2017,19 +2017,44 @@ document.addEventListener('visibilitychange',function(){
   }
 });
 
-/* ── gasPost with retry (재시도 2회) ── */
+/* ── gasPostRetry — 사진은 POST, 나머지는 JSONP ── */
 async function gasPostRetry(action, payload, siteId, maxTry){
   maxTry = maxTry || 3;
   var lastErr;
-  for(var t=0; t<maxTry; t++){
+  for(var attempt=0; attempt<maxTry; attempt++){
     try{
-      var r = await gasPost(action, payload, siteId);
-      if(r && r.success !== false) return r;
-      lastErr = new Error(r.msg || r.error || '서버 오류');
+      var r;
+      if(action === 'saveOnePhoto'){
+        // 사진: POST 방식 (base64가 크므로)
+        var resp = await fetch(GAS_URL, {
+          method : 'POST',
+          headers: {'Content-Type':'text/plain;charset=utf-8'},
+          body   : JSON.stringify({
+            action  : action,
+            payload : payload,
+            siteId  : siteId||appSite||'site1'
+          })
+        });
+        if(!resp.ok) throw new Error('HTTP '+resp.status);
+        r = await resp.json();
+      } else {
+        // 나머지: 기존 JSONP(gasCall) 방식
+        var p2 = Object.assign({}, payload, {siteId: siteId||appSite||'site1'});
+        r = await gasCall(action, p2);
+      }
+      if(!r) throw new Error('응답 없음');
+      if(r.error) throw new Error(r.error);
+      if(r.success === false) throw new Error(r.msg || '실패');
+      return r;
     }catch(e){
       lastErr = e;
-      if(t < maxTry-1){
-        await new Promise(function(res){ setTimeout(res, 2000*(t+1)); }); // 2s, 4s 대기
+      if(attempt < maxTry-1){
+        var wait = 3000*(attempt+1);
+        showLoading(
+          document.getElementById('ltxt').textContent.split('\n')[0] +
+          '\n재시도 '+(attempt+2)+'/'+maxTry+' ('+Math.round(wait/1000)+'초 후…)'
+        );
+        await new Promise(function(res){ setTimeout(res, wait); });
       }
     }
   }
