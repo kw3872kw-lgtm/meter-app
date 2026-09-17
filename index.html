@@ -898,20 +898,48 @@ var dbGet=(s,k)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readonly');var
 var dbAll=(s)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readonly');var r=tx.objectStore(s).getAll();r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e);});
 var dbDel=(s,k)=>new Promise((res,rej)=>{var tx=db.transaction(s,'readwrite');var r=tx.objectStore(s).delete(k);r.onsuccess=()=>res();r.onerror=e=>rej(e);});
 
-/* GAS */
+/* GAS — JSONP (조회용, 타임아웃 15초) */
 function gasCall(action,params){
   return new Promise((res,rej)=>{
     var cb='_cb_'+Date.now()+'_'+Math.floor(Math.random()*9999);
     var url=GAS_URL+'?action='+encodeURIComponent(action)+'&cb='+cb;
     if(params)Object.keys(params).forEach(k=>url+='&'+encodeURIComponent(k)+'='+encodeURIComponent(typeof params[k]==='object'?JSON.stringify(params[k]):params[k]));
-    var t=setTimeout(()=>{delete window[cb];rej(new Error('시간 초과'));},90000);
+    var t=setTimeout(()=>{delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);rej(new Error('시간 초과'));},15000);
     window[cb]=d=>{clearTimeout(t);delete window[cb];res(d);};
-    var s=document.createElement('script');s.src=url;s.onerror=()=>{clearTimeout(t);delete window[cb];rej(new Error('네트워크 오류'));};
-    document.head.appendChild(s);setTimeout(()=>{if(s.parentNode)s.parentNode.removeChild(s);},35000);
+    var s=document.createElement('script');
+    s.src=url;
+    s.onerror=()=>{clearTimeout(t);delete window[cb];rej(new Error('네트워크 오류'));};
+    document.head.appendChild(s);
+    setTimeout(()=>{if(s.parentNode)s.parentNode.removeChild(s);},16000);
   });
 }
+
+/* GAS — POST (저장/조회 공용, 타임아웃 90초) */
 function gasPost(action,payload,siteId){
-  return fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,payload,siteId:siteId||appSite||'site1'})}).then(r=>r.json());
+  return fetch(GAS_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action,payload,siteId:siteId||appSite||'site1'})
+  }).then(r=>r.json());
+}
+
+/* GAS — getRowByNo 전용 POST 방식 (빠르고 안정적) */
+var _rowCache={};  // NO별 캐시
+function getRowByNoFast(no, siteId){
+  var key = siteId+'_'+no;
+  // 캐시 히트 → 즉시 반환
+  if(_rowCache[key]) return Promise.resolve(_rowCache[key]);
+  // POST로 조회
+  return fetch(GAS_URL,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'getRowByNo', payload:{no:no}, siteId:siteId||appSite||'site1'})
+  })
+  .then(r=>r.json())
+  .then(function(d){
+    if(d && !d.error) _rowCache[key]=d;  // 성공 시 캐시 저장
+    return d;
+  });
 }
 
 /* 상태 */
@@ -1024,7 +1052,7 @@ function onAbNo(v){
   var siteEl = document.getElementById('abSiteInp');
   var siteId = siteEl ? siteEl.value : appSite;
   abNoTmr = setTimeout(function(){
-    gasCall('getRowByNo',{no:parseInt(v),siteId:siteId}).then(function(d){
+    getRowByNoFast(parseInt(v), siteId).then(function(d){
       if(d&&!d.error&&d.no!==undefined){
         box.classList.add('found');
         tag.textContent='✓ 확인'; tag.className='no-tag show found';
@@ -1239,30 +1267,58 @@ function doAbSearch(){
   onAbNo(v);
 }
 
-/* NO 입력 */
+/* NO 입력 — POST 방식으로 빠르게 조회 */
 function onNo(v){
   clearTimeout(noTmr);
   var box=document.getElementById('noBox'),tag=document.getElementById('noTag'),hint=document.getElementById('noHint');
   box.classList.remove('found','notfound');tag.className='no-tag';
   if(!v){cur=null;resetCust();updateBot();return;}
   tag.textContent='조회 중…';tag.className='no-tag show searching';
-  noTmr=setTimeout(()=>{
-    gasCall('getRowByNo',{no:parseInt(v),siteId:appSite}).then(d=>{
+
+  noTmr=setTimeout(function(){
+    var no=parseInt(v);
+    var sid=appSite||'site1';
+
+    // 1차 시도
+    getRowByNoFast(no, sid)
+    .then(function(d){
       if(d&&!d.error&&d.no!==undefined){
         box.classList.add('found');tag.textContent='✓ 확인';tag.className='no-tag show found';
         hint.textContent='';hint.className='no-hint';
         cur=d;renderCust(v,d);updateBot();autoSave();
       } else {
         box.classList.add('notfound');tag.textContent='✗ 없음';tag.className='no-tag show notfound';
-        hint.textContent=d&&d.error?'❌ '+d.error:'⚠ 해당 NO가 없습니다.';hint.className='no-hint err';
+        hint.textContent=d&&d.error?'❌ '+d.error:'⚠ 해당 NO가 없습니다.';
+        hint.className='no-hint err';
         cur=null;resetCust();updateBot();
-  // 날짜는 유지 (리셋 안 함 - 같은 날 여러 건 작업 시 편의)
       }
-    }).catch(()=>{
-      box.classList.add('notfound');tag.textContent='✗ 오류';tag.className='no-tag show notfound';
-      hint.textContent='❌ 오프라인 상태입니다.';hint.className='no-hint err';
+    })
+    .catch(function(e1){
+      // 1차 실패 → 2초 후 재시도 1회
+      tag.textContent='재시도 중…';tag.className='no-tag show searching';
+      hint.textContent='⏳ 연결 재시도 중…';hint.className='no-hint';
+      setTimeout(function(){
+        getRowByNoFast(no, sid)
+        .then(function(d){
+          if(d&&!d.error&&d.no!==undefined){
+            box.classList.add('found');tag.textContent='✓ 확인';tag.className='no-tag show found';
+            hint.textContent='';hint.className='no-hint';
+            cur=d;renderCust(v,d);updateBot();autoSave();
+          } else {
+            box.classList.add('notfound');tag.textContent='✗ 없음';tag.className='no-tag show notfound';
+            hint.textContent=d&&d.error?'❌ '+d.error:'⚠ 해당 NO가 없습니다.';
+            hint.className='no-hint err';
+            cur=null;resetCust();updateBot();
+          }
+        })
+        .catch(function(){
+          box.classList.add('notfound');tag.textContent='✗ 오류';tag.className='no-tag show notfound';
+          hint.textContent='❌ 서버 연결 실패. 잠시 후 다시 조회해 주세요.';
+          hint.className='no-hint err';
+        });
+      }, 2000);
     });
-  },500);
+  }, 300); // 입력 후 300ms 대기 (빠른 반응)
 }
 function renderCust(no,d){
   var f=[{k:'수용가번호',v:d.custNo},{k:'수용가명',v:d.custName},{k:'연락처',v:d.phone},{k:'교체사유',v:d.reason},{k:'구경',v:d.size},{k:'기물번호',v:d.meterNo},{k:'주소',v:d.address,w:true}];
