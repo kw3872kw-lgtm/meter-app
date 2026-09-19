@@ -924,22 +924,78 @@ function gasPost(action,payload,siteId){
 }
 
 /* GAS — getRowByNo 전용 POST 방식 (빠르고 안정적) */
-var _rowCache={};  // NO별 캐시
-function getRowByNoFast(no, siteId){
-  var key = siteId+'_'+no;
-  // 캐시 히트 → 즉시 반환
-  if(_rowCache[key]) return Promise.resolve(_rowCache[key]);
-  // POST로 조회
-  return fetch(GAS_URL,{
-    method:'POST',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action:'getRowByNo', payload:{no:no}, siteId:siteId||appSite||'site1'})
+/* ═══════════════════════════════════
+   NO 조회 — localStorage 캐시 + POST
+   캐시 유효기간: 24시간
+═══════════════════════════════════ */
+var _rowCache = {};
+var _CACHE_KEY = 'meterRowCache';
+var _CACHE_TTL = 24 * 60 * 60 * 1000; // 24시간
+
+/* 앱 시작 시 localStorage 캐시 복원 */
+function loadRowCache() {
+  try {
+    var raw = localStorage.getItem(_CACHE_KEY);
+    if (!raw) return;
+    var saved = JSON.parse(raw);
+    var now   = Date.now();
+    // 만료된 항목 제거
+    Object.keys(saved).forEach(function(k) {
+      if (saved[k]._ts && (now - saved[k]._ts) < _CACHE_TTL) {
+        _rowCache[k] = saved[k];
+      }
+    });
+  } catch(e) {}
+}
+
+/* 캐시 저장 */
+function saveRowCache() {
+  try {
+    localStorage.setItem(_CACHE_KEY, JSON.stringify(_rowCache));
+  } catch(e) {}
+}
+
+function getRowByNoFast(no, siteId) {
+  var key = (siteId||'site1') + '_' + no;
+
+  // ① 메모리 캐시 히트 → 즉시 반환
+  if (_rowCache[key] && _rowCache[key].no !== undefined) {
+    return Promise.resolve(_rowCache[key]);
+  }
+
+  // ② 서버 조회 (POST)
+  return fetch(GAS_URL, {
+    method : 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body   : JSON.stringify({
+      action : 'getRowByNo',
+      payload: { no: no },
+      siteId : siteId || appSite || 'site1'
+    })
   })
-  .then(r=>r.json())
-  .then(function(d){
-    if(d && !d.error) _rowCache[key]=d;  // 성공 시 캐시 저장
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d && !d.error && d.no !== undefined) {
+      d._ts = Date.now();      // 캐시 타임스탬프
+      _rowCache[key] = d;
+      saveRowCache();          // localStorage에 저장
+    }
     return d;
   });
+}
+
+/* ═══════════════════════════════════
+   Apps Script 워밍업
+   앱 시작 시 빈 요청으로 서버 미리 깨우기
+═══════════════════════════════════ */
+function warmUpGAS() {
+  fetch(GAS_URL, {
+    method : 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body   : JSON.stringify({ action: 'warmUp', payload: {} })
+  })
+  .then(function() { console.log('GAS 워밍업 완료'); })
+  .catch(function() { /* 실패해도 무시 */ });
 }
 
 /* 상태 */
@@ -956,6 +1012,8 @@ var photos={full:null,before:null,after:null,sticker:null,sign:null};
 
 /* 초기화 */
 window.addEventListener('DOMContentLoaded',()=>{
+  loadRowCache();   // localStorage 캐시 복원
+  warmUpGAS();      // Apps Script 서버 워밍업 (백그라운드)
   initDB().then(()=>{
     var s=localStorage.getItem('meterSession');
     if(s){try{var d=JSON.parse(s);if(d.date&&d.worker){appDate=d.date;appWorker=d.worker;appSite=d.site||'site1';appSiteName=d.siteName||'서남광산';appCompany=SITE_COMPANIES[appSite]||d.company||'(주)양정건설';launchApp();return;}}catch(e){}}
@@ -2149,15 +2207,14 @@ async function uploadWorks(works){
       var validKeys=photoKeys.filter(function(pk){ return photoMap[pk] && photoMap[pk].base64; });
       var folderUrl='';
 
-      for(var pi=0; pi<validKeys.length; pi++){
-        var pk=validKeys[pi];
-        var pct=Math.round(10 + (pi/validKeys.length)*70);
-        if(pbEl)pbEl.style.width=pct+'%';
-        if(upEl)upEl.textContent='📷 '+(pi+1)+'/'+validKeys.length+'장 업로드 중…';
-        showLoading('NO'+pad+' 사진 '+(pi+1)+'/'+validKeys.length+'장\n('+(wi+1)+'/'+total+') 📵 끄지 마세요');
+      if(upEl)upEl.textContent='📷 사진 '+validKeys.length+'장 동시 업로드 중…';
+      if(pbEl)pbEl.style.width='20%';
+      showLoading('NO'+pad+' 사진 '+validKeys.length+'장 전송 중…\n('+(wi+1)+'/'+total+') 📵 끄지 마세요');
 
-        var pd=photoMap[pk];
-        var oneResult=await gasPostRetry('saveOnePhoto',{
+      /* ── 병렬 전송 (Promise.all) ── */
+      var uploadPromises = validKeys.map(function(pk){
+        var pd = photoMap[pk];
+        return gasPostRetry('saveOnePhoto',{
           no      : w.no,
           workDate: w.date,
           siteId  : w.siteId||'site1',
@@ -2165,41 +2222,52 @@ async function uploadWorks(works){
           name    : nameMap[pk],
           base64  : pd.base64,
           mime    : pd.mime||'image/jpeg'
-        }, w.siteId||'site1');
+        }, w.siteId||'site1').then(function(r){
+          if(!r.success) throw new Error(pk+' 저장 실패: '+(r.msg||''));
+          if(r.folderUrl) folderUrl = r.folderUrl;
+          return r;
+        });
+      });
 
-        if(!oneResult.success)throw new Error(pk+' 저장 실패: '+(oneResult.msg||''));
-        if(oneResult.folderUrl)folderUrl=oneResult.folderUrl;
+      /* 진행률 애니메이션 (전송 중) */
+      var pctTmr = setInterval(function(){
+        var cur = parseInt((pbEl&&pbEl.style.width)||'20');
+        if(cur < 75 && pbEl) pbEl.style.width = (cur+3)+'%';
+      }, 800);
+
+      try {
+        await Promise.all(uploadPromises);
+      } finally {
+        clearInterval(pctTmr);
       }
 
-      /* ── 작업서(textDoc) 전송 ── */
+      if(pbEl)pbEl.style.width='78%';
+
+      /* ── 작업서 + 시트기록 동시 처리 ── */
       if(pbEl)pbEl.style.width='82%';
-      if(upEl)upEl.textContent='📄 작업서 저장 중…';
-      showLoading('NO'+pad+' 작업서 저장 중… ('+(wi+1)+'/'+total+')');
+      if(upEl)upEl.textContent='📄 작업서 · 📊 시트 동시 처리 중…';
+      showLoading('NO'+pad+' 마무리 중… ('+(wi+1)+'/'+total+')');
+
+      var docPromise = Promise.resolve();
       try{
         var docHtml = typeof makeDocHtml==='function' ? makeDocHtml(w) : '';
         if(docHtml){
-          // base64로 변환해서 saveOnePhoto 방식으로 전송
           var docB64 = btoa(unescape(encodeURIComponent(docHtml)));
-          await gasPostRetry('saveOnePhoto',{
+          docPromise = gasPostRetry('saveOnePhoto',{
             no      : w.no,
             workDate: w.date,
             siteId  : w.siteId||'site1',
             key     : 'textDoc',
-            name    : 'NO'+pad+'_\uc791\uc5c5\ub0b4\uc6a9',
+            name    : 'NO'+pad+'\uc791\uc5c5\ub0b4\uc6a9',
             base64  : docB64,
             mime    : 'text/html'
-          }, w.siteId||'site1');
+          }, w.siteId||'site1').catch(function(e){
+            console.warn('작업서 실패(무시):', e.message);
+          });
         }
-      }catch(docErr){
-        console.warn('작업서 저장 실패(계속진행):', docErr.message);
-      }
+      }catch(e){ console.warn('작업서 생성 실패:', e.message); }
 
-      /* ── 시트 기록 ── */
-      if(pbEl)pbEl.style.width='90%';
-      if(upEl)upEl.textContent='📊 시트 기록 중…';
-      showLoading('NO'+pad+' 시트 기록 중… ('+(wi+1)+'/'+total+')');
-
-      var sr=await gasPostRetry('saveRecord',{
+      var recordPromise = gasPostRetry('saveRecord',{
         no           : w.no,
         workDate     : w.date,
         siteId       : w.siteId||'site1',
@@ -2214,6 +2282,10 @@ async function uploadWorks(works){
         worker       : w.worker,
         photoFolderUrl: folderUrl
       }, w.siteId||'site1');
+
+      /* 작업서 + 시트 동시 완료 대기 */
+      var results = await Promise.allSettled([docPromise, recordPromise]);
+      var sr = results[1].status === 'fulfilled' ? results[1].value : null;
 
       // 시트 기록 실패해도 사진은 올라갔으므로 완료 처리
       // (실패 원인은 토스트로 표시)
