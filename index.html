@@ -2207,11 +2207,27 @@ async function uploadWorks(works){
       var validKeys=photoKeys.filter(function(pk){ return photoMap[pk] && photoMap[pk].base64; });
       var folderUrl='';
 
+      /* ── 폴더 먼저 생성 (중복 방지) ── */
+      if(upEl)upEl.textContent='📁 폴더 생성 중…';
+      if(pbEl)pbEl.style.width='10%';
+      showLoading('NO'+pad+' 준비 중… ('+(wi+1)+'/'+total+')');
+
+      try{
+        var folderResult = await gasPostRetry('ensureFolder',{
+          no      : w.no,
+          workDate: w.date,
+          siteId  : w.siteId||'site1'
+        }, w.siteId||'site1');
+        if(folderResult && folderResult.folderUrl) folderUrl = folderResult.folderUrl;
+      }catch(fe){
+        console.warn('폴더 생성 실패, 계속 진행:', fe.message);
+      }
+
+      /* ── 사진 병렬 전송 (폴더 생성 후) ── */
       if(upEl)upEl.textContent='📷 사진 '+validKeys.length+'장 동시 업로드 중…';
       if(pbEl)pbEl.style.width='20%';
       showLoading('NO'+pad+' 사진 '+validKeys.length+'장 전송 중…\n('+(wi+1)+'/'+total+') 📵 끄지 마세요');
 
-      /* ── 병렬 전송 (Promise.all) ── */
       var uploadPromises = validKeys.map(function(pk){
         var pd = photoMap[pk];
         return gasPostRetry('saveOnePhoto',{
@@ -2229,7 +2245,7 @@ async function uploadWorks(works){
         });
       });
 
-      /* 진행률 애니메이션 (전송 중) */
+      /* 진행률 애니메이션 */
       var pctTmr = setInterval(function(){
         var cur = parseInt((pbEl&&pbEl.style.width)||'20');
         if(cur < 75 && pbEl) pbEl.style.width = (cur+3)+'%';
@@ -2258,7 +2274,7 @@ async function uploadWorks(works){
             workDate: w.date,
             siteId  : w.siteId||'site1',
             key     : 'textDoc',
-            name    : 'NO'+pad+'\uc791\uc5c5\ub0b4\uc6a9',
+            name    : 'NO'+pad+'_작업내용',
             base64  : docB64,
             mime    : 'text/html'
           }, w.siteId||'site1').catch(function(e){
