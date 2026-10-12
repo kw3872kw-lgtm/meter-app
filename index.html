@@ -2381,7 +2381,7 @@ function compositePhotoWithAddr(file, label, addr, dateStr){
                 ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.k,pd,mY);
                 ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.v,tW-kW-pd*2),kW+pd,mY);
               }else{
-                var dVW=Math.round((tW-kW*2)*.38),c2=kW,c3=c2+dVW,c4=c3+kW;
+                var dVW=Math.round((tW-kW*2)*.52),c2=kW,c3=c2+dVW,c4=c3+kW;
                 ctx.fillStyle='rgba(200,220,245,.85)';ctx.fillRect(0,rY,kW,rH);ctx.fillRect(c3,rY,kW,rH);
                 [c2,c3,c4].forEach(function(x){ctx.beginPath();ctx.moveTo(x,rY);ctx.lineTo(x,rY+rH);ctx.stroke();});
                 ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.k,pd,mY);
@@ -2443,7 +2443,7 @@ function compositePhoto(file,label){
                 ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.k,pd,mY);
                 ctx.font=fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(ell(ctx,row.v,tW-kW-pd*2),kW+pd,mY);
               }else{
-                var dVW=Math.round((tW-kW*2)*.38),c2=kW,c3=c2+dVW,c4=c3+kW;
+                var dVW=Math.round((tW-kW*2)*.52),c2=kW,c3=c2+dVW,c4=c3+kW;
                 ctx.fillStyle='rgba(200,220,245,.85)';ctx.fillRect(0,rY,kW,rH);ctx.fillRect(c3,rY,kW,rH);
                 [c2,c3,c4].forEach(x=>{ctx.beginPath();ctx.moveTo(x,rY);ctx.lineTo(x,rY+rH);ctx.stroke();});
                 ctx.fillStyle='#111';ctx.font='bold '+fSz+'px "Noto Sans KR",sans-serif';ctx.fillText(row.k,pd,mY);
